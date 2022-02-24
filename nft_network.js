@@ -15,15 +15,16 @@ function NftNetwork() {
 
         // Custom metadata of the NFT, note that you can fully customize this metadata with other properties.
         const metadata = {
-        name: "Cool NFT",
-        description: "This is a cool NFT",
-        image: fs.readFileSync("path/to/image.png"), // This can be an image url or file
+            name: "Cool NFT",
+            description: "This is a cool NFT",
+            image: fs.readFileSync("path/to/image.png"), // This can be an image url or file
         }
-
-        await module.mintTo(toAddress, metadata);
+        
+        const metadata = await module.mintTo(toAddress, metadata);
+        return metadata
     }
 
-    const list = function() {
+    const list = function(id) {
         // function to list new nft on marketplace
     }
 }
