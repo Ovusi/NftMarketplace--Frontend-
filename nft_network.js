@@ -6,7 +6,7 @@ function NftNetwork() {
     // You can switch out this provider with any wallet or provider setup you like.
     const provider = ethers.Wallet.createRandom(); // set provider
     const sdk = new ThirdwebSDK(provider); // initialize sdk
-    const module = sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize module
+    const nft_module = sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize module
     const market_module = sdk.getMarketplaceModule("0xe15f489890B50320a8D22bb3b3f30967f4Eba900");
     const token_address = sdk.getTokenModule("0xBfF86A4188B84dd3Ed24D2aD9E5E6FdE7071e802")
 
@@ -21,7 +21,7 @@ function NftNetwork() {
             image: fs.readFileSync("path/to/image.png"), // This can be an image url or file
         }
         
-        const metadata = await module.mintTo(toAddress, metadata);
+        const metadata = await nft_module.mintTo(toAddress, metadata);
         return metadata
     }
 
@@ -46,7 +46,7 @@ function NftNetwork() {
             buyoutPricePerToken: tokenprice,
         }
         
-        await module.createDirectListing(listing);
+        await market_module.createDirectListing(listing);
     }
 
     const buy_nft = function(listid, quant) {
@@ -56,6 +56,6 @@ function NftNetwork() {
         // Quantity of the asset you want to buy
         const quantityDesired = quant;
 
-        await module.buyoutDirectListing({ listingId, quantityDesired });
+        await market_module.buyoutDirectListing({ listingId, quantityDesired });
     }
 }
