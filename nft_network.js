@@ -23,8 +23,6 @@ const Component = () => {
 
 function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWallet_) {
 
-
-
     // You can switch out this provider with any wallet or provider setup you like.
     this.sdk = new ThirdwebSDK(provider_?.getSigner() instanceof Signer); // initialize sdk
     this.nft_module = this.sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize module
@@ -37,13 +35,13 @@ function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWal
         
 
         // Custom metadata of the NFT, note that you can fully customize this metadata with other properties.
-        const metadata = {
+        const metadata_ = {
             name: "Cool NFT",
             description: "This is a cool NFT",
             image: fs.readFileSync("path/to/image.png"), // This can be an image url or file
         }
         
-        const metadata = await this.nft_module.mintTo(this.toAddress, metadata);
+        const metadata = await this.nft_module.mintTo(this.toAddress, metadata_);
         return metadata // to access ID's and store in leveldb
     }
 
