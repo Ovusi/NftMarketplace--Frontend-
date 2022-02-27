@@ -1,6 +1,6 @@
 import { ThirdwebSDK } from "@3rdweb/sdk";
 import { NFTModule, NFTMetadataOwner } from "@3rdweb/sdk";
-import { useWeb3 } from "@3rdweb/hooks"
+import { UseWeb3 } from "@3rdweb/hooks"
 import { useMemo } from "react"
 import { useModule } from "./test";
 import { Signer } from "ethers";
