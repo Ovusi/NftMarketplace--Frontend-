@@ -3,7 +3,7 @@
 
 function Test(be) { // object
     const word = be
-    this.f = function() {// method
+    this.f = function() {// method..
         return word
     }
     this.g = function(word) {
@@ -17,7 +17,8 @@ console.log(w.g("dgdgd"))
 
 const Component = (address, chainId, provider, connectWallet, disconnectWallet) => {
     // You can do whatever you want with this data
-    //const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider.
+    //const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider.\
+    return {
         address,
         chainId,
         provider,
