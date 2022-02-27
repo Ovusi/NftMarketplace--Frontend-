@@ -1,6 +1,6 @@
 
 const { NFTModule, NFTMetadataOwner } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
-//const { useWeb3, useSwitchNetwork } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/hooks")
+const { useWeb3, useSwitchNetwork } = require("C:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@3rdweb/react/node_modules/@3rdweb/hooks")
 const { useMemo, useState } = require("react");
 //const { useModule } = require("./test")
 const { Signer } = require("ethers");
