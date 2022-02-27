@@ -39,10 +39,13 @@ function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWal
             name: "Cool NFT",
             description: "This is a cool NFT",
             image: fs.readFileSync("path/to/image.png"), // This can be an image url or file
+            properties: {},
         }
         
-        const metadata = await this.nft_module.mintTo(this.toAddress, metadata_);
-        return metadata // to access ID's and store in leveldb
+        const metadata = await this.nft_module.mintTo(this.toAddress, metadata_)
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err));
+        //return metadata // to access ID's and store in leveldb.
     }
 
     this.list_nft = async function(id, assetcontractadd, starttimesecs, listingdurationsecs,
@@ -66,7 +69,9 @@ function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWal
             buyoutPricePerToken: tokenprice,
         }
         
-        await this.market_module.createDirectListing(listing);
+        await this.market_module.createDirectListing(listing)
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err));
     }
 
     this.buy_nft = async function(listid, quant) {
@@ -76,7 +81,8 @@ function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWal
         // Quantity of the asset you want to buy
         const quantityDesired = quant;
 
-        await this.market_module.buyoutDirectListing({ listingId, quantityDesired });
+        await this.market_module.buyoutDirectListing({ listingId, quantityDesired })
+        .catch((err) => console.log(err));
     }
 }
 

@@ -27,7 +27,7 @@ const Component = (address, chainId, provider, connectWallet, disconnectWallet) 
     }
 }
 console.log(Component(1, 2, 3, 4, 5,))
-const ad = Component(1, 2, 3, 4, 5)
+const ad = Component(1, 255, 3, 4, 5)
 console.log(ad.chainId)
 
 // const prompt = require("prompt-sync")({ sigint: true })

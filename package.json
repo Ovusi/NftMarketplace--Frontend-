@@ -1,0 +1,20 @@
+{
+  "name": "nftmarketplace-(frontend)",
+  "version": "1.0.0",
+  "description": "",
+  "main": "moralis_network.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ovusi/NftMarketplace--Frontend-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ovusi/NftMarketplace--Frontend-/issues"
+  },
+  "homepage": "https://github.com/Ovusi/NftMarketplace--Frontend-#readme"
+}

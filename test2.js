@@ -23,7 +23,7 @@ class NftNetwork {
         // funtion to mint new nft
         const toAddress = address
 
-        // Custom metadata of the NFT, note that you can fully customize this metadata with other properties.
+        // Custom metadata of the NFT, note that you can fully customize this metadata with other properties..
         const metadata = {
             name: "Cool NFT",
             description: "This is a cool NFT",
