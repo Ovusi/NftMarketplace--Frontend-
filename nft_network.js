@@ -26,7 +26,7 @@ const { assert } = require("console");
 function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWallet_) {
     const pr = 'https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby'
     // You can switch out this provider with any wallet or provider setup you like.
-    this.sdk = new ThirdwebSDK(pr) // initialize sdk
+    this.sdk = new ThirdwebSDK(pr); // initialize sdk
     this.nft_module = this.sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize module
     this.market_module = this.sdk.getMarketplaceModule("0xe15f489890B50320a8D22bb3b3f30967f4Eba900");
     this.token_address = this.sdk.getTokenModule("0xBfF86A4188B84dd3Ed24D2aD9E5E6FdE7071e802")
@@ -35,7 +35,9 @@ function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWal
     this.mint_nft = async function() {
         // funtion to mint new nft
         //let fs = require("C:\Users\Nobert Jakpor\Desktop\NftMarketplace (Frontend)\scadasys.png");
+        
         let file = readFileSync("scadasys.png");
+
         // Custom metadata of the NFT, note that you can fully customize this metadata with other properties.
         const metadata_ = {
             name: "Cool NFT",
