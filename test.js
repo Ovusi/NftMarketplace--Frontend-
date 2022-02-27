@@ -14,6 +14,22 @@ const w = new Test("me")
 console.log(w.f())
 console.log(w.g("dgdgd"))
 
+
+const Component = (address, chainId, provider, connectWallet, disconnectWallet) => {
+    // You can do whatever you want with this data
+    //const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider
+    return {
+        address,
+        chainId,
+        provider,
+        connectWallet,
+        disconnectWallet
+    }
+}
+console.log(Component(1, 2, 3, 4, 5,))
+const ad = Component(1, 2, 3, 4, 5)
+console.log(ad.chainId)
+
 // const prompt = require("prompt-sync")({ sigint: true })
 // const pro = prompt("input: ");
 // alert('enter text: '+ pro);
