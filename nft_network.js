@@ -7,7 +7,8 @@ import { Signer } from "ethers";
 
 
 const Component = () => {
-    // You can do whatever you want with this data
+    // This is the function that enables the connect wallet button in the dapp
+    // You can do whatever you want with this returned data
     const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider
     const { switchNetwork } = useSwitchNetwork();
     return {
