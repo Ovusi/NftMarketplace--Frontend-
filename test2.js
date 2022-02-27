@@ -6,18 +6,20 @@ import { useModule } from "./test";
 import { Signer } from "ethers";
 
 
-const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider
 
-
-
-function NftNetwork(address, chainId, provider, connectWallet, disconnectWallet) {
+class NftNetwork {
     // You can switch out this provider with any wallet or provider setup you like.
-    this.sdk = new ThirdwebSDK(provider?.getSigner() instanceof Signer); // initialize sdk
-    this.nft_module = this.sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize module
-    this.market_module = this.sdk.getMarketplaceModule("0xe15f489890B0a8D22bb3b3f30967f4Eba900");
-    this.token_address = this.sdk.getTokenModule("0xBfF86A4188B84dd3Ed24D2aD9E5E6FdE7071e802")
+    constructor() {
+        this.name = ""
+        /*const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider*/
+    const sdk = new ThirdwebSDK(provider?.getSigner() instanceof Signer); // initialize sdk
+    this.nft_module = sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize module
+    this.market_module = sdk.getMarketplaceModule("0xe15f489890B0a8D22bb3b3f30967f4Eba900");
+    this.token_address = sdk.getTokenModule("0xBfF86A4188B84dd3Ed24D2aD9E5E6FdE7071e802")
+    }
     
-    this.mint_nft = function(address) {
+    
+    mint_nft = function(address) {
         // funtion to mint new nft
         const toAddress = address
 
@@ -32,7 +34,7 @@ function NftNetwork(address, chainId, provider, connectWallet, disconnectWallet)
         return metadata
     }
 
-    this.list_nft = function(id, assetcontractadd, starttimesecs, listingdurationsecs,
+    list_nft = function(id, assetcontractadd, starttimesecs, listingdurationsecs,
         quant, tokenprice) {
         // function to list new nft on marketplace
         // Data of the listing you want to create
@@ -56,16 +58,14 @@ function NftNetwork(address, chainId, provider, connectWallet, disconnectWallet)
         await this.market_module.createDirectListing(listing);
     }
 
-    this.buy_nft = function(listid, quant) {
+    buy_nft = function(this,listid, quant) {
         // funtion to purchase nft
         // The listing ID of the asset you want to buy
         const listingId = listid;
         // Quantity of the asset you want to buy
         const quantityDesired = quant;
-
         await this.market_module.buyoutDirectListing({ listingId, quantityDesired });
     }
 }
 
 f = new NftNetwork
-f.buy_nft()

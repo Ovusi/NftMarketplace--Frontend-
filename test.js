@@ -1,34 +1,18 @@
 // TEST SCRIPT
 
 
-function Test(word) {
-    console.log(word);
-    const newWord = 'mad! this is what we do';
-    console.log(newWord);
-
-    this.new = function() {
-        console.log("New method")
+function Test(be) { // object
+    const word = be
+    this.f = function() {// method
+        return word
+    }
+    this.g = function(word) {
+        return word
     }
 }
-
-Test('Vusi is legendury');
-console.log(Test.newWord = 'twsit')
-
-const items = [1, 2, 3];
-for (let item in items) {
-    console.log(item, items[item])
-}
-
-variable = new Test('vusiii');
-variable.new()
-
-function Number(num) { // test
-    num1 = num
-    num2 = "x"
-    return num1 + num2
-}
-
-console.log(Number(23))
+const w = new Test("me")
+console.log(w.f())
+console.log(w.g("dgdgd"))
 
 // const prompt = require("prompt-sync")({ sigint: true })
 // const pro = prompt("input: ");
@@ -40,26 +24,39 @@ console.log(Number(23))
 
 
 
-import { useWeb3 } from "@3rdweb/hooks";
+/*import { useWeb3, useSwitchNetwork } from "@3rdweb/hooks";
 import { ThirdwebSDK } from "@3rdweb/sdk";
 import { Signer } from "ethers";
-import { useMemo } from "react";
+import { useMemo,useState } from "react";
 
 export const useModule = () => {
-  const { provider } = useWeb3();
-  const sdk = useMemo(() => {
-    if (provider) {
-      return new ThirdwebSDK(provider?.getSigner() as Signer);
-    }
-    return undefined;
-  }, [provider]);
-  // instantiate the sdk
-  const nftCollection = useMemo(() => {
-    if (sdk) {
-      return sdk.getNFTModule("<NFT_COLLECTION_MODULE_ADDRESS>");
-    }
-    return undefined;
-  }, [sdk]);
-  return nftCollection;
-};
+    const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3();
+    const sdk = useMemo(() => {
+        if (provider) {
+        return new ThirdwebSDK(provider?.getSigner() instanceof Signer); // instanceof used in place of as or =
+        }
+        return undefined;
+    }, [provider]);
+    // instantiate the sdk
+    const nftCollection = useMemo(() => {
+        if (sdk) {
+        return sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA");
+        }
+        return undefined;
+    }, [sdk]);
+    return nftCollection
+    /*const nftMarket = useMemo(() => {
+        if (sdk) {
+        return sdk.getMarketplaceModule("0xe15f489890B0a8D22bb3b3f30967f4Eba900");
+        }
+        return nftMarket;
+    }, [sdk]);
+
+    const token = useMemo(() => {
+        if (sdk) {
+        return f = sdk.getTokenModule("0xBfF86A4188B84dd3Ed24D2aD9E5E6FdE7071e802");
+        }
+        return token;
+    }, [sdk]);*/
+    
 
