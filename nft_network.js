@@ -1,12 +1,14 @@
-import { ThirdwebSDK } from "@3rdweb/sdk";
-import { NFTModule, NFTMetadataOwner } from "@3rdweb/sdk";
-import { useWeb3, useSwitchNetwork } from "@3rdweb/hooks"
-import { useMemo, useState } from "react"
-import { useModule } from "./test";
-import { Signer } from "ethers";
 
+const { NFTModule, NFTMetadataOwner } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
+//const { useWeb3, useSwitchNetwork } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/hooks")
+const { useMemo, useState } = require("react");
+//const { useModule } = require("./test")
+const { Signer } = require("ethers");
+const { ThirdwebSDK } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
+const { readFileSync } = require('fs');
+const { assert } = require("console");
 
-const Component = () => {
+/*const Component = () => {
     // This is the function that enables the connect wallet button in the dapp
     // You can do whatever you want with this returned data
     const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider
@@ -19,26 +21,26 @@ const Component = () => {
         disconnectWallet,
         switchNetwork
     }
-}
+}*/
 
 function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWallet_) {
-
+    const pr = 'https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby'
     // You can switch out this provider with any wallet or provider setup you like.
-    this.sdk = new ThirdwebSDK(provider_?.getSigner() instanceof Signer); // initialize sdk
+    this.sdk = new ThirdwebSDK(pr) // initialize sdk
     this.nft_module = this.sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize module
-    this.market_module = this.sdk.getMarketplaceModule("0xe15f489890B0a8D22bb3b3f30967f4Eba900");
+    this.market_module = this.sdk.getMarketplaceModule("0xe15f489890B50320a8D22bb3b3f30967f4Eba900");
     this.token_address = this.sdk.getTokenModule("0xBfF86A4188B84dd3Ed24D2aD9E5E6FdE7071e802")
-    this.toAddress = address_
+    this.toAddress = "0xeA84aC0D1712c505c970DB345C96706994f64Ab3"
 
     this.mint_nft = async function() {
         // funtion to mint new nft
-        
-
+        //let fs = require("C:\Users\Nobert Jakpor\Desktop\NftMarketplace (Frontend)\scadasys.png");
+        let file = readFileSync("scadasys.png");
         // Custom metadata of the NFT, note that you can fully customize this metadata with other properties.
         const metadata_ = {
             name: "Cool NFT",
             description: "This is a cool NFT",
-            image: fs.readFileSync("path/to/image.png"), // This can be an image url or file
+            image: file, // This can be an image url or file
             properties: {},
         }
         
@@ -87,4 +89,4 @@ function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWal
 }
 
 f = new NftNetwork
-f.buy_nft()
+f.mint_nft()
