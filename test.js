@@ -17,8 +17,7 @@ console.log(w.g("dgdgd"))
 
 const Component = (address, chainId, provider, connectWallet, disconnectWallet) => {
     // You can do whatever you want with this data
-    //const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider
-    return {
+    //const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider.
         address,
         chainId,
         provider,
