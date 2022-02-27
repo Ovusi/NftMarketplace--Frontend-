@@ -45,7 +45,7 @@ function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWal
         const metadata = await this.nft_module.mintTo(this.toAddress, metadata_)
         .then((data) => console.log(data))
         .catch((err) => console.log(err));
-        //return metadata // to access ID's and store in leveldb.
+        return metadata // to access ID's and store in leveldb.
     }
 
     this.list_nft = async function(id, assetcontractadd, starttimesecs, listingdurationsecs,
