@@ -22,7 +22,7 @@ export function NftNetwork() {
 
     this.toAddress = comp.address
 
-    this.mint_nft = async function (file_) {
+    this.mint_nft = async function (file_, categ) {
         // funtion to mint new nft
         //let fs = require("C:\Users\Nobert Jakpor\Desktop\NftMarketplace (Frontend)\scadasys.png");
 
@@ -33,7 +33,9 @@ export function NftNetwork() {
             name: "Cool NFT",
             description: "This is a cool NFT",
             image: file_, // This can be an image url or file
-            properties: {},
+            properties: {
+                category: categ,
+            },
         }
 
         const metadata = await this.nft_module.mintTo(this.toAddress, metadata_)
