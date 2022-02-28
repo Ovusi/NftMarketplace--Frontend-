@@ -1,7 +1,7 @@
 
 const { NFTModule, NFTMetadataOwner } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
 const { useWeb3, useSwitchNetwork, ThirdwebWeb3Provider } = require("C:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@3rdweb/react/node_modules/@3rdweb/hooks")
-const { useMemo, useState } = require("react");
+const { useMemo, useState, useEffect } = require("react");
 const { ethers } = require("ethers");
 const { ThirdwebSDK } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
 const { readFileSync } = require('fs');
@@ -23,7 +23,7 @@ const MyApp = ({ Components, pageProps}) => {
     )
 }
 
-/*const Component = () => {
+const Component = () => {
     // This is the function that enables the connect wallet button in the dapp
     // You can do whatever you want with this returned data
     const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider
@@ -36,7 +36,7 @@ const MyApp = ({ Components, pageProps}) => {
         disconnectWallet,
         switchNetwork
     }
-}*/
+}
 
 function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWallet_) {
     const pr = new ethers.providers.JsonRpcProvider("https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby") //speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby'
