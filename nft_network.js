@@ -8,21 +8,6 @@ const { readFileSync } = require('fs');
 const { assert, error } = require("console");
 
 
-export const MyApp = ({ Components, pageProps}) => {
-    let supportedChainIds = [4]
-    let connectors = {
-        injected: {}
-    }
-    return (
-        <ThirdwebWeb3Provider
-            supportedChainIds={supportedChainIds}
-            connectors={connectors}
-        >
-            <Components {... pageProps}/>
-        </ThirdwebWeb3Provider>
-    )
-}
-
 export const Component = () => {
     // This is the function that enables the connect wallet button in the dapp
     // You can do whatever you want with this returned data
