@@ -23,7 +23,7 @@ export const MyApp = ({ Components, pageProps}) => {
     )
 }
 
-const Component = () => {
+export const Component = () => {
     // This is the function that enables the connect wallet button in the dapp
     // You can do whatever you want with this returned data
     const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider
@@ -38,7 +38,7 @@ const Component = () => {
     }
 }
 
-function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWallet_) {
+export function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWallet_) {
     const pr = new ethers.providers.JsonRpcProvider("https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby") //speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby'
 
     // You can switch out this provider with any wallet or provider setup you like.
@@ -119,6 +119,3 @@ function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWal
         .catch((error) => console.error(error)) 
     }
 }
-
-f = new NftNetwork()
-f.get_balance("0x0337de5dF2B0bee58dEDeA2fD639103C794146CE")
