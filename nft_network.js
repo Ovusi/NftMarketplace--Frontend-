@@ -13,7 +13,8 @@ export function NftNetwork() {
     // initialize Component() to gain access to all its properties
     const comp = Component()
 
-    const sdk = new ThirdwebSDK(comp.provider.getSigner(), 'https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby')
+    const sdk = new ThirdwebSDK(comp.provider.getSigner(), 
+    'https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby')
 
     this.nft_module = sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize nft module
     this.market_module = sdk.getMarketplaceModule("0xe15f489890B50320a8D22bb3b3f30967f4Eba900");
