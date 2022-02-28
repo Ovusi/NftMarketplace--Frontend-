@@ -25,13 +25,13 @@ export function NftNetwork() {
         // funtion to mint new nft
         //let fs = require("C:\Users\Nobert Jakpor\Desktop\NftMarketplace (Frontend)\scadasys.png");
 
-        let file = readFileSync(file_);
+        // let file = readFileSync(file_);
 
         // Custom metadata of the NFT, note that you can fully customize this metadata with other properties.
         const metadata_ = {
             name: "Cool NFT",
             description: "This is a cool NFT",
-            image: file, // This can be an image url or file
+            image: file_, // This can be an image url or file
             properties: {},
         }
 
