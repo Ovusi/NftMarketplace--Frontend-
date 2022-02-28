@@ -12,11 +12,12 @@ const { Component } = require("../NftMarketplace (Frontend)/component")
 export function NftNetwork() {
     // initialize Component() to gain access to all its properties
     const comp = Component()
-    
-    this.sdk = new ThirdwebSDK(comp.provider.getSigner(), 'https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby')
-    this.nft_module = this.sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize module
-    this.market_module = this.sdk.getMarketplaceModule("0xe15f489890B50320a8D22bb3b3f30967f4Eba900");
-    this.token_address = this.sdk.getTokenModule("0xBfF86A4188B84dd3Ed24D2aD9E5E6FdE7071e802")
+
+    const sdk = new ThirdwebSDK(comp.provider.getSigner(), 'https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby')
+
+    this.nft_module = sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize nft module
+    this.market_module = sdk.getMarketplaceModule("0xe15f489890B50320a8D22bb3b3f30967f4Eba900");
+    this.token_address = sdk.getTokenModule("0xBfF86A4188B84dd3Ed24D2aD9E5E6FdE7071e802")
 
     this.toAddress = comp.address
 
@@ -77,9 +78,10 @@ export function NftNetwork() {
             .catch((err) => console.error(err));
     }
 
-    this.get_balance = async (address) => {
+    this.get_balance = async () => {
         // Get wallet ballance of a particular address
-        await this.token_address.balanceOf(address)
+        await this.token_address.balanceOf(this.toAddress)
+            .then((data) => console.log(data))
             .catch((err) => console.log(err))
     }
 
