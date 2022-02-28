@@ -6,7 +6,7 @@ const { ethers } = require("ethers");
 const { ThirdwebSDK } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
 const { readFileSync } = require('fs');
 const { assert, error } = require("console");
-const { Component } = require("")
+const { Component } = require("..//")
 
 
 export function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWallet_) {
@@ -17,13 +17,13 @@ export function NftNetwork(address_, chainId_, provider_, connectWallet_, discon
     this.nft_module = this.sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize module
     this.market_module = this.sdk.getMarketplaceModule("0xe15f489890B50320a8D22bb3b3f30967f4Eba900");
     this.token_address = this.sdk.getTokenModule("0xBfF86A4188B84dd3Ed24D2aD9E5E6FdE7071e802")
-    
+
     this.toAddress = "0xeA84aC0D1712c505c970DB345C96706994f64Ab3"
 
-    this.mint_nft = async function(file_) {
+    this.mint_nft = async function (file_) {
         // funtion to mint new nft
         //let fs = require("C:\Users\Nobert Jakpor\Desktop\NftMarketplace (Frontend)\scadasys.png");
-        
+
         let file = readFileSync(file_);
 
         // Custom metadata of the NFT, note that you can fully customize this metadata with other properties.
@@ -33,14 +33,14 @@ export function NftNetwork(address_, chainId_, provider_, connectWallet_, discon
             image: file, // This can be an image url or file
             properties: {},
         }
-        
+
         const metadata = await this.nft_module.mintTo(this.toAddress, metadata_)
-        .then((data) => console.log(data))
-        .catch((err) => console.log(err));
+            .then((data) => console.log(data))
+            .catch((err) => console.log(err));
         return metadata // to access ID's and store in leveldb.
     }
 
-    this.list_nft = async function(id, assetcontractadd, starttimesecs, listingdurationsecs,
+    this.list_nft = async function (id, assetcontractadd, starttimesecs, listingdurationsecs,
         quant, tokenprice) {
         // function to list new nft on marketplace
         // Data of the listing you want to create
@@ -60,13 +60,13 @@ export function NftNetwork(address_, chainId_, provider_, connectWallet_, discon
             // how much the asset will be sold for
             buyoutPricePerToken: tokenprice,
         }
-        
+
         await this.market_module.createDirectListing(listing)
-        .then((data) => console.log(data))
-        .catch((err) => console.error(err));
+            .then((data) => console.log(data))
+            .catch((err) => console.error(err));
     }
 
-    this.buy_nft = async function(listid, quant) {
+    this.buy_nft = async function (listid, quant) {
         // funtion to purchase nft
         // The listing ID of the asset you want to buy
         const listingId = listid;
@@ -74,19 +74,19 @@ export function NftNetwork(address_, chainId_, provider_, connectWallet_, discon
         const quantityDesired = quant;
 
         await this.market_module.buyoutDirectListing({ listingId, quantityDesired })
-        .catch((err) => console.error(err));
+            .catch((err) => console.error(err));
     }
 
     this.get_balance = async (address) => {
         // Get wallet ballance of a particular address
         await this.token_address.balanceOf(address)
-        .catch((err) => console.log(err))
+            .catch((err) => console.log(err))
     }
 
     this.get_all_listing = async () => {
         // get metadata of all listings in the marketplace
         await this.market_module.getAllListings()
-        .then((data) => console.log(data))
-        .catch((error) => console.error(error)) 
+            .then((data) => console.log(data))
+            .catch((error) => console.error(error))
     }
 }
