@@ -6,19 +6,19 @@ const { ethers } = require("ethers");
 const { ThirdwebSDK } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
 const { readFileSync } = require('fs');
 const { assert, error } = require("console");
-const { Component } = require("..//")
+const { Component } = require("../NftMarketplace (Frontend)/component")
 
 
-export function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWallet_) {
-    const pr = new ethers.providers.JsonRpcProvider("https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby") //speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby'
-
-    // You can switch out this provider with any wallet or provider setup you like.
-    this.sdk = new ThirdwebSDK(pr.getSigner()); // remove signer to debug
+export function NftNetwork() {
+    // initialize Component() to gain access to all its properties
+    const comp = Component()
+    
+    this.sdk = new ThirdwebSDK(comp.provider.getSigner(), 'https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby')
     this.nft_module = this.sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize module
     this.market_module = this.sdk.getMarketplaceModule("0xe15f489890B50320a8D22bb3b3f30967f4Eba900");
     this.token_address = this.sdk.getTokenModule("0xBfF86A4188B84dd3Ed24D2aD9E5E6FdE7071e802")
 
-    this.toAddress = "0xeA84aC0D1712c505c970DB345C96706994f64Ab3"
+    this.toAddress = comp.address
 
     this.mint_nft = async function (file_) {
         // funtion to mint new nft
