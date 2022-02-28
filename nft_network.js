@@ -2,11 +2,10 @@
 const { NFTModule, NFTMetadataOwner } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
 const { useWeb3, useSwitchNetwork } = require("C:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@3rdweb/react/node_modules/@3rdweb/hooks")
 const { useMemo, useState } = require("react");
-//const { useModule } = require("./test")
 const { ethers } = require("ethers");
 const { ThirdwebSDK } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
 const { readFileSync } = require('fs');
-const { assert } = require("console");
+const { assert, error } = require("console");
 
 /*const Component = () => {
     // This is the function that enables the connect wallet button in the dapp
@@ -77,7 +76,7 @@ function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWal
         
         await this.market_module.createDirectListing(listing)
         .then((data) => console.log(data))
-        .catch((err) => console.log(err));
+        .catch((err) => console.error(err));
     }
 
     this.buy_nft = async function(listid, quant) {
@@ -88,7 +87,7 @@ function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWal
         const quantityDesired = quant;
 
         await this.market_module.buyoutDirectListing({ listingId, quantityDesired })
-        .catch((err) => console.log(err));
+        .catch((err) => console.error(err));
     }
 
     this.get_balance = async (address) => {
@@ -96,7 +95,14 @@ function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWal
         await this.token_address.balanceOf(address)
         .catch((err) => console.log(err))
     }
+
+    this.get_all_listing = async () => {
+        // get metadata of all listings in the marketplace
+        await this.market_module.getAllListings()
+        .then((data) => console.log(data))
+        .catch((error) => console.error(error)) 
+    }
 }
 
-f = new NftNetwork
+f = new NftNetwork()
 f.get_balance("0x0337de5dF2B0bee58dEDeA2fD639103C794146CE")
