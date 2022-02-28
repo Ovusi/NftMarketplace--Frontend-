@@ -30,8 +30,8 @@ export function NftNetwork() {
 
         // Custom metadata of the NFT, note that you can fully customize this metadata with other properties.
         const metadata_ = {
-            name: "Cool NFT",
-            description: "This is a cool NFT",
+            name: "",
+            description: "",
             image: file_, // This can be an image url or file
             properties: {
                 category: categ,
