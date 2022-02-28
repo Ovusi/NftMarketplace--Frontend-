@@ -8,7 +8,7 @@ const { readFileSync } = require('fs');
 const { assert, error } = require("console");
 
 
-const MyApp = ({ Components, pageProps}) => {
+export const MyApp = ({ Components, pageProps}) => {
     let supportedChainIds = [4]
     let connectors = {
         injected: {}
