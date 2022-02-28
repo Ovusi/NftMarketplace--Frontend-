@@ -6,22 +6,8 @@ const { ethers } = require("ethers");
 const { ThirdwebSDK } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
 const { readFileSync } = require('fs');
 const { assert, error } = require("console");
+const { Component } = require("")
 
-
-export const Component = () => {
-    // This is the function that enables the connect wallet button in the dapp
-    // You can do whatever you want with this returned data
-    const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider
-    const { switchNetwork } = useSwitchNetwork();
-    return {
-        address,
-        chainId,
-        provider,
-        connectWallet,
-        disconnectWallet,
-        switchNetwork
-    }
-}
 
 export function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWallet_) {
     const pr = new ethers.providers.JsonRpcProvider("https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby") //speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby'
@@ -34,11 +20,11 @@ export function NftNetwork(address_, chainId_, provider_, connectWallet_, discon
     
     this.toAddress = "0xeA84aC0D1712c505c970DB345C96706994f64Ab3"
 
-    this.mint_nft = async function() {
+    this.mint_nft = async function(file_) {
         // funtion to mint new nft
         //let fs = require("C:\Users\Nobert Jakpor\Desktop\NftMarketplace (Frontend)\scadasys.png");
         
-        let file = readFileSync("scadasys.png");
+        let file = readFileSync(file_);
 
         // Custom metadata of the NFT, note that you can fully customize this metadata with other properties.
         const metadata_ = {
