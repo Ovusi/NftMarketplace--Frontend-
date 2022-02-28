@@ -1,14 +1,14 @@
-const { ThirdwebSDK } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
+const { ThirdwebWeb3Provider } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
 
-export const MyApp = ({ children }) => {
-    supportedChainIds = [4]
-    connectors = {
-    injected: {},
-    walletconnect: {},
-    walletlink: {
-        appName: "thirdweb - demo",
-        url: "https://thirdweb.com",
-        darkMode: false,
+const App = ({ children }) => {
+    const supportedChainIds = [4]
+    const connectors = {
+        injected: {},
+        walletconnect: {},
+        walletlink: {
+            appName: "thirdweb - demo",
+            url: "https://thirdweb.com",
+            darkMode: false,
         },
     }
     return (
@@ -20,3 +20,5 @@ export const MyApp = ({ children }) => {
         </ThirdwebWeb3Provider>
     )
 }
+
+export default App
