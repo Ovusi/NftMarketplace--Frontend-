@@ -3,7 +3,7 @@ const { NFTModule, NFTMetadataOwner } = require("C:/Users/Nobert Jakpor/node_mod
 const { useWeb3, useSwitchNetwork } = require("C:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@3rdweb/react/node_modules/@3rdweb/hooks")
 const { useMemo, useState } = require("react");
 //const { useModule } = require("./test")
-const { Signer } = require("ethers");
+const { ethers } = require("ethers");
 const { ThirdwebSDK } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
 const { readFileSync } = require('fs');
 const { assert } = require("console");
@@ -24,12 +24,14 @@ const { assert } = require("console");
 }*/
 
 function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWallet_) {
-    const pr = 'https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby'
+    const pr = new ethers.providers.JsonRpcProvider("https://speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby") //speedy-nodes-nyc.moralis.io/82cc6856950dd22781f120a1/eth/rinkeby'
+
     // You can switch out this provider with any wallet or provider setup you like.
-    this.sdk = new ThirdwebSDK(pr); // initialize sdk
+    this.sdk = new ThirdwebSDK(pr.getSigner()); // remove signer to debug
     this.nft_module = this.sdk.getNFTModule("0x6aF30684100864bD53a6ccCA87B3c09aA79BD6DA"); // initialize module
     this.market_module = this.sdk.getMarketplaceModule("0xe15f489890B50320a8D22bb3b3f30967f4Eba900");
     this.token_address = this.sdk.getTokenModule("0xBfF86A4188B84dd3Ed24D2aD9E5E6FdE7071e802")
+    
     this.toAddress = "0xeA84aC0D1712c505c970DB345C96706994f64Ab3"
 
     this.mint_nft = async function() {
@@ -88,7 +90,13 @@ function NftNetwork(address_, chainId_, provider_, connectWallet_, disconnectWal
         await this.market_module.buyoutDirectListing({ listingId, quantityDesired })
         .catch((err) => console.log(err));
     }
+
+    this.get_balance = async (address) => {
+        // Get wallet ballance of a particular address
+        await this.token_address.balanceOf(address)
+        .catch((err) => console.log(err))
+    }
 }
 
 f = new NftNetwork
-f.mint_nft()
+f.get_balance("0x0337de5dF2B0bee58dEDeA2fD639103C794146CE")
