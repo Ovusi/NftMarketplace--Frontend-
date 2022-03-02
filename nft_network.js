@@ -7,6 +7,7 @@ const { ThirdwebSDK } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk
 const { readFileSync } = require('fs');
 const { assert, error } = require("console");
 const { Component } = require("../NftMarketplace (Frontend)/component")
+const {  } = require("@3rdweb/hooks")
 
 
 export function NftNetwork() {
@@ -34,7 +35,7 @@ export function NftNetwork() {
                 category: categ,
             },
         }
-
+        
         const metadata = await this.nft_module.mintTo(this.toAddress, metadata_)
             .then((data) => console.log(data))
             .catch((err) => console.log(err));
