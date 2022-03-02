@@ -1,13 +1,13 @@
 
 const { NFTModule, NFTMetadataOwner } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
-const { useWeb3, useSwitchNetwork, ThirdwebWeb3Provider } = require("C:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@3rdweb/react/node_modules/@3rdweb/hooks")
+const { useWeb3, useSwitchNetwork, ThirdwebWeb3Provider } = require("../NftMarketplace (Frontend)/node_modules/@3rdweb/hooks")
 const { useMemo, useState, useEffect } = require("react");
 const { ethers } = require("ethers");
 const { ThirdwebSDK } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
 const { readFileSync } = require('fs');
 const { assert, error } = require("console");
 const { Component } = require("../NftMarketplace (Frontend)/component")
-const {  } = require("@3rdweb/hooks")
+const {  } = require("../NftMarketplace (Frontend)/node_modules/@3rdweb/hooks")
 
 
 export function NftNetwork() {

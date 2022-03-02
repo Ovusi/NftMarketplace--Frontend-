@@ -1,4 +1,4 @@
-const { useWeb3, useSwitchNetwork, ThirdwebWeb3Provider } = require("C:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@3rdweb/react/node_modules/@3rdweb/hooks")
+const { useWeb3, useSwitchNetwork, ThirdwebWeb3Provider } = require("../NftMarketplace (Frontend)/node_modules/@3rdweb/hooks")
 
 
 export const Component = () => {
