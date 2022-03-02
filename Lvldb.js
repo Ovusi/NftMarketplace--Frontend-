@@ -6,7 +6,7 @@ const leveldown = require("leveldown")
    It uses the LevelDb database. */
 
 
-export function Users() {
+function Users() {
     const db = level("userDb") // Create database store
 
     this.add = async (key, value) => {
@@ -35,7 +35,7 @@ export function Users() {
 }
 
 
-export function ListingIds() {
+function ListingIds() {
     const db = level("lisingIdDb") // Create database store
 
     this.add = async (key, value) => {
@@ -62,3 +62,5 @@ export function ListingIds() {
         console.log(keys)
     }
 }
+
+module.exports = { Users, ListingIds }

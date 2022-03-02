@@ -1,7 +1,7 @@
-const { useWeb3, useSwitchNetwork, ThirdwebWeb3Provider } = require("../NftMarketplace (Frontend)/node_modules/@3rdweb/hooks")
+const { useWeb3, useSwitchNetwork, ThirdwebWeb3Provider } = require("@3rdweb/hooks")
 
 
-export const Component = () => {
+function Component() {
     // This is the function that enables the connect wallet button in the dapp
     // You can do whatever you want with this returned data
     const { address, chainId, provider, connectWallet, disconnectWallet } = useWeb3(); // set provider
@@ -15,3 +15,5 @@ export const Component = () => {
         switchNetwork
     }
 }
+
+module.exports = { Component }

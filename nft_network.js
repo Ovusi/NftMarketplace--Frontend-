@@ -1,12 +1,10 @@
 const { useMemo, useState, useEffect } = require("react");
-const { ethers } = require("ethers");
-const { ThirdwebSDK } = require("C:/Users/Nobert Jakpor/node_modules/@3rdweb/sdk")
-const { readFileSync } = require('fs');
+const { ThirdwebSDK } = require('@3rdweb/sdk');
 const { Component } = require("../NftMarketplace (Frontend)/component")
 const { Users, ListingIds } = require("../NftMarketplace (Frontend)/Lvldb")
 
 
-export async function NftNetwork() {
+async function NftNetwork() {
     // initialize Component() to gain access to all its properties
     const comp = Component()
 
