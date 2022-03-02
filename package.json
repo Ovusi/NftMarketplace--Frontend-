@@ -20,6 +20,7 @@
   "dependencies": {
     "@3rdweb/hooks": "^1.1.7",
     "@3rdweb/react": "^1.1.7",
+    "level": "^7.0.1",
     "leveldown": "^6.1.0"
   }
 }
