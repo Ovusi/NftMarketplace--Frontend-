@@ -1,0 +1,5 @@
+2022/03/02-12:50:40.507 4af8 Recovering log #258
+2022/03/02-12:50:40.507 4af8 Level-0 table #260: started
+2022/03/02-12:50:40.565 4af8 Level-0 table #260: 186 bytes OK
+2022/03/02-12:50:40.636 4af8 Delete type=0 #258
+2022/03/02-12:50:40.636 4af8 Delete type=3 #256
