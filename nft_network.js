@@ -86,3 +86,5 @@ async function NftNetwork() {
             .catch((error) => console.error(error))
     }
 }
+
+module.exports = { NftNetwork }
