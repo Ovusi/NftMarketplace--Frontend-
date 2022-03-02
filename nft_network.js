@@ -6,7 +6,7 @@ const { Component } = require("../NftMarketplace (Frontend)/component")
 const { Users, ListingIds } = require("../NftMarketplace (Frontend)/Lvldb")
 
 
-export function NftNetwork() {
+export async function NftNetwork() {
     // initialize Component() to gain access to all its properties
     const comp = Component()
 
