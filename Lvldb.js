@@ -35,7 +35,7 @@ export function Users() {
 }
 
 
-function ListingIds() {
+export function ListingIds() {
     const db = level("lisingIdDb") // Create database store
 
     this.add = async (key, value) => {
