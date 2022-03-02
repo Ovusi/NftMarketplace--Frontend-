@@ -57,8 +57,7 @@ function ListingIds() {
         const keys = []
         for await (const [key, value] of db.iterator()) {
             keys.push(key)
-            console.log(key + " " + value)
         }
-        return keys
+        console.log(keys)
     }
 }
