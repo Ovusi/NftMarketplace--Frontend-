@@ -2,11 +2,12 @@ const level = require("level")
 const levelup = require("../NftMarketplace (Frontend)/node_modules/levelup")
 const leveldown = require("leveldown")
 
-/*  */
+/* This module contains database functions for users and listing ids.
+   It uses the LevelDb database. */
 
 
-function Users() {
-    const db = level("mydb") // Create database store
+export function Users() {
+    const db = level("userDb") // Create database store
 
     this.add = async (key, value) => {
         const keyString = JSON.stringify(key)
@@ -35,7 +36,7 @@ function Users() {
 
 
 function ListingIds() {
-    const db = level("mydb") // Create database store
+    const db = level("lisingIdDb") // Create database store
 
     this.add = async (key, value) => {
         const keyString = JSON.stringify(key)
