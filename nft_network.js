@@ -51,7 +51,7 @@ async function NftNetwork() {
             // how many of the asset you want to list
             quantity: quant,
             // address of the currency contract that will be used to pay for the listing
-            currencyContractAddress: token_address,
+            currencyContractAddress: this.token_address,
             // how much the asset will be sold for
             buyoutPricePerToken: tokenprice,
         }
