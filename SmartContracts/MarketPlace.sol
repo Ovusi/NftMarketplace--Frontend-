@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract HavenMarketPlace {
-    struct offering {
+    struct listing {
         address offerer;
         address hostContract;
         uint256 tokenId;
@@ -13,7 +13,7 @@ contract HavenMarketPlace {
         bool closed;
     }
 
-    mapping(bytes32 => offering) offeringRegistry;
+    mapping(bytes32 => listing) offeringRegistry;
     mapping(address => uint256) balances;
 
     constructor(address _operator) {
