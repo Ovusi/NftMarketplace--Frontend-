@@ -18,15 +18,22 @@ contract NFT is ERC721URIStorage {
 
     constructor() ERC721("", "") {}
 
-    function mintNft(string memory tokenURI) public {
+    function mintNft(string memory tokenURI) public returns (uint256) {
         _tokenIds.increment();
-        uint newItemId = _tokenIds.current();
+        uint256 newItemId = _tokenIds.current();
         _mint(_owner, newItemId);
         _setTokenURI(newItemId, tokenURI);
+
+        return newItemId;
     }
 
-    function balance(address owner) public {
-        balanceOf(owner);
+    function balance(address owner_) public view {
+        owner_ = _owner;
+        balanceOf(owner_);
+    }
+
+    function owner(uint tokenid) public view {
+        ownerOf(tokenid);
     }
 
 }
