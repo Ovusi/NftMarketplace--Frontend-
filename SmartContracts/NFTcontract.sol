@@ -17,7 +17,7 @@ contract NFT is ERC721URIStorage {
     string _symbol;
     bytes _data;
 
-    constructor() ERC721("", "") {}
+    constructor(address marketAddress) ERC721("Haven NFT Marketplace", "HNM") {}
 
     function mintNft(string memory tokenURI) public returns (uint256) {
         // mint new nft to collection
