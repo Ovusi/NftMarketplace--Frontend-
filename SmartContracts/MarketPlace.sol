@@ -6,10 +6,24 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 
-contract HavenMarketPlace is IERC721 {
+abstract contract HavenMarketPlace is IERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
+
+    event Listed(
+        address newToken,
+        uint id,
+        uint price
+    );
+
+    event Bought(
+        address buyer,
+        uint price,
+        uint id
+    );
 
     enum status {
         open,
@@ -46,18 +60,29 @@ contract HavenMarketPlace is IERC721 {
 
         uint256 newItemId = _tokenIds.current();
         _listings[newItemId] = listing;
+
+        emit Listed(token_, tokenid_, price_);
     }
 
 
-    function buyNft(uint256 listingId_) external payable {
+    function buyNft(uint256 listingId_, address payable tokenContract_) external payable {
         Listing storage listing = _listings[listingId_];
         require(msg.sender != listing.seller);
         require(msg.value >= listing.price);
         require(listing.status == status.open);
+        require(tokenContract_ != msg.sender);
+        require(tokenContract_ != listing.seller);
 
+        uint fee = (msg.value * 2) / 100;
+        uint commision = msg.value - fee;
+        
         listing.status = status.sold;
 
+        emit Bought(msg.sender, msg.value, listing.tokenId);
+
         IERC721(listing.nftContract).transferFrom(address(this), msg.sender, listing.tokenId);
-        payable(listing.seller).transfer(listing.price);
+        payable(listing.seller).transfer(commision);
+        payable(tokenContract_).transfer(fee);
+
     }
 }
