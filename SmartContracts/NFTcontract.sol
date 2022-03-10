@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract NFT is ERC721URIStorage {
+    // Create new nft collection
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
@@ -19,10 +20,13 @@ contract NFT is ERC721URIStorage {
     constructor() ERC721("", "") {}
 
     function mintNft(string memory tokenURI) public returns (uint256) {
+        // mint new nft to collection
         _tokenIds.increment();
+
         uint256 newItemId = _tokenIds.current();
-        _mint(_owner, newItemId);
-        _setTokenURI(newItemId, tokenURI);
+        _safeMint(_owner, newItemId);
+        _setTokenURI(newItemId, tokenURI); // TokenUri contains nft metadata e.g name,
+        // description, image url,
 
         return newItemId;
     }

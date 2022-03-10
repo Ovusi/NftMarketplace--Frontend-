@@ -15,3 +15,20 @@ contract HavenToken is ERC20 {
     }
 }
 
+
+contract HelloWorld {
+    string public greeting = "Hello World"; // state variable
+
+
+    constructor(string memory greet) { // constructor
+        greeting = greet; 
+    }
+
+    function helloWorld(string memory newGreeting) public {
+        greeting = newGreeting;
+    }
+
+    function newHello(string memory update) public {
+        greeting = update;
+    }
+}
