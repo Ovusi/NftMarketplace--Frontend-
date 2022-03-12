@@ -16,11 +16,8 @@ abstract contract HavenMarketPlace is IERC721 {
     Counters.Counter private _tokenIds;
 
     event Listed(address newToken, uint256 id, uint256 price);
-
     event deListed(address owner, uint256 id);
-
     event Bought(address buyer, uint256 price, uint256 id);
-
     event Auctioned(address newToken, uint id, uint startPrice);
 
     enum status {
@@ -143,6 +140,7 @@ abstract contract HavenMarketPlace is IERC721 {
 
 
 contract Auction is IERC721 {
+
     event itemAuctioned(address owner, uint id, uint startPrice);
     event auctionSold(address buyer, uint id, uint sellingPrice);
     event auctionCanceled(address owner, uint id);
