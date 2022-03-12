@@ -140,3 +140,15 @@ abstract contract HavenMarketPlace is IERC721 {
         return  itemsListed;
     }
 }
+
+
+contract Auction is IERC721 {
+    event itemAuctioned(address owner, uint id, uint startPrice);
+    event auctionSold(address buyer, uint id, uint sellingPrice);
+    event auctionCanceled(address owner, uint id);
+
+    uint bidTime = block.timestamp;
+    uint bidEndTime;
+    uint bidDuration = bidTime + bidEndTime;
+
+}
