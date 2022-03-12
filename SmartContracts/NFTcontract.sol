@@ -32,7 +32,7 @@ contract NFT is ERC721URIStorage {
         return "https";
     }
 
-    function mintNft(string memory tokenURI) public returns (uint256) {
+    function mintNft(string memory tokenURI) public returns (uint256, string memory) {
         // mint new nft to collection
         _tokenIds.increment();
 
@@ -43,19 +43,19 @@ contract NFT is ERC721URIStorage {
         setApprovalForAll(contractAddress, true);
 
         emit Minted(_owner, tokenURI);
-        return newItemId;
+        return (newItemId, tokenURI);
     }
 
-    function balance(address owner_) public view {
+    function balance(address owner_) public view returns (uint) {
         owner_ = _owner;
-        balanceOf(owner_);
+        return balanceOf(owner_);
     }
 
-    function owner(uint256 tokenid) public view {
-        ownerOf(tokenid);
+    function owner(uint256 tokenid) public view returns (address) {
+        return ownerOf(tokenid);
     }
 
-    function uri(uint256 tokenid) public view {
-        tokenURI(tokenid);
+    function uri(uint256 tokenid) public view returns (string memory) {
+        return tokenURI(tokenid);
     }
 }
