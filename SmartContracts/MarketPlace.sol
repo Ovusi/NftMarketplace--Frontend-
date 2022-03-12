@@ -10,6 +10,8 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 
 abstract contract HavenMarketPlace is IERC721 {
+
+// STATE VARIABLES
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
