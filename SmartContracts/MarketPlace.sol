@@ -145,9 +145,9 @@ contract Auction is IERC721 {
     event auctionSold(address buyer, uint id, uint sellingPrice);
     event auctionCanceled(address owner, uint id);
 
-    uint bidTime = block.timestamp;
-    uint bidEndTime;
-    uint bidDuration = bidTime + bidEndTime;
+    uint public bidTime = block.timestamp;
+    uint public bidEndTime;
+    uint public bidDuration = bidTime + bidEndTime;
 
     enum status {
         open,
@@ -156,25 +156,42 @@ contract Auction is IERC721 {
     }
 
     struct AuctionedItem {
+        status status;
         address creator;
         address nftContract;
         uint tokenId;
         uint startPrice;
     }
+    mapping(uint256 => AuctionedItem) public auctionedItem_;
 
-    function placeAuction() external {
+    function placeAuction(address token_, uint tokenid_, uint price_) external {
+        IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
+        
+        AuctionedItem memory auctionedItem = AuctionedItem(
+            status.open,
+            msg.sender,
+            token_,
+            tokenid_,
+            price_
+        );
 
     }
 
-    function bid() external {
+    function bid() external payable {
+        require(block.timestamp >= bidTime && block.timestamp <= bidDuration, "Auction Ended");
 
     }
 
-    function withdraw() external {
+    function withdraw(uint aId) external {  
+        AuctionedItem storage auctioneditem = auctionedItem_[aId];
+        require(auctioneditem.status == status.closed);
 
     }
 
-    function cancelBid() external {
+    function cancelBid(uint aId) external {
+        AuctionedItem storage auctioneditem = auctionedItem_[aId];
+        require(msg.sender == auctioneditem.creator);
+        require(auctioneditem.status == status.open);
 
     }
 
