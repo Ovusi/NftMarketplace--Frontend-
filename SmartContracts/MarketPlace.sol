@@ -36,7 +36,7 @@ abstract contract HavenMarketPlace is IERC721 {
     mapping(uint256 => Listing) public _listings;
     uint[] public itemsListed;
 
-    function find(uint256 value) public returns (uint256) {
+    function find(uint256 value) public view returns (uint256) {
         uint256 i = 0;
         while (itemsListed[i] != value) {
             i++;
