@@ -13,17 +13,11 @@ abstract contract HavenMarketPlace is IERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    event Listed(
-        address newToken,
-        uint id,
-        uint price
-    );
+    event Listed(address newToken, uint256 id, uint256 price);
 
-    event Bought(
-        address buyer,
-        uint price,
-        uint id
-    );
+    event deListed(address owner, uint256 id);
+
+    event Bought(address buyer, uint256 price, uint256 id);
 
     enum status {
         open,
@@ -39,8 +33,30 @@ abstract contract HavenMarketPlace is IERC721 {
         uint256 price;
     }
 
-    mapping(uint256 => Listing) _listings;
-    
+    mapping(uint256 => Listing) public _listings;
+    uint[] public itemsListed;
+
+    function find(uint256 value) public returns (uint256) {
+        uint256 i = 0;
+        while (itemsListed[i] != value) {
+            i++;
+        }
+        return i;
+    }
+
+    function removeByValue(uint256 value) public {
+        uint256 i = find(value);
+        removeByIndex(i);
+    }
+
+    function removeByIndex(uint256 i) public {
+        while (i < itemsListed.length - 1) {
+            itemsListed[i] = itemsListed[i + 1];
+            i++;
+        }
+        itemsListed.pop();
+    }
+
 
     function listNft(
         address token_,
@@ -60,12 +76,15 @@ abstract contract HavenMarketPlace is IERC721 {
 
         uint256 newItemId = _tokenIds.current();
         _listings[newItemId] = listing;
+        itemsListed.push(newItemId);
 
         emit Listed(token_, tokenid_, price_);
     }
 
-
-    function buyNft(uint256 listingId_, address payable tokenContract_) external payable {
+    function buyNft(uint256 listingId_, address payable tokenContract_)
+        external
+        payable
+    {
         Listing storage listing = _listings[listingId_];
         require(msg.sender != listing.seller);
         require(msg.value >= listing.price);
@@ -73,16 +92,35 @@ abstract contract HavenMarketPlace is IERC721 {
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
 
-        uint fee = (msg.value * 2) / 100;
-        uint commision = msg.value - fee;
-        
+        uint256 fee = (msg.value * 2) / 100;
+        uint256 commision = msg.value - fee;
+
         listing.status = status.sold;
 
-        emit Bought(msg.sender, msg.value, listing.tokenId);
-
-        IERC721(listing.nftContract).transferFrom(address(this), msg.sender, listing.tokenId);
+        IERC721(listing.nftContract).transferFrom(
+            address(this),
+            msg.sender,
+            listing.tokenId
+        );
         payable(listing.seller).transfer(commision);
         payable(tokenContract_).transfer(fee);
 
+        emit Bought(msg.sender, msg.value, listing.tokenId);
+    }
+
+    function cancelListing(uint256 lId) external payable {
+        Listing storage listing = _listings[lId];
+        require(msg.sender == listing.seller);
+        require(listing.status == status.open);
+        require(lId == find(lId));
+
+        delete _listings[lId];
+        listing.status = status.canceled;
+        removeByValue(lId);
+        emit deListed(msg.sender, lId);
+    }
+
+    function getAllListings() public view returns(uint256[] memory) {
+        return itemsListed;
     }
 }

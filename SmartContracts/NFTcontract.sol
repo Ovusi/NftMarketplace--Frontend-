@@ -27,6 +27,11 @@ contract NFT is ERC721URIStorage {
         contractAddress = marketAddress;
     }
 
+    function _baseURI() internal pure override returns (string memory) {
+        // ipfs
+        return "https";
+    }
+
     function mintNft(string memory tokenURI) public returns (uint256) {
         // mint new nft to collection
         _tokenIds.increment();
