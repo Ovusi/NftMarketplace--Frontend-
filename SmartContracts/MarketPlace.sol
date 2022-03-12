@@ -89,30 +89,33 @@ abstract contract HavenMarketPlace is IERC721 {
         return newItemId;
     }
 
-    function buyNft(uint256 listingId_, address payable tokenContract_)
+    function buyNft(uint256 listingId_, address payable tokenContract_, uint price_)
         external
         payable
         returns (bool)
     {
         Listing storage listing = _listings[listingId_];
-        require(msg.sender != listing.seller);
-        require(msg.value >= listing.price);
+        require(IERC20(tokenContract_).approve(address(this), price_) == true, "Transaction not approved.");
+        require(IERC20(tokenContract_).balanceOf(msg.sender) >= price_, "Not enough funds.");
+        require(msg.sender != listing.seller, "Permission not granted.");
+        require(price_ >= listing.price, "Insufficient amount.");
         require(listing.status == status.open);
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
 
-        uint256 fee = (msg.value * 2) / 100;
-        uint256 commision = msg.value - fee;
-
-        listing.status = status.sold;
+        uint256 fee = (price_ * 2) / 100;
+        uint256 commision = price_ - fee;
 
         IERC721(listing.nftContract).transferFrom(
             address(this),
             msg.sender,
             listing.tokenId
         );
-        payable(listing.seller).transfer(commision);
-        payable(tokenContract_).transfer(fee);
+        IERC20(tokenContract_).transferFrom(address(this), listing.seller, commision); // Todo
+        IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // Todo
+
+        listing.status = status.sold;
+
 
         emit Bought(msg.sender, msg.value, listing.tokenId);
 
@@ -139,9 +142,13 @@ abstract contract HavenMarketPlace is IERC721 {
 }
 
 
-contract Auction is IERC721 {
+
+// AUCTION CONTRACT...
+
+abstract contract Auction is IERC721 {
 
     event itemAuctioned(address owner, uint id, uint startPrice);
+    event HighestBidIncreased(address bidder, uint amount);
     event auctionSold(address buyer, uint id, uint sellingPrice);
     event auctionCanceled(address owner, uint id);
 
@@ -162,7 +169,9 @@ contract Auction is IERC721 {
         uint tokenId;
         uint startPrice;
     }
+
     mapping(uint256 => AuctionedItem) public auctionedItem_;
+    uint[] public itemsAuctioned;
 
     function placeAuction(address token_, uint tokenid_, uint price_) external {
         IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
@@ -184,13 +193,13 @@ contract Auction is IERC721 {
 
     function withdraw(uint aId) external {  
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
-        require(auctioneditem.status == status.closed);
+        require(auctioneditem.status == status.closed, "Auction still open.");
 
     }
 
-    function cancelBid(uint aId) external {
+    function cancelAuction(uint aId) external {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
-        require(msg.sender == auctioneditem.creator);
+        require(msg.sender == auctioneditem.creator, "You are not allowed to cancel this auction.");
         require(auctioneditem.status == status.open);
 
     }

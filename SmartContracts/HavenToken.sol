@@ -13,4 +13,21 @@ contract HavenToken is ERC20 {
     constructor() ERC20(_name, _symbol) {
         _mint(msg.sender, _totalSupply);
     }
+
+    function _balanceOf() external {
+
+    }
+
+    function _transferToken() external {
+
+    }
+
+    function _totalsupplyOf() external {
+
+    }
+
+    function _transferTokenFrom() external {
+        
+    }
+
 }
