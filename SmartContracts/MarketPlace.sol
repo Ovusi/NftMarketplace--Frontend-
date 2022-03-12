@@ -149,4 +149,33 @@ contract Auction is IERC721 {
     uint bidEndTime;
     uint bidDuration = bidTime + bidEndTime;
 
+    enum status {
+        open,
+        closed,
+        canceled
+    }
+
+    struct AuctionedItem {
+        address creator;
+        address nftContract;
+        uint tokenId;
+        uint startPrice;
+    }
+
+    function placeAuction() external {
+
+    }
+
+    function bid() external {
+
+    }
+
+    function withdraw() external {
+
+    }
+
+    function cancelBid() external {
+
+    }
+
 }
