@@ -36,7 +36,9 @@ abstract contract HavenMarketPlace is IERC721 {
     mapping(uint256 => Listing) public _listings;
     uint[] public itemsListed;
 
-    function find(uint256 value) public view returns (uint256) {
+
+// HELPER FUNCTIONS
+    function find(uint256 value) internal view returns (uint256) {
         uint256 i = 0;
         while (itemsListed[i] != value) {
             i++;
@@ -44,12 +46,12 @@ abstract contract HavenMarketPlace is IERC721 {
         return i;
     }
 
-    function removeByValue(uint256 value) public {
+    function removeByValue(uint256 value) internal {
         uint256 i = find(value);
         removeByIndex(i);
     }
 
-    function removeByIndex(uint256 i) public {
+    function removeByIndex(uint256 i) internal {
         while (i < itemsListed.length - 1) {
             itemsListed[i] = itemsListed[i + 1];
             i++;
@@ -57,6 +59,7 @@ abstract contract HavenMarketPlace is IERC721 {
         itemsListed.pop();
     }
 
+// CORE FUNCTIONS 
 
     function listNft(
         address token_,
