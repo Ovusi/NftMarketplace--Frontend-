@@ -21,6 +21,8 @@ abstract contract HavenMarketPlace is IERC721 {
 
     event Bought(address buyer, uint256 price, uint256 id);
 
+    event Auctioned(address newToken, uint id, uint startPrice);
+
     enum status {
         open,
         sold,
@@ -67,7 +69,7 @@ abstract contract HavenMarketPlace is IERC721 {
         address token_,
         uint256 tokenid_,
         uint256 price_
-    ) external {
+    ) external returns (uint) {
         IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
 
         Listing memory listing = Listing(
@@ -84,11 +86,13 @@ abstract contract HavenMarketPlace is IERC721 {
         itemsListed.push(newItemId);
 
         emit Listed(token_, tokenid_, price_);
+        return newItemId;
     }
 
     function buyNft(uint256 listingId_, address payable tokenContract_)
         external
         payable
+        returns (bool)
     {
         Listing storage listing = _listings[listingId_];
         require(msg.sender != listing.seller);
@@ -111,9 +115,11 @@ abstract contract HavenMarketPlace is IERC721 {
         payable(tokenContract_).transfer(fee);
 
         emit Bought(msg.sender, msg.value, listing.tokenId);
+
+        return true;
     }
 
-    function cancelListing(uint256 lId) external payable {
+    function cancelListing(uint256 lId) external payable returns (bool) {
         Listing storage listing = _listings[lId];
         require(msg.sender == listing.seller);
         require(listing.status == status.open);
@@ -123,6 +129,8 @@ abstract contract HavenMarketPlace is IERC721 {
         listing.status = status.canceled;
         removeByValue(lId);
         emit deListed(msg.sender, lId);
+
+        return true;
     }
 
     function getAllListings() public view returns(uint256[] memory) {
