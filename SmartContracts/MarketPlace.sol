@@ -37,6 +37,9 @@ abstract contract HavenMarketPlace is IERC721 {
         uint256 price;
     }
 
+    Listing[] public itemsOnList; // todo
+    mapping(address => mapping(uint256 => bool)) activeItems; // todo
+
     mapping(uint256 => Listing) public _listings;
     uint[] public itemsListed;
 
@@ -133,7 +136,7 @@ abstract contract HavenMarketPlace is IERC721 {
         return (true, 'canceled');
     }
 
-    function getAllListings() public view returns(uint256[] memory) {
-        return itemsListed;
+    function getAllListings() public view returns(uint[] memory) {
+        return  itemsListed;
     }
 }
