@@ -119,7 +119,7 @@ abstract contract HavenMarketPlace is IERC721 {
         return true;
     }
 
-    function cancelListing(uint256 lId) external payable returns (bool) {
+    function cancelListing(uint256 lId) external payable returns (bool, string memory) {
         Listing storage listing = _listings[lId];
         require(msg.sender == listing.seller);
         require(listing.status == status.open);
@@ -130,7 +130,7 @@ abstract contract HavenMarketPlace is IERC721 {
         removeByValue(lId);
         emit deListed(msg.sender, lId);
 
-        return true;
+        return (true, 'canceled');
     }
 
     function getAllListings() public view returns(uint256[] memory) {
