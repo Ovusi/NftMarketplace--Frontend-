@@ -187,6 +187,7 @@ abstract contract Auction is IERC721 {
     modifier isClosed(uint aId) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(auctioneditem.status != status.open && auctioneditem.status != status.canceled);
+        require(block.timestamp > auctioneditem.auctionEndTime);
 
         auctioneditem.status = status.closed;
         _;
@@ -283,7 +284,7 @@ abstract contract Auction is IERC721 {
 
     }
 
-    function claimNft(uint aId) external payable {
+    function claimNft(uint aId) external payable isClosed(aId) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(msg.sender == highestBidder);
         require(block.timestamp > auctioneditem.auctionEndTime);
