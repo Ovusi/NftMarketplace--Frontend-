@@ -154,6 +154,7 @@ abstract contract Auction is IERC721 {
     event HighestBidIncreased(address bidder, uint amount);
     event auctionSold(address buyer, uint id, uint sellingPrice);
     event auctionCanceled(address owner, uint id);
+    event withdrawnFunds(address owner, uint amount);
 
     address payable public beneficiary;
     uint public bidTime = block.timestamp;
@@ -233,6 +234,8 @@ abstract contract Auction is IERC721 {
 
         IERC20(tokenContract_).transferFrom(msg.sender, address(this), price_);
 
+        emit HighestBidIncreased(highestBidder, highestBid);
+
     }
 
     function withdrawUnderBid(uint aId, address payable tokenContract_) external payable {  
@@ -270,6 +273,8 @@ abstract contract Auction is IERC721 {
         IERC20(tokenContract_).transferFrom(address(this), auctioneditem.creator, commision); // Todo
         IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // Todo
 
+        emit withdrawnFunds(msg.sender, commision);
+
     }
 
     function cancelAuction(uint aId) external {
@@ -278,6 +283,8 @@ abstract contract Auction is IERC721 {
         require(auctioneditem.status == status.open);
 
         auctioneditem.status = status.canceled;
+
+        emit auctionCanceled(msg.sender, aId);
 
     }
 
@@ -293,6 +300,8 @@ abstract contract Auction is IERC721 {
             highestBidder,
             auctioneditem.tokenId
         );
+
+        emit auctionSold(msg.sender, aId, highestBid);
         
     }
 
