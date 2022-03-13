@@ -265,11 +265,6 @@ abstract contract Auction is IERC721 {
         uint256 fee = (amount * 2) / 100;
         uint256 commision = amount - fee;
 
-        IERC721(auctioneditem.nftContract).transferFrom(
-            address(this),
-            highestBidder,
-            auctioneditem.tokenId
-        );
         IERC20(tokenContract_).transferFrom(address(this), auctioneditem.creator, commision); // Todo
         IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // Todo
 
