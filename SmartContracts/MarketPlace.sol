@@ -15,7 +15,7 @@ abstract contract HavenMarketPlace is IERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    event Listed(address newToken, uint256 id, uint256 price);
+    event Listed(address seller, address newToken, uint256 id, uint256 price);
     event deListed(address owner, uint256 id);
     event Bought(address buyer, uint256 price, uint256 id);
     event Auctioned(address newToken, uint id, uint startPrice);
@@ -85,7 +85,7 @@ abstract contract HavenMarketPlace is IERC721 {
         _listings[newItemId] = listing;
         itemsListed.push(newItemId);
 
-        emit Listed(token_, tokenid_, price_);
+        emit Listed(msg.sender, token_, tokenid_, price_);
         return newItemId;
     }
 
@@ -147,14 +147,20 @@ abstract contract HavenMarketPlace is IERC721 {
 
 abstract contract Auction is IERC721 {
 
+    using Counters for Counters.Counter;
+    Counters.Counter private _tokenIds;
+
     event itemAuctioned(address owner, uint id, uint startPrice);
     event HighestBidIncreased(address bidder, uint amount);
     event auctionSold(address buyer, uint id, uint sellingPrice);
     event auctionCanceled(address owner, uint id);
 
+    address payable public beneficiary;
     uint public bidTime = block.timestamp;
     uint public bidEndTime;
-    uint public bidDuration = bidTime + bidEndTime;
+
+    address public highestBidder;
+    uint public highestBid;
 
     enum status {
         open,
@@ -166,6 +172,8 @@ abstract contract Auction is IERC721 {
         status status;
         address creator;
         address nftContract;
+        uint auctionTime;
+        uint auctionEndTime;
         uint tokenId;
         uint startPrice;
     }
@@ -173,27 +181,87 @@ abstract contract Auction is IERC721 {
     mapping(uint256 => AuctionedItem) public auctionedItem_;
     uint[] public itemsAuctioned;
 
-    function placeAuction(address token_, uint tokenid_, uint price_) external {
+    mapping(address => uint) pendingReturns;
+
+    function placeAuction(address token_, uint tokenid_, uint aucEndTime, uint price_) external returns (uint) {
         IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
+        bidEndTime = aucEndTime;
+        uint bidDuration = block.timestamp + bidEndTime;
+
         
         AuctionedItem memory auctionedItem = AuctionedItem(
             status.open,
             msg.sender,
             token_,
+            block.timestamp,
+            bidDuration,
             tokenid_,
             price_
         );
+        _tokenIds.increment();
+
+        uint256 newItemId = _tokenIds.current();
+        auctionedItem_[newItemId] = auctionedItem;
+        itemsAuctioned.push(newItemId);
+
+        auctionedItem.status = status.open;
+
+        emit itemAuctioned(msg.sender, newItemId, price_);
+        return newItemId;
 
     }
 
-    function bid() external payable {
-        require(block.timestamp >= bidTime && block.timestamp <= bidDuration, "Auction Ended");
+    function bid(uint aId, address payable tokenContract_, uint price_) external payable {
+        AuctionedItem storage auctioneditem = auctionedItem_[aId];
+        require(bidTime >= auctioneditem.auctionTime && bidTime <= auctioneditem.auctionEndTime, "Auction Ended");
+        require(price_ > auctioneditem.startPrice, "Bid must be greater than auction price.");
+        require(price_ > highestBid, "Increase bid");
+        require(auctioneditem.status == status.open);
+
+        pendingReturns[highestBidder] += highestBid;
+
+        highestBidder = msg.sender;
+        highestBid = price_;
+
+        IERC20(tokenContract_).transferFrom(msg.sender, address(this), price_);
 
     }
 
-    function withdraw(uint aId) external {  
+    function withdrawUnderBid(uint aId, address payable tokenContract_) external payable {  
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(auctioneditem.status == status.closed, "Auction still open.");
+        require(block.timestamp > auctioneditem.auctionEndTime);
+        require(msg.sender != auctioneditem.creator);
+        require(msg.sender < highestBidder);
+
+        uint amount = pendingReturns[msg.sender];
+        
+
+        IERC20(tokenContract_).transferFrom(address(this), msg.sender, amount);
+
+        delete pendingReturns[msg.sender];
+
+
+    }
+
+    function withdrawHighestBid(uint aId, address payable tokenContract_) external payable {
+        AuctionedItem storage auctioneditem = auctionedItem_[aId];
+        require(auctioneditem.status != status.canceled);
+        require(block.timestamp > auctioneditem.auctionEndTime);
+        require(msg.sender == auctioneditem.creator);
+
+        uint amount = pendingReturns[highestBidder];
+
+        uint256 fee = (amount * 2) / 100;
+        uint256 commision = amount - fee;
+
+        IERC721(auctioneditem.nftContract).transferFrom(
+            address(this),
+            highestBidder,
+            auctioneditem.tokenId
+        );
+        IERC20(tokenContract_).transferFrom(address(this), auctioneditem.creator, commision); // Todo
+        IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // Todo
 
     }
 
@@ -202,6 +270,23 @@ abstract contract Auction is IERC721 {
         require(msg.sender == auctioneditem.creator, "You are not allowed to cancel this auction.");
         require(auctioneditem.status == status.open);
 
+        auctioneditem.status = status.canceled;
+
+    }
+
+    function claimNft(uint aId) external payable {
+        AuctionedItem storage auctioneditem = auctionedItem_[aId];
+        require(msg.sender == highestBidder);
+        require(block.timestamp > auctioneditem.auctionEndTime);
+        require(msg.sender != auctioneditem.creator);
+        require(auctioneditem.status != status.canceled);
+
+        IERC721(auctioneditem.nftContract).transferFrom(
+            address(this),
+            highestBidder,
+            auctioneditem.tokenId
+        );
+        
     }
 
 }
