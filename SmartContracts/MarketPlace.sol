@@ -183,6 +183,14 @@ abstract contract Auction is IERC721 {
 
     mapping(address => uint) pendingReturns;
 
+    modifier isClosed(uint aId) {
+        AuctionedItem storage auctioneditem = auctionedItem_[aId];
+        require(auctioneditem.status != status.open && auctioneditem.status != status.canceled);
+
+        auctioneditem.status = status.closed;
+        _;
+    }
+
     function placeAuction(address token_, uint tokenid_, uint aucEndTime, uint price_) external returns (uint) {
         IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
         bidEndTime = aucEndTime;
@@ -211,7 +219,7 @@ abstract contract Auction is IERC721 {
 
     }
 
-    function bid(uint aId, address payable tokenContract_, uint price_) external payable {
+    function bid(uint aId, address payable tokenContract_, uint price_) isClosed(aId) external payable {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(bidTime >= auctioneditem.auctionTime && bidTime <= auctioneditem.auctionEndTime, "Auction Ended");
         require(price_ > auctioneditem.startPrice, "Bid must be greater than auction price.");
@@ -229,7 +237,6 @@ abstract contract Auction is IERC721 {
 
     function withdrawUnderBid(uint aId, address payable tokenContract_) external payable {  
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
-        require(auctioneditem.status == status.closed, "Auction still open.");
         require(block.timestamp > auctioneditem.auctionEndTime);
         require(msg.sender != auctioneditem.creator);
         require(msg.sender < highestBidder);
