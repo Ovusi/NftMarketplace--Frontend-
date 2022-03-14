@@ -91,7 +91,7 @@ abstract contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard
         return newItemId;
     }
 
-    function buyNft(uint256 listingId_, address payable tokenContract_, uint price_)
+    function buyNft(uint256 listingId_, address payable tokenContract_, uint price_, uint feePercentage)
         external nonReentrant()
         payable
         returns (bool)
@@ -105,7 +105,7 @@ abstract contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
 
-        uint256 fee = (price_ * 2) / 100;
+        uint256 fee = (price_ * feePercentage) / 100;
         uint256 commision = price_ - fee;
 
         IERC721(listing.nftContract).transferFrom(
