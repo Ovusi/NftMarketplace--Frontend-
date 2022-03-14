@@ -304,4 +304,8 @@ abstract contract Auction is IERC721 {
         return (true, "Reward claimed successfully.");
     }
 
+    function getAllAuctions() external view returns (uint[] memory) {
+        return itemsAuctioned;
+    }
+
 }
