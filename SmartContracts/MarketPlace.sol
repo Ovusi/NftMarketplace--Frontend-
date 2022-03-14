@@ -347,7 +347,7 @@ abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
     function claimNft(uint256 aId)
         external
         payable
-        nonReentrant()
+        nonReentrant
         isClosed(aId)
         returns (bool, string memory)
     {

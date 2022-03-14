@@ -12,10 +12,7 @@ contract NFT is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    event Minted(
-        address add,
-        string uri
-    );
+    event Minted(address add, string uri);
 
     address public contractAddress;
     address payable _owner;
@@ -32,7 +29,10 @@ contract NFT is ERC721URIStorage {
         return "https";
     }
 
-    function mintNft(string memory tokenURI) public returns (uint256, string memory) {
+    function mintNft(string memory tokenURI)
+        public
+        returns (uint256, string memory)
+    {
         // mint new nft to collection
         _tokenIds.increment();
 
@@ -44,18 +44,5 @@ contract NFT is ERC721URIStorage {
 
         emit Minted(_owner, tokenURI);
         return (newItemId, tokenURI);
-    }
-
-    function balance(address owner_) public view returns (uint) {
-        owner_ = _owner;
-        return balanceOf(owner_);
-    }
-
-    function owner(uint256 tokenid) public view returns (address) {
-        return ownerOf(tokenid);
-    }
-
-    function uri(uint256 tokenid) public view returns (string memory) {
-        return tokenURI(tokenid);
     }
 }
