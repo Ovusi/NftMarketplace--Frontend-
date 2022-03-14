@@ -255,15 +255,15 @@ abstract contract Auction is IERC721 {
 
     }
 
-    function withdrawHighestBid(uint aId, address payable tokenContract_) external payable {
+    function withdrawHighestBid(uint aId, address payable tokenContract_, uint feePercentage) external payable {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(auctioneditem.status != status.canceled);
         require(block.timestamp > auctioneditem.auctionEndTime);
         require(msg.sender == auctioneditem.creator);
 
-        uint amount = pendingReturns[highestBidder];
+        uint amount = highestBid;
 
-        uint256 fee = (amount * 2) / 100;
+        uint256 fee = (amount * feePercentage) / 100;
         uint256 commision = amount - fee;
 
         IERC20(tokenContract_).transferFrom(address(this), auctioneditem.creator, commision); // Todo
@@ -278,13 +278,15 @@ abstract contract Auction is IERC721 {
         require(msg.sender == auctioneditem.creator, "You are not allowed to cancel this auction.");
         require(auctioneditem.status == status.open);
 
+        IERC721(auctioneditem.nftContract).transferFrom(address(this), auctioneditem.creator, auctioneditem.tokenId);
+
         auctioneditem.status = status.canceled;
 
         emit auctionCanceled(msg.sender, aId);
 
     }
 
-    function claimNft(uint aId) external payable isClosed(aId) {
+    function claimNft(uint aId) external payable isClosed(aId) returns (bool, string memory) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(msg.sender == highestBidder);
         require(block.timestamp > auctioneditem.auctionEndTime);
@@ -299,6 +301,7 @@ abstract contract Auction is IERC721 {
 
         emit auctionSold(msg.sender, aId, highestBid);
         
+        return (true, "Reward claimed successfully.");
     }
 
 }
