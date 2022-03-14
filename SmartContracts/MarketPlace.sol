@@ -242,10 +242,12 @@ abstract contract HavenMarketPlace is
         return newItemId;
     }
 
-    function bid(
-        uint256 aId,
-        uint256 price_
-    ) external payable nonReentrant isClosed(aId) {
+    function bid(uint256 aId, uint256 price_)
+        external
+        payable
+        nonReentrant
+        isClosed(aId)
+    {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(
             bidTime >= auctioneditem.auctionTime &&
@@ -269,11 +271,7 @@ abstract contract HavenMarketPlace is
         emit HighestBidIncreased(highestBidder, highestBid);
     }
 
-    function withdrawUnderBid(uint256 aId)
-        external
-        payable
-        nonReentrant
-    {
+    function withdrawUnderBid(uint256 aId) external payable nonReentrant {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(senderAdd != auctioneditem.creator);
         require(senderAdd != highestBidder);
@@ -285,10 +283,12 @@ abstract contract HavenMarketPlace is
         delete pendingReturns[senderAdd];
     }
 
-    function withdrawHighestBid(
-        uint256 aId,
-        uint256 feePercentage
-    ) external payable nonReentrant returns (bool, string memory) {
+    function withdrawHighestBid(uint256 aId, uint256 feePercentage)
+        external
+        payable
+        nonReentrant
+        returns (bool, string memory)
+    {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(auctioneditem.status != status.canceled);
         require(block.timestamp > auctioneditem.auctionEndTime);
