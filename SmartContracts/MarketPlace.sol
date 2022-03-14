@@ -69,6 +69,7 @@ abstract contract HavenMarketPlace is
     uint256[] public itemsListed;
 
     address senderAdd;
+    address payable tokenContract_;
 
     mapping(uint256 => AuctionedItem) public auctionedItem_;
     uint256[] public itemsAuctioned;
@@ -87,8 +88,9 @@ abstract contract HavenMarketPlace is
         _;
     }
 
-    constructor(address senderAddress) {
+    constructor(address senderAddress, address payable tokenContractAddress) {
         senderAdd = senderAddress;
+        tokenContract_ = tokenContractAddress;
     }
 
     // HELPER FUNCTIONS
@@ -141,7 +143,6 @@ abstract contract HavenMarketPlace is
 
     function buyNft(
         uint256 listingId_,
-        address payable tokenContract_,
         uint256 price_,
         uint256 feePercentage
     ) external payable nonReentrant returns (bool) {
@@ -243,7 +244,6 @@ abstract contract HavenMarketPlace is
 
     function bid(
         uint256 aId,
-        address payable tokenContract_,
         uint256 price_
     ) external payable nonReentrant isClosed(aId) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
@@ -269,7 +269,7 @@ abstract contract HavenMarketPlace is
         emit HighestBidIncreased(highestBidder, highestBid);
     }
 
-    function withdrawUnderBid(uint256 aId, address payable tokenContract_)
+    function withdrawUnderBid(uint256 aId)
         external
         payable
         nonReentrant
@@ -287,7 +287,6 @@ abstract contract HavenMarketPlace is
 
     function withdrawHighestBid(
         uint256 aId,
-        address payable tokenContract_,
         uint256 feePercentage
     ) external payable nonReentrant returns (bool, string memory) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
