@@ -228,10 +228,9 @@ abstract contract Auction is IERC721 {
         require(price_ > highestBid, "Increase bid");
         require(auctioneditem.status == status.open);
 
-        pendingReturns[highestBidder] += highestBid;
-
         highestBidder = msg.sender;
         highestBid = price_;
+        pendingReturns[highestBidder] += highestBid;
 
         IERC20(tokenContract_).transferFrom(msg.sender, address(this), price_);
 
@@ -241,12 +240,10 @@ abstract contract Auction is IERC721 {
 
     function withdrawUnderBid(uint aId, address payable tokenContract_) external payable {  
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
-        require(block.timestamp > auctioneditem.auctionEndTime);
         require(msg.sender != auctioneditem.creator);
-        require(msg.sender < highestBidder);
+        require(msg.sender != highestBidder);
 
         uint amount = pendingReturns[msg.sender];
-        
 
         IERC20(tokenContract_).transferFrom(address(this), msg.sender, amount);
 
