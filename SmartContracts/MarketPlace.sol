@@ -252,10 +252,9 @@ abstract contract Auction is IERC721 {
 
         delete pendingReturns[msg.sender];
 
-
     }
 
-    function withdrawHighestBid(uint aId, address payable tokenContract_, uint feePercentage) external payable {
+    function withdrawHighestBid(uint aId, address payable tokenContract_, uint feePercentage) external payable returns (bool, string memory) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(auctioneditem.status != status.canceled);
         require(block.timestamp > auctioneditem.auctionEndTime);
@@ -271,9 +270,11 @@ abstract contract Auction is IERC721 {
 
         emit withdrawnFunds(msg.sender, commision);
 
+        return (true, "Withdrawal successful");
+
     }
 
-    function cancelAuction(uint aId) external {
+    function cancelAuction(uint aId) external returns (bool, string memory) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(msg.sender == auctioneditem.creator, "You are not allowed to cancel this auction.");
         require(auctioneditem.status == status.open);
@@ -283,6 +284,8 @@ abstract contract Auction is IERC721 {
         auctioneditem.status = status.canceled;
 
         emit auctionCanceled(msg.sender, aId);
+
+        return (true, "Auction canceled");
 
     }
 
