@@ -24,11 +24,17 @@ abstract contract HavenMarketPlace is
     event deListed(address owner, uint256 id);
     event Bought(address buyer, uint256 price, uint256 id);
     event Auctioned(address newToken, uint256 id, uint256 startPrice);
+    event itemAuctioned(address owner, uint256 id, uint256 startPrice);
+    event HighestBidIncreased(address bidder, uint256 amount);
+    event auctionSold(address buyer, uint256 id, uint256 sellingPrice);
+    event auctionCanceled(address owner, uint256 id);
+    event withdrawnFunds(address owner, uint256 amount);
 
     enum status {
         open,
         sold,
-        canceled
+        canceled,
+        closed
     }
 
     struct Listing {
@@ -39,11 +45,51 @@ abstract contract HavenMarketPlace is
         uint256 price;
     }
 
+    address payable public beneficiary;
+    uint256 public bidTime = block.timestamp;
+    uint256 public bidEndTime;
+
+    address public highestBidder;
+    uint256 public highestBid;
+
+    struct AuctionedItem {
+        status status;
+        address creator;
+        address nftContract;
+        uint256 auctionTime;
+        uint256 auctionEndTime;
+        uint256 tokenId;
+        uint256 startPrice;
+    }
+
     Listing[] public itemsOnList; // todo
     mapping(address => mapping(uint256 => bool)) activeItems; // todo
 
     mapping(uint256 => Listing) public _listings;
     uint256[] public itemsListed;
+
+    address senderAdd;
+
+    mapping(uint256 => AuctionedItem) public auctionedItem_;
+    uint256[] public itemsAuctioned;
+
+    mapping(address => uint256) pendingReturns;
+
+    modifier isClosed(uint256 aId) {
+        AuctionedItem storage auctioneditem = auctionedItem_[aId];
+        require(
+            auctioneditem.status != status.open &&
+                auctioneditem.status != status.canceled
+        );
+        require(block.timestamp > auctioneditem.auctionEndTime);
+
+        auctioneditem.status = status.closed;
+        _;
+    }
+
+    constructor(address senderAddress) {
+        senderAdd = senderAddress;
+    }
 
     // HELPER FUNCTIONS
     function find(uint256 value) internal view returns (uint256) {
@@ -74,11 +120,11 @@ abstract contract HavenMarketPlace is
         uint256 tokenid_,
         uint256 price_
     ) external nonReentrant returns (uint256) {
-        IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
+        IERC721(token_).transferFrom(senderAdd, address(this), tokenid_);
 
         Listing memory listing = Listing(
             status.open,
-            msg.sender,
+            senderAdd,
             token_,
             tokenid_,
             price_
@@ -89,7 +135,7 @@ abstract contract HavenMarketPlace is
         _listings[newItemId] = listing;
         itemsListed.push(newItemId);
 
-        emit Listed(msg.sender, token_, tokenid_, price_);
+        emit Listed(senderAdd, token_, tokenid_, price_);
         return newItemId;
     }
 
@@ -105,13 +151,13 @@ abstract contract HavenMarketPlace is
             "Transaction not approved."
         );
         require(
-            IERC20(tokenContract_).balanceOf(msg.sender) >= price_,
+            IERC20(tokenContract_).balanceOf(senderAdd) >= price_,
             "Not enough funds."
         );
-        require(msg.sender != listing.seller, "Permission not granted.");
+        require(senderAdd != listing.seller, "Permission not granted.");
         require(price_ >= listing.price, "Insufficient amount.");
         require(listing.status == status.open);
-        require(tokenContract_ != msg.sender);
+        require(tokenContract_ != senderAdd);
         require(tokenContract_ != listing.seller);
 
         uint256 fee = (price_ * feePercentage) / 100;
@@ -119,7 +165,7 @@ abstract contract HavenMarketPlace is
 
         IERC721(listing.nftContract).transferFrom(
             address(this),
-            msg.sender,
+            senderAdd,
             listing.tokenId
         );
         IERC20(tokenContract_).transferFrom(
@@ -131,7 +177,7 @@ abstract contract HavenMarketPlace is
 
         listing.status = status.sold;
 
-        emit Bought(msg.sender, msg.value, listing.tokenId);
+        emit Bought(senderAdd, msg.value, listing.tokenId);
 
         return true;
     }
@@ -143,14 +189,14 @@ abstract contract HavenMarketPlace is
         returns (bool, string memory)
     {
         Listing storage listing = _listings[lId];
-        require(msg.sender == listing.seller);
+        require(senderAdd == listing.seller);
         require(listing.status == status.open);
         require(lId == find(lId));
 
         delete _listings[lId];
         listing.status = status.canceled;
         // removeByValue(lId);
-        emit deListed(msg.sender, lId);
+        emit deListed(senderAdd, lId);
 
         return (true, "canceled");
     }
@@ -163,59 +209,6 @@ abstract contract HavenMarketPlace is
         Listing storage listing = _listings[lId];
         return tokenURI(listing.tokenId);
     }
-}
-
-// AUCTION CONTRACT...
-
-abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
-
-    event itemAuctioned(address owner, uint256 id, uint256 startPrice);
-    event HighestBidIncreased(address bidder, uint256 amount);
-    event auctionSold(address buyer, uint256 id, uint256 sellingPrice);
-    event auctionCanceled(address owner, uint256 id);
-    event withdrawnFunds(address owner, uint256 amount);
-
-    address payable public beneficiary;
-    uint256 public bidTime = block.timestamp;
-    uint256 public bidEndTime;
-
-    address public highestBidder;
-    uint256 public highestBid;
-
-    enum status {
-        open,
-        closed,
-        canceled
-    }
-
-    struct AuctionedItem {
-        status status;
-        address creator;
-        address nftContract;
-        uint256 auctionTime;
-        uint256 auctionEndTime;
-        uint256 tokenId;
-        uint256 startPrice;
-    }
-
-    mapping(uint256 => AuctionedItem) public auctionedItem_;
-    uint256[] public itemsAuctioned;
-
-    mapping(address => uint256) pendingReturns;
-
-    modifier isClosed(uint256 aId) {
-        AuctionedItem storage auctioneditem = auctionedItem_[aId];
-        require(
-            auctioneditem.status != status.open &&
-                auctioneditem.status != status.canceled
-        );
-        require(block.timestamp > auctioneditem.auctionEndTime);
-
-        auctioneditem.status = status.closed;
-        _;
-    }
 
     function placeAuction(
         address token_,
@@ -223,13 +216,13 @@ abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
         uint256 aucEndTime,
         uint256 price_
     ) external nonReentrant returns (uint256) {
-        IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
+        IERC721(token_).transferFrom(senderAdd, address(this), tokenid_);
         bidEndTime = aucEndTime;
         uint256 bidDuration = block.timestamp + bidEndTime;
 
         AuctionedItem memory auctionedItem = AuctionedItem(
             status.open,
-            msg.sender,
+            senderAdd,
             token_,
             block.timestamp,
             bidDuration,
@@ -244,7 +237,7 @@ abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
 
         auctionedItem.status = status.open;
 
-        emit itemAuctioned(msg.sender, newItemId, price_);
+        emit itemAuctioned(senderAdd, newItemId, price_);
         return newItemId;
     }
 
@@ -268,10 +261,10 @@ abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
 
         pendingReturns[highestBidder] += highestBid;
 
-        highestBidder = msg.sender;
+        highestBidder = senderAdd;
         highestBid = price_;
 
-        IERC20(tokenContract_).transferFrom(msg.sender, address(this), price_);
+        IERC20(tokenContract_).transferFrom(senderAdd, address(this), price_);
 
         emit HighestBidIncreased(highestBidder, highestBid);
     }
@@ -282,14 +275,14 @@ abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
         nonReentrant
     {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
-        require(msg.sender != auctioneditem.creator);
-        require(msg.sender != highestBidder);
+        require(senderAdd != auctioneditem.creator);
+        require(senderAdd != highestBidder);
 
-        uint256 amount = pendingReturns[msg.sender];
+        uint256 amount = pendingReturns[senderAdd];
 
-        IERC20(tokenContract_).transferFrom(address(this), msg.sender, amount);
+        IERC20(tokenContract_).transferFrom(address(this), senderAdd, amount);
 
-        delete pendingReturns[msg.sender];
+        delete pendingReturns[senderAdd];
     }
 
     function withdrawHighestBid(
@@ -300,7 +293,7 @@ abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(auctioneditem.status != status.canceled);
         require(block.timestamp > auctioneditem.auctionEndTime);
-        require(msg.sender == auctioneditem.creator);
+        require(senderAdd == auctioneditem.creator);
 
         uint256 amount = highestBid;
 
@@ -314,7 +307,7 @@ abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
         ); // Todo
         IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // Todo
 
-        emit withdrawnFunds(msg.sender, commision);
+        emit withdrawnFunds(senderAdd, commision);
 
         return (true, "Withdrawal successful");
     }
@@ -326,7 +319,7 @@ abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
     {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(
-            msg.sender == auctioneditem.creator,
+            senderAdd == auctioneditem.creator,
             "You are not allowed to cancel this auction."
         );
         require(auctioneditem.status == status.open);
@@ -339,7 +332,7 @@ abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
 
         auctioneditem.status = status.canceled;
 
-        emit auctionCanceled(msg.sender, aId);
+        emit auctionCanceled(senderAdd, aId);
 
         return (true, "Auction canceled");
     }
@@ -352,9 +345,9 @@ abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
         returns (bool, string memory)
     {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
-        require(msg.sender == highestBidder);
+        require(senderAdd == highestBidder);
         require(block.timestamp > auctioneditem.auctionEndTime);
-        require(msg.sender != auctioneditem.creator);
+        require(senderAdd != auctioneditem.creator);
         require(auctioneditem.status != status.canceled);
 
         IERC721(auctioneditem.nftContract).transferFrom(
@@ -363,7 +356,7 @@ abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
             auctioneditem.tokenId
         );
 
-        emit auctionSold(msg.sender, aId, highestBid);
+        emit auctionSold(senderAdd, aId, highestBid);
 
         return (true, "Reward claimed successfully.");
     }
