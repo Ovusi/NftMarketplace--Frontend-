@@ -122,6 +122,7 @@ abstract contract HavenMarketPlace is
         uint256 tokenid_,
         uint256 price_
     ) external nonReentrant returns (uint256) {
+        require(price_ > 0);
         IERC721(token_).transferFrom(senderAdd, address(this), tokenid_);
 
         Listing memory listing = Listing(
@@ -217,6 +218,8 @@ abstract contract HavenMarketPlace is
         uint256 aucEndTime,
         uint256 price_
     ) external nonReentrant returns (uint256) {
+        require(price_ > 0);
+
         IERC721(token_).transferFrom(senderAdd, address(this), tokenid_);
         bidEndTime = aucEndTime;
         uint256 bidDuration = block.timestamp + bidEndTime;
