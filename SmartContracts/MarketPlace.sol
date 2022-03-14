@@ -130,7 +130,7 @@ abstract contract HavenMarketPlace is IERC721 {
 
         delete _listings[lId];
         listing.status = status.canceled;
-        removeByValue(lId);
+        // removeByValue(lId);
         emit deListed(msg.sender, lId);
 
         return (true, 'canceled');
