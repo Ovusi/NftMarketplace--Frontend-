@@ -8,8 +8,9 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-abstract contract HavenMarketPlace is IERC721 {
+abstract contract HavenMarketPlace is IERC721, ERC721URIStorage {
 
 // STATE VARIABLES
     using Counters for Counters.Counter;
@@ -116,7 +117,6 @@ abstract contract HavenMarketPlace is IERC721 {
 
         listing.status = status.sold;
 
-
         emit Bought(msg.sender, msg.value, listing.tokenId);
 
         return true;
@@ -139,13 +139,18 @@ abstract contract HavenMarketPlace is IERC721 {
     function getAllListings() public view returns(uint[] memory) {
         return  itemsListed;
     }
+    
+    function getTokenUri(uint lId) external view returns (string memory) {
+        Listing storage listing = _listings[lId];
+        return tokenURI(listing.tokenId);
+    }
 }
 
 
 
 // AUCTION CONTRACT...
 
-abstract contract Auction is IERC721 {
+abstract contract Auction is IERC721, ERC721URIStorage {
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
@@ -215,7 +220,7 @@ abstract contract Auction is IERC721 {
         itemsAuctioned.push(newItemId);
 
         auctionedItem.status = status.open;
-
+        
         emit itemAuctioned(msg.sender, newItemId, price_);
         return newItemId;
 
@@ -306,6 +311,11 @@ abstract contract Auction is IERC721 {
 
     function getAllAuctions() external view returns (uint[] memory) {
         return itemsAuctioned;
+    }
+
+    function getAuctionedTokenUri(uint aId) external view returns (string memory) {
+        AuctionedItem storage auctioneditem = auctionedItem_[aId];
+        return tokenURI(auctioneditem.tokenId);
     }
 
 }
