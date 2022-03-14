@@ -9,8 +9,9 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-abstract contract HavenMarketPlace is IERC721, ERC721URIStorage {
+abstract contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
 
 // STATE VARIABLES
     using Counters for Counters.Counter;
@@ -70,7 +71,7 @@ abstract contract HavenMarketPlace is IERC721, ERC721URIStorage {
         address token_,
         uint256 tokenid_,
         uint256 price_
-    ) external returns (uint) {
+    ) external nonReentrant() returns (uint) {
         IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
 
         Listing memory listing = Listing(
@@ -91,7 +92,7 @@ abstract contract HavenMarketPlace is IERC721, ERC721URIStorage {
     }
 
     function buyNft(uint256 listingId_, address payable tokenContract_, uint price_)
-        external
+        external nonReentrant()
         payable
         returns (bool)
     {
@@ -122,7 +123,7 @@ abstract contract HavenMarketPlace is IERC721, ERC721URIStorage {
         return true;
     }
 
-    function cancelListing(uint256 lId) external payable returns (bool, string memory) {
+    function cancelListing(uint256 lId) external nonReentrant() payable returns (bool, string memory) {
         Listing storage listing = _listings[lId];
         require(msg.sender == listing.seller);
         require(listing.status == status.open);
@@ -150,7 +151,7 @@ abstract contract HavenMarketPlace is IERC721, ERC721URIStorage {
 
 // AUCTION CONTRACT...
 
-abstract contract Auction is IERC721, ERC721URIStorage {
+abstract contract Auction is IERC721, ERC721URIStorage, ReentrancyGuard {
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
@@ -198,7 +199,7 @@ abstract contract Auction is IERC721, ERC721URIStorage {
         _;
     }
 
-    function placeAuction(address token_, uint tokenid_, uint aucEndTime, uint price_) external returns (uint) {
+    function placeAuction(address token_, uint tokenid_, uint aucEndTime, uint price_) external nonReentrant() returns (uint) {
         IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
         bidEndTime = aucEndTime;
         uint bidDuration = block.timestamp + bidEndTime;
@@ -226,7 +227,7 @@ abstract contract Auction is IERC721, ERC721URIStorage {
 
     }
 
-    function bid(uint aId, address payable tokenContract_, uint price_) isClosed(aId) external payable {
+    function bid(uint aId, address payable tokenContract_, uint price_) external nonReentrant() isClosed(aId) payable {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(bidTime >= auctioneditem.auctionTime && bidTime <= auctioneditem.auctionEndTime, "Auction Ended");
         require(price_ > auctioneditem.startPrice, "Bid must be greater than auction price.");
@@ -243,7 +244,7 @@ abstract contract Auction is IERC721, ERC721URIStorage {
 
     }
 
-    function withdrawUnderBid(uint aId, address payable tokenContract_) external payable {  
+    function withdrawUnderBid(uint aId, address payable tokenContract_) external nonReentrant() payable {  
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(msg.sender != auctioneditem.creator);
         require(msg.sender != highestBidder);
@@ -256,7 +257,7 @@ abstract contract Auction is IERC721, ERC721URIStorage {
 
     }
 
-    function withdrawHighestBid(uint aId, address payable tokenContract_, uint feePercentage) external payable returns (bool, string memory) {
+    function withdrawHighestBid(uint aId, address payable tokenContract_, uint feePercentage) external nonReentrant() payable returns (bool, string memory) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(auctioneditem.status != status.canceled);
         require(block.timestamp > auctioneditem.auctionEndTime);
@@ -276,7 +277,7 @@ abstract contract Auction is IERC721, ERC721URIStorage {
 
     }
 
-    function cancelAuction(uint aId) external returns (bool, string memory) {
+    function cancelAuction(uint aId) external nonReentrant() returns (bool, string memory) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(msg.sender == auctioneditem.creator, "You are not allowed to cancel this auction.");
         require(auctioneditem.status == status.open);
@@ -291,7 +292,7 @@ abstract contract Auction is IERC721, ERC721URIStorage {
 
     }
 
-    function claimNft(uint aId) external payable isClosed(aId) returns (bool, string memory) {
+    function claimNft(uint aId) external nonReentrant() payable isClosed(aId) returns (bool, string memory) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(msg.sender == highestBidder);
         require(block.timestamp > auctioneditem.auctionEndTime);
