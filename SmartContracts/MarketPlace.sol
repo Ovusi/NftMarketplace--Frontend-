@@ -76,6 +76,8 @@ abstract contract HavenMarketPlace is
 
     mapping(address => uint256) pendingReturns;
 
+    uint[] owned; // arrary if NDTs owned by an address
+
     modifier isClosed(uint256 aId) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(
@@ -179,7 +181,7 @@ abstract contract HavenMarketPlace is
 
         listing.status = status.sold;
 
-        emit Bought(senderAdd, msg.value, listing.tokenId);
+        emit Bought(senderAdd, price_, listing.tokenId);
 
         return true;
     }
