@@ -17,6 +17,7 @@ contract NFT is ERC721URIStorage, ERC721Enumerable, Ownable {
     Counters.Counter private _tokenIds;
 
     event Minted(address add, string uri);
+    event MintedBatch(address add, string[]);
 
     address public contractAddress;
     address payable _owner;
@@ -119,8 +120,8 @@ contract NFT is ERC721URIStorage, ERC721Enumerable, Ownable {
             setApprovalForAll(contractAddress, true);
             _tokenIds.increment();
 
-            emit Minted(_owner, tokenURIList[i]);
         }
+        emit MintedBatch(_owner, tokenURIList);
         return (newItemId, tokenURIList, true);
 
     }
