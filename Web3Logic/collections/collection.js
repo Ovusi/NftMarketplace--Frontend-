@@ -2,20 +2,21 @@ const { Web3 } = require('web3');
 const { ABI, BYTE_CODE } = require("../collections/data")
 const { Component } = require("/../Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/component")
 
-async function DeployCollection(name, symbol) {
-    const comp = Component()
-    const rpcURL = comp.provider
+async function DeployCollection(nftmarketaddress, senderadd, provider_, name, symbol) {
+    const rpcURL = provider_
     const web3 = new Web3(rpcURL)
 
     const deploy_contract = new web3.eth.Contract(JSON.parse(ABI))
 
     const payload = {
         data: BYTE_CODE,
-        arguments: web3.eth.abi.encodeParameters(["address", "address", "string", "string"], [nftmarketaddress, senderadd, name, symbol])
+        arguments: [nftmarketaddress, senderadd, name, symbol]
     }
 
     const parameter = {
-        from: comp.address
+        from: senderadd,
+        gas: 1500000,
+        gasPrice: '30000000000000'
     }
 
     this.deploy_collection = async () => {
@@ -29,3 +30,5 @@ async function DeployCollection(name, symbol) {
     }
 
 }
+
+module.exports = { DeployCollection }
