@@ -1,6 +1,5 @@
 const { Web3 } = require('web3');
 const { ABI, BYTE_CODE } = require("../collections/data")
-const { Component } = require("/../Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/component")
 
 async function DeployCollection(nftmarketaddress, senderadd, provider_, name, symbol) {
     const rpcURL = provider_
