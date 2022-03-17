@@ -21,10 +21,11 @@
     "@3rdweb/hooks": "^1.1.7",
     "@3rdweb/react": "^1.1.7",
     "@openzeppelin/contracts": "^4.5.0",
+    "ipfs-mini": "^1.1.5",
     "level": "^7.0.1",
     "leveldown": "^6.1.0",
-    "web3": "^1.7.1",
     "minimist": "^1.2.5",
+    "web3": "^1.7.1",
     "web3.storage": "^3.1.0"
   }
 }

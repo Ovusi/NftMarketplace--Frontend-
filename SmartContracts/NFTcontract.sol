@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-contract NFT is ERC721URIStorage, ERC721Enumerable, Ownable {
+contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     // Create new nft collection
     using SafeMath for uint256;
     using Counters for Counters.Counter;
