@@ -21,6 +21,8 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
 
     address public contractAddress;
     address payable _owner;
+    string public pictureHash;
+    string public collectionDescription;
     string _name;
     string _symbol;
     bytes _data;
@@ -77,8 +79,26 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         _name = name;
     }
 
+    function getImage() external view returns (string memory) {
+        return pictureHash;
+    }
+
+    function updateImage(string memory newHash) external onlyOwner returns (string memory) {
+        pictureHash = newHash;
+        return pictureHash;
+    }
+
+    function getDescription() external view returns (string memory) {
+        return collectionDescription;
+    }
+
+    function updateDescription(string memory newDescription) external onlyOwner returns (string memory) {
+        collectionDescription = newDescription;
+        return collectionDescription;
+    }
+
     function mintNft(string memory tokenURI_)
-        external
+        external onlyOwner
         returns (
             uint256,
             string memory,
@@ -103,7 +123,7 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         string[] memory tokenURIList
     )
         external
-        virtual
+        virtual onlyOwner
         returns (
             uint256,
             string[] memory,
