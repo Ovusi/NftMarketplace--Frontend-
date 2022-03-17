@@ -18,6 +18,10 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
 
     event Minted(address add, string uri);
     event MintedBatch(address add, string[]);
+    event DescriptionChanged(string description);
+    event ProfileImagedChanged(string newhash);
+    event CollNameChanged(string name);
+    event SymChanged(string sym);
 
     address public contractAddress;
     address payable _owner;
@@ -27,8 +31,7 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     string _symbol;
     bytes _data;
 
-    uint256 public constant MAX_SUPPLY = 100;
-    uint256 public constant PRICE = 0.01 ether;
+    uint256 public constant MAX_SUPPLY = 10000;
     uint256 public constant MAX_PER_MINT = 5;
 
 
@@ -83,8 +86,13 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         return pictureHash;
     }
 
-    function updateImage(string memory newHash) external onlyOwner returns (string memory) {
+    function updateImage(string memory newHash)
+        external
+        onlyOwner
+        returns (string memory)
+    {
         pictureHash = newHash;
+        emit ProfileImagedChanged(pictureHash);
         return pictureHash;
     }
 
@@ -92,13 +100,47 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         return collectionDescription;
     }
 
-    function updateDescription(string memory newDescription) external onlyOwner returns (string memory) {
+    function updateDescription(string memory newDescription)
+        external
+        onlyOwner
+        returns (string memory)
+    {
         collectionDescription = newDescription;
+        emit DescriptionChanged(collectionDescription);
         return collectionDescription;
     }
 
+    function getName() external view returns (string memory) {
+        return _name;
+    }
+
+    function getSymbol() external view returns (string memory) {
+        return _symbol;
+    }
+
+    function changeName(string memory newName)
+        external
+        onlyOwner
+        returns (string memory)
+    {
+        _name = newName;
+        emit CollNameChanged(_name);
+        return _name;
+    }
+
+    function changeSymbol(string memory newSymbol)
+        external
+        onlyOwner
+        returns (string memory)
+    {
+        _symbol = newSymbol;
+        emit SymChanged(_symbol);
+        return _symbol;
+    }
+
     function mintNft(string memory tokenURI_)
-        external onlyOwner
+        external
+        onlyOwner
         returns (
             uint256,
             string memory,
@@ -110,8 +152,7 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
 
         uint256 newItemId = _tokenIds.current();
         _safeMint(_owner, newItemId);
-        _setTokenURI(newItemId, tokenURI_); // TokenUri contains nft metadata e.g name,
-        // description, image url,
+        _setTokenURI(newItemId, tokenURI_);
         setApprovalForAll(contractAddress, true);
 
         emit Minted(_owner, tokenURI_);
@@ -123,7 +164,8 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         string[] memory tokenURIList
     )
         external
-        virtual onlyOwner
+        virtual
+        onlyOwner
         returns (
             uint256,
             string[] memory,
@@ -135,15 +177,14 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
 
         for (uint256 i = 0; i < recipients.length; i++) {
             _safeMint(_owner, newItemId);
-            _setTokenURI(newItemId, tokenURIList[i]); // TokenUri contains nft metadata e.g name,
-            // description, image url,
+            _setTokenURI(newItemId, tokenURIList[i]);
             setApprovalForAll(contractAddress, true);
             _tokenIds.increment();
 
         }
         emit MintedBatch(_owner, tokenURIList);
         return (newItemId, tokenURIList, true);
-
+        
     }
 
     function tokensOfOwner(address token_owner)
