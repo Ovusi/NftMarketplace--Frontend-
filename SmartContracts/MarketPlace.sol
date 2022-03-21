@@ -197,7 +197,7 @@ abstract contract HavenMarketPlace is
         require(listing.status == status.open);
         require(lId == find(lId));
 
-         IERC721(listing.nftContract).transferFrom(
+        IERC721(listing.nftContract).transferFrom(
             address(this),
             senderAdd,
             listing.tokenId
