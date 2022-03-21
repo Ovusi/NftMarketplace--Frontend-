@@ -146,8 +146,7 @@ abstract contract HavenMarketPlace is
 
     function buyNft(
         uint256 listingId_,
-        uint256 price_,
-        uint256 feePercentage
+        uint256 price_
     ) external payable nonReentrant returns (bool) {
         Listing storage listing = _listings[listingId_];
         require(
@@ -164,7 +163,7 @@ abstract contract HavenMarketPlace is
         require(tokenContract_ != senderAdd);
         require(tokenContract_ != listing.seller);
 
-        uint256 fee = (price_ * feePercentage) / 100;
+        uint256 fee = (price_ * 2) / 100;
         uint256 commision = price_ - fee;
 
         IERC721(listing.nftContract).transferFrom(
@@ -284,7 +283,7 @@ abstract contract HavenMarketPlace is
         delete pendingReturns[senderAdd];
     }
 
-    function withdrawHighestBid(uint256 aId, uint256 feePercentage)
+    function withdrawHighestBid(uint256 aId)
         external
         payable
         nonReentrant
@@ -297,7 +296,7 @@ abstract contract HavenMarketPlace is
 
         uint256 amount = highestBid;
 
-        uint256 fee = (amount * feePercentage) / 100;
+        uint256 fee = (amount * 2) / 100;
         uint256 commision = amount - fee;
 
         IERC20(tokenContract_).transferFrom(
