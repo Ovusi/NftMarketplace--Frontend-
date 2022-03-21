@@ -76,7 +76,7 @@ abstract contract HavenMarketPlace is
 
     mapping(address => uint256) pendingReturns;
 
-    uint[] owned; // arrary if NDTs owned by an address
+    uint256[] owned; // arrary if NDTs owned by an address
 
     modifier isClosed(uint256 aId) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
@@ -378,7 +378,11 @@ abstract contract HavenMarketPlace is
         return tokenURI(auctioneditem.tokenId);
     }
 
-    function getListingById(uint lId) external view returns (Listing memory) {
+    function getListingById(uint256 lId)
+        external
+        view
+        returns (Listing memory)
+    {
         Listing storage listing = _listings[lId];
         return listing;
     }
