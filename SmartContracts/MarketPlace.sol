@@ -197,21 +197,17 @@ abstract contract HavenMarketPlace is
         require(listing.status == status.open);
         require(lId == find(lId));
 
+         IERC721(listing.nftContract).transferFrom(
+            address(this),
+            senderAdd,
+            listing.tokenId
+        );
+
         delete _listings[lId];
         listing.status = status.canceled;
-        // removeByValue(lId);
         emit deListed(senderAdd, lId);
 
         return (true, "canceled");
-    }
-
-    function getAllListings() public view returns (uint256[] memory) {
-        return itemsListed;
-    }
-
-    function getTokenUri(uint256 lId) external view returns (string memory) {
-        Listing storage listing = _listings[lId];
-        return tokenURI(listing.tokenId);
     }
 
     function placeAuction(
@@ -385,5 +381,14 @@ abstract contract HavenMarketPlace is
     {
         Listing storage listing = _listings[lId];
         return listing;
+    }
+
+    function getAllListings() public view returns (uint256[] memory) {
+        return itemsListed;
+    }
+
+    function getTokenUri(uint256 lId) external view returns (string memory) {
+        Listing storage listing = _listings[lId];
+        return tokenURI(listing.tokenId);
     }
 }
