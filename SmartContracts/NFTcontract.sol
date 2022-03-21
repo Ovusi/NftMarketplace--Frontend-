@@ -147,7 +147,6 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
             bool
         )
     {
-        // mint new nft to collection
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();

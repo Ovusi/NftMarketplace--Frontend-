@@ -377,4 +377,9 @@ abstract contract HavenMarketPlace is
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         return tokenURI(auctioneditem.tokenId);
     }
+
+    function getListingById(uint lId) external view returns (Listing memory) {
+        Listing storage listing = _listings[lId];
+        return listing;
+    }
 }
