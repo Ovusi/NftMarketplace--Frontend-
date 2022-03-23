@@ -29,7 +29,7 @@ abstract contract HavenMarketPlace is
     event auctionSold(address buyer, uint256 id, uint256 sellingPrice);
     event auctionCanceled(address owner, uint256 id);
     event withdrawnFunds(address owner, uint256 amount);
-    event UserCreated(address user, string username);
+    event UserCreated(address user, string useruri);
 
     address payable public beneficiary;
     uint256 public bidTime = block.timestamp;
@@ -77,12 +77,8 @@ abstract contract HavenMarketPlace is
 
     struct User {
         verified verified;
-        string userName;
-        string twitterUrl;
-        string redditUrl;
-        string discordUrl;
-        string instagramUrl;
-        string website;
+        address userAddress;
+        string userURI;
     }
     mapping(address => User) users_;
     address[] public marketUserAddresses;
@@ -130,25 +126,16 @@ abstract contract HavenMarketPlace is
 
     function createUser(
         address useraddress,
-        string memory username,
-        string memory twitter,
-        string memory reddit,
-        string memory discord,
-        string memory instagram,
-        string memory website
+        string memory useruri_
     ) external returns (bool) {
         User memory user = User(
             verified.no,
-            username,
-            twitter,
-            reddit,
-            discord,
-            instagram,
-            website
+            useraddress,
+            useruri_
         );
         users_[useraddress] = user;
         marketUserAddresses.push(useraddress);
-        emit UserCreated(useraddress, username);
+        emit UserCreated(useraddress, useruri_);
         return true;
     }
 
@@ -158,6 +145,12 @@ abstract contract HavenMarketPlace is
         require(user.verified != verified.yes, "User already verified");
         require(admin == msg.sender);
         user.verified = verified.yes;
+    }
+
+    function editUser(address useradd, string memory useruri_) external {
+        User storage user = users_[useradd];
+        require(useradd == user.userAddress);
+        user.userURI = useruri_;
     }
 
     function listNft(
