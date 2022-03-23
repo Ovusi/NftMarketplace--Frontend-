@@ -46,7 +46,7 @@ abstract contract HavenMarketPlace is
         closed
     }
     enum verified {
-        yes, 
+        yes,
         no
     }
 
@@ -59,8 +59,6 @@ abstract contract HavenMarketPlace is
     }
     mapping(uint256 => Listing) public _listings;
     uint256[] public itemsListed;
-
-    
 
     struct AuctionedItem {
         status status;
@@ -154,7 +152,8 @@ abstract contract HavenMarketPlace is
         return true;
     }
 
-    function verifiyUser(address useradd, address admin) external { // todo: sort admin priviledge
+    function verifiyUser(address useradd, address admin) external {
+        // todo: sort admin priviledge
         User storage user = users_[useradd];
         require(user.verified != verified.yes, "User already verified");
         require(admin == msg.sender);
