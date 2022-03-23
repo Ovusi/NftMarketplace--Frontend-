@@ -162,7 +162,7 @@ abstract contract HavenMarketPlace is
         return true;
     }
 
-    function verifiyUser(address useradd, address admin) external {
+    function verifiyUser(address useradd, address admin) external { // todo: sort admin priviledge
         User storage user = users_[useradd];
         require(user.verified != verified.yes, "User already verified");
         require(admin == msg.sender);
