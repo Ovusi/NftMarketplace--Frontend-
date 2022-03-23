@@ -38,6 +38,11 @@ abstract contract HavenMarketPlace is
         closed
     }
 
+    enum verified {
+        yes, 
+        no
+    }
+
     struct Listing {
         status status;
         address seller;
@@ -80,6 +85,7 @@ abstract contract HavenMarketPlace is
     uint256[] owned; // arrary if NDTs owned by an address
 
     struct User {
+        verified verified;
         string userName;
         string twitterUrl;
         string redditUrl;
@@ -89,7 +95,7 @@ abstract contract HavenMarketPlace is
     }
 
     mapping(address => User) users_;
-    address[] marketUserAddresses;
+    address[] public marketUserAddresses;
 
     modifier isClosed(uint256 aId) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
@@ -142,6 +148,7 @@ abstract contract HavenMarketPlace is
         string memory website
     ) external returns (bool) {
         User memory user = User(
+            verified.no,
             username,
             twitter,
             reddit,
@@ -150,8 +157,16 @@ abstract contract HavenMarketPlace is
             website
         );
         users_[useraddress] = user;
+        marketUserAddresses.push(useraddress);
         emit UserCreated(useraddress, username);
         return true;
+    }
+
+    function verifiyUser(address useradd, address admin) external {
+        User storage user = users_[useradd];
+        require(user.verified != verified.yes, "User already verified");
+        require(admin == msg.sender);
+        user.verified = verified.yes;
     }
 
     function listNft(
