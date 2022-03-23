@@ -31,13 +31,20 @@ abstract contract HavenMarketPlace is
     event withdrawnFunds(address owner, uint256 amount);
     event UserCreated(address user, string username);
 
+    address payable public beneficiary;
+    uint256 public bidTime = block.timestamp;
+    uint256 public bidEndTime;
+    address public highestBidder;
+    uint256 public highestBid;
+    address senderAdd;
+    address payable tokenContract_;
+
     enum status {
         open,
         sold,
         canceled,
         closed
     }
-
     enum verified {
         yes, 
         no
@@ -50,13 +57,10 @@ abstract contract HavenMarketPlace is
         uint256 tokenId;
         uint256 price;
     }
+    mapping(uint256 => Listing) public _listings;
+    uint256[] public itemsListed;
 
-    address payable public beneficiary;
-    uint256 public bidTime = block.timestamp;
-    uint256 public bidEndTime;
-
-    address public highestBidder;
-    uint256 public highestBid;
+    
 
     struct AuctionedItem {
         status status;
@@ -67,21 +71,10 @@ abstract contract HavenMarketPlace is
         uint256 tokenId;
         uint256 startPrice;
     }
-
-    Listing[] public itemsOnList; // todo
-    mapping(address => mapping(uint256 => bool)) activeItems; // todo
-
-    mapping(uint256 => Listing) public _listings;
-    uint256[] public itemsListed;
-
-    address senderAdd;
-    address payable tokenContract_;
-
     mapping(uint256 => AuctionedItem) public auctionedItem_;
     uint256[] public itemsAuctioned;
 
     mapping(address => uint256) pendingReturns;
-
     uint256[] owned; // arrary if NDTs owned by an address
 
     struct User {
@@ -93,7 +86,6 @@ abstract contract HavenMarketPlace is
         string instagramUrl;
         string website;
     }
-
     mapping(address => User) users_;
     address[] public marketUserAddresses;
 
