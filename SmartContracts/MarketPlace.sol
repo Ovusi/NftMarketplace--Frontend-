@@ -125,17 +125,18 @@ abstract contract HavenMarketPlace is
     // CORE FUNCTIONS
 
     function createUser(
-        address useraddress,
         string memory useruri_
     ) external returns (bool) {
+        User storage userr = users_[msg.sender];
+        require(msg.sender != userr.userAddress);
         User memory user = User(
             verified.no,
-            useraddress,
+            msg.sender,
             useruri_
         );
-        users_[useraddress] = user;
-        marketUserAddresses.push(useraddress);
-        emit UserCreated(useraddress, useruri_);
+        users_[msg.sender] = user;
+        marketUserAddresses.push(msg.sender);
+        emit UserCreated(msg.sender, useruri_);
         return true;
     }
 
@@ -147,9 +148,9 @@ abstract contract HavenMarketPlace is
         user.verified = verified.yes;
     }
 
-    function editUser(address useradd, string memory useruri_) external {
-        User storage user = users_[useradd];
-        require(useradd == user.userAddress);
+    function editUser(string memory useruri_) external {
+        User storage user = users_[msg.sender];
+        require(msg.sender == user.userAddress);
         user.userURI = useruri_;
     }
 
