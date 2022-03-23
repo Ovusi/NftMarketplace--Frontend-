@@ -29,6 +29,7 @@ abstract contract HavenMarketPlace is
     event auctionSold(address buyer, uint256 id, uint256 sellingPrice);
     event auctionCanceled(address owner, uint256 id);
     event withdrawnFunds(address owner, uint256 amount);
+    event UserCreated(address user, string username);
 
     enum status {
         open,
@@ -78,6 +79,18 @@ abstract contract HavenMarketPlace is
 
     uint256[] owned; // arrary if NDTs owned by an address
 
+    struct User {
+        string userName;
+        string twitterUrl;
+        string redditUrl;
+        string discordUrl;
+        string instagramUrl;
+        string website;
+    }
+
+    mapping(address => User) users_;
+    address[] marketUserAddresses;
+
     modifier isClosed(uint256 aId) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(
@@ -119,6 +132,28 @@ abstract contract HavenMarketPlace is
 
     // CORE FUNCTIONS
 
+    function createUser(
+        address useraddress,
+        string memory username,
+        string memory twitter,
+        string memory reddit,
+        string memory discord,
+        string memory instagram,
+        string memory website
+    ) external returns (bool) {
+        User memory user = User(
+            username,
+            twitter,
+            reddit,
+            discord,
+            instagram,
+            website
+        );
+        users_[useraddress] = user;
+        emit UserCreated(useraddress, username);
+        return true;
+    }
+
     function listNft(
         address token_,
         uint256 tokenid_,
@@ -144,10 +179,12 @@ abstract contract HavenMarketPlace is
         return newItemId;
     }
 
-    function buyNft(
-        uint256 listingId_,
-        uint256 price_
-    ) external payable nonReentrant returns (bool) {
+    function buyNft(uint256 listingId_, uint256 price_)
+        external
+        payable
+        nonReentrant
+        returns (bool)
+    {
         Listing storage listing = _listings[listingId_];
         require(
             IERC20(tokenContract_).approve(address(this), price_) == true,

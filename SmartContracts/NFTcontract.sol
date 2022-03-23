@@ -199,4 +199,9 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
 
         return tokensId;
     }
+
+    function burnToken(uint tokenId) external returns (string memory) {
+        _burn(tokenId);
+        return ("Burned successfully");
+    }
 }
