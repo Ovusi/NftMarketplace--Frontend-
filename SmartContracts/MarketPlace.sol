@@ -16,7 +16,6 @@ abstract contract HavenMarketPlace is
     ERC721URIStorage,
     ReentrancyGuard
 {
-    // STATE VARIABLES
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
@@ -143,7 +142,7 @@ abstract contract HavenMarketPlace is
     function verifiyUser(address useradd, address admin) external {
         // todo: sort admin priviledge
         User storage user = users_[useradd];
-        require(user.verified != verified.yes, "User already verified");
+        require(user.verified != verified.no, "User already verified");
         require(admin == msg.sender);
         user.verified = verified.yes;
     }
