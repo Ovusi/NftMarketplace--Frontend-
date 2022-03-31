@@ -6,8 +6,6 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/utils/math/Math.sol";
-import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
@@ -77,6 +75,7 @@ abstract contract HavenMarketPlace is
     struct User {
         verified verified;
         address userAddress;
+        uint regTime;
         string userURI;
     }
     mapping(address => User) users_;
@@ -131,6 +130,7 @@ abstract contract HavenMarketPlace is
         User memory user = User(
             verified.no,
             msg.sender,
+            block.timestamp,
             useruri_
         );
         users_[msg.sender] = user;
