@@ -17,6 +17,11 @@ abstract contract HavenMarketPlace is
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+
+    /*///////////////////////////////////////////////////////////////
+                            Events
+    //////////////////////////////////////////////////////////////*/
+
     event Listed(address seller, address newToken, uint256 id, uint256 price);
     event deListed(address owner, uint256 id);
     event Bought(address buyer, uint256 price, uint256 id);
@@ -28,6 +33,11 @@ abstract contract HavenMarketPlace is
     event withdrawnFunds(address owner, uint256 amount);
     event UserCreated(address user, string useruri);
 
+    
+    /*///////////////////////////////////////////////////////////////
+                            State variables
+    //////////////////////////////////////////////////////////////*/
+
     address payable public beneficiary;
     uint256 public bidTime = block.timestamp;
     uint256 public bidEndTime;
@@ -35,6 +45,11 @@ abstract contract HavenMarketPlace is
     uint256 public highestBid;
     address senderAdd;
     address payable tokenContract_;
+
+    
+    /*///////////////////////////////////////////////////////////////
+                            Enums
+    //////////////////////////////////////////////////////////////*/
 
     enum status {
         open,
@@ -46,6 +61,11 @@ abstract contract HavenMarketPlace is
         yes,
         no
     }
+
+    
+    /*///////////////////////////////////////////////////////////////
+                        Structs, Mappings and Lists
+    //////////////////////////////////////////////////////////////*/
 
     struct Listing {
         status status;
@@ -98,7 +118,11 @@ abstract contract HavenMarketPlace is
         tokenContract_ = tokenContractAddress;
     }
 
-    // HELPER FUNCTIONS
+    
+    /*///////////////////////////////////////////////////////////////
+                            Helper logic
+    //////////////////////////////////////////////////////////////*/
+
     function find(uint256 value) internal view returns (uint256) {
         uint256 i = 0;
         while (itemsListed[i] != value) {
@@ -120,7 +144,10 @@ abstract contract HavenMarketPlace is
         itemsListed.pop();
     }
 
-    // CORE FUNCTIONS
+    
+    /*///////////////////////////////////////////////////////////////
+                            User logic
+    //////////////////////////////////////////////////////////////*/
 
     function createUser(
         string memory useruri_
@@ -152,6 +179,11 @@ abstract contract HavenMarketPlace is
         require(msg.sender == user.userAddress);
         user.userURI = useruri_;
     }
+
+    
+    /*///////////////////////////////////////////////////////////////
+                        Direct listing logic
+    //////////////////////////////////////////////////////////////*/
 
     function listNft(
         address token_,
@@ -244,6 +276,11 @@ abstract contract HavenMarketPlace is
 
         return (true, "canceled");
     }
+
+    
+    /*///////////////////////////////////////////////////////////////
+                            Auction logic
+    //////////////////////////////////////////////////////////////*/
 
     function placeAuction(
         address token_,
@@ -395,6 +432,11 @@ abstract contract HavenMarketPlace is
 
         return (true, "Reward claimed successfully.");
     }
+
+    
+    /*///////////////////////////////////////////////////////////////
+                            Getter functions
+    //////////////////////////////////////////////////////////////*/
 
     function getAllAuctions() external view returns (uint256[] memory) {
         return itemsAuctioned;
