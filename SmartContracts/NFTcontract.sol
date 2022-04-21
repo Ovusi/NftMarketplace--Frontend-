@@ -147,6 +147,7 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         )
     {
         require(id_list.length < MAX_SUPPLY);
+        require(msg.sender == _owner);
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();
@@ -175,6 +176,7 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     {
         require(tokenURIList.length <= MAX_PER_MINT);
         require(id_list.length < MAX_SUPPLY);
+        require(msg.sender == _owner);
         recipients[0] = _owner;
         uint256 newItemId = _tokenIds.current();
 
