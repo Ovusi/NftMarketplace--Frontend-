@@ -52,7 +52,6 @@ contract NFT is
     uint256[] id_list;
 
 
-    
     /*///////////////////////////////////////////////////////////////
                         Overriding functions
     //////////////////////////////////////////////////////////////*/
@@ -90,11 +89,21 @@ contract NFT is
         return super.supportsInterface(interfaceId);
     }
 
+    
+    /*///////////////////////////////////////////////////////////////
+                            Constructor
+    //////////////////////////////////////////////////////////////*/
+
     constructor(string memory name, string memory sym) ERC721(_name, _symbol) {
         _owner = msg.sender;
         _symbol = sym;
         _name = name;
     }
+
+        
+    /*///////////////////////////////////////////////////////////////
+                        Contract URI
+    //////////////////////////////////////////////////////////////*/
 
     function getImage() external view returns (string memory) {
         return pictureHash;
@@ -153,6 +162,11 @@ contract NFT is
         return _symbol;
     }
 
+        
+    /*///////////////////////////////////////////////////////////////
+                        Core functions
+    //////////////////////////////////////////////////////////////*/
+
     function mintNft(string memory tokenURI_)
         external
         onlyOwner
@@ -207,6 +221,17 @@ contract NFT is
         return (newItemId, tokenURIList, true);
     }
 
+    function burnToken(uint256 tokenId) external returns (string memory) {
+        require(msg.sender == _owner);
+        _burn(tokenId);
+        return ("Burned successfully");
+    }
+    
+       
+    /*///////////////////////////////////////////////////////////////
+                        Getter functions
+    //////////////////////////////////////////////////////////////*/
+
     function tokensOfOwner(address token_owner)
         external
         view
@@ -219,11 +244,5 @@ contract NFT is
         }
 
         return tokensId;
-    }
-
-    function burnToken(uint256 tokenId) external returns (string memory) {
-        require(msg.sender == _owner);
-        _burn(tokenId);
-        return ("Burned successfully");
     }
 }
