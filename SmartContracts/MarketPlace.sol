@@ -191,11 +191,11 @@ abstract contract HavenMarketPlace is
         uint256 price_
     ) external nonReentrant returns (uint256) {
         require(price_ > 0);
-        IERC721(token_).transferFrom(senderAdd, address(this), tokenid_);
+        IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
 
         Listing memory listing = Listing(
             status.open,
-            senderAdd,
+            msg.sender,
             token_,
             tokenid_,
             price_
@@ -206,7 +206,7 @@ abstract contract HavenMarketPlace is
         _listings[newItemId] = listing;
         itemsListed.push(newItemId);
 
-        emit Listed(senderAdd, token_, tokenid_, price_);
+        emit Listed(msg.sender, token_, tokenid_, price_);
         return newItemId;
     }
 
@@ -225,10 +225,10 @@ abstract contract HavenMarketPlace is
             IERC20(tokenContract_).balanceOf(senderAdd) >= price_,
             "Not enough funds."
         );
-        require(senderAdd != listing.seller, "Permission not granted.");
+        require(msg.sender != listing.seller, "Permission not granted.");
         require(price_ >= listing.price, "Insufficient amount.");
         require(listing.status == status.open);
-        require(tokenContract_ != senderAdd);
+        require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
 
         uint256 fee = (price_ * 2) / 100;
@@ -236,7 +236,7 @@ abstract contract HavenMarketPlace is
 
         IERC721(listing.nftContract).transferFrom(
             address(this),
-            senderAdd,
+            msg.sender,
             listing.tokenId
         );
         IERC20(tokenContract_).transferFrom(
@@ -260,13 +260,13 @@ abstract contract HavenMarketPlace is
         returns (bool, string memory)
     {
         Listing storage listing = _listings[lId];
-        require(senderAdd == listing.seller);
+        require(msg.sender == listing.seller);
         require(listing.status == status.open);
         require(lId == find(lId));
 
         IERC721(listing.nftContract).transferFrom(
             address(this),
-            senderAdd,
+            msg.sender,
             listing.tokenId
         );
 
@@ -290,13 +290,13 @@ abstract contract HavenMarketPlace is
     ) external nonReentrant returns (uint256) {
         require(price_ > 0);
 
-        IERC721(token_).transferFrom(senderAdd, address(this), tokenid_);
+        IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
         bidEndTime = aucEndTime;
         uint256 bidDuration = block.timestamp + bidEndTime;
 
         AuctionedItem memory auctionedItem = AuctionedItem(
             status.open,
-            senderAdd,
+            msg.sender,
             token_,
             block.timestamp,
             bidDuration,
@@ -311,7 +311,7 @@ abstract contract HavenMarketPlace is
 
         auctionedItem.status = status.open;
 
-        emit itemAuctioned(senderAdd, newItemId, price_);
+        emit itemAuctioned(msg.sender, newItemId, price_);
         return newItemId;
     }
 
@@ -336,24 +336,24 @@ abstract contract HavenMarketPlace is
 
         pendingReturns[highestBidder] += highestBid;
 
-        highestBidder = senderAdd;
+        highestBidder = msg.sender;
         highestBid = price_;
 
-        IERC20(tokenContract_).transferFrom(senderAdd, address(this), price_);
+        IERC20(tokenContract_).transferFrom(msg.sender, address(this), price_);
 
         emit HighestBidIncreased(highestBidder, highestBid);
     }
 
     function withdrawUnderBid(uint256 aId) external payable nonReentrant {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
-        require(senderAdd != auctioneditem.creator);
-        require(senderAdd != highestBidder);
+        require(msg.sender != auctioneditem.creator);
+        require(msg.sender != highestBidder);
 
-        uint256 amount = pendingReturns[senderAdd];
+        uint256 amount = pendingReturns[msg.sender];
 
-        IERC20(tokenContract_).transferFrom(address(this), senderAdd, amount);
+        IERC20(tokenContract_).transferFrom(address(this), msg.sender, amount);
 
-        delete pendingReturns[senderAdd];
+        delete pendingReturns[msg.sender];
     }
 
     function withdrawHighestBid(uint256 aId)
@@ -365,7 +365,7 @@ abstract contract HavenMarketPlace is
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(auctioneditem.status != status.canceled);
         require(block.timestamp > auctioneditem.auctionEndTime);
-        require(senderAdd == auctioneditem.creator);
+        require(msg.sender == auctioneditem.creator);
 
         uint256 amount = highestBid;
 
@@ -379,7 +379,7 @@ abstract contract HavenMarketPlace is
         ); // Todo
         IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // Todo
 
-        emit withdrawnFunds(senderAdd, commision);
+        emit withdrawnFunds(msg.sender, commision);
 
         return (true, "Withdrawal successful");
     }
@@ -391,7 +391,7 @@ abstract contract HavenMarketPlace is
     {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(
-            senderAdd == auctioneditem.creator,
+            msg.sender == auctioneditem.creator,
             "You are not allowed to cancel this auction."
         );
         require(auctioneditem.status == status.open);
@@ -404,7 +404,7 @@ abstract contract HavenMarketPlace is
 
         auctioneditem.status = status.canceled;
 
-        emit auctionCanceled(senderAdd, aId);
+        emit auctionCanceled(msg.sender, aId);
 
         return (true, "Auction canceled");
     }
@@ -417,9 +417,9 @@ abstract contract HavenMarketPlace is
         returns (bool, string memory)
     {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
-        require(senderAdd == highestBidder);
+        require(msg.sender == highestBidder);
         require(block.timestamp > auctioneditem.auctionEndTime);
-        require(senderAdd != auctioneditem.creator);
+        require(msg.sender != auctioneditem.creator);
         require(auctioneditem.status != status.canceled);
 
         IERC721(auctioneditem.nftContract).transferFrom(
@@ -428,7 +428,7 @@ abstract contract HavenMarketPlace is
             auctioneditem.tokenId
         );
 
-        emit auctionSold(senderAdd, aId, highestBid);
+        emit auctionSold(msg.sender, aId, highestBid);
 
         return (true, "Reward claimed successfully.");
     }
