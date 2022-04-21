@@ -34,6 +34,9 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     uint256 public constant MAX_SUPPLY = 10000;
     uint256 public constant MAX_PER_MINT = 5;
 
+    mapping(uint => string) ids;
+    uint[] id_list;
+
     string public baseTokenURI;
 
     function _beforeTokenTransfer(
@@ -143,11 +146,15 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
             bool
         )
     {
+        require(id_list.length < MAX_SUPPLY);
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();
         _safeMint(_owner, newItemId);
         _setTokenURI(newItemId, tokenURI_);
+
+        ids[newItemId] = tokenURI_;
+        id_list.push(newItemId);
 
         emit Minted(_owner, tokenURI_);
         return (newItemId, tokenURI_, true);
@@ -166,6 +173,8 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
             bool
         )
     {
+        require(tokenURIList.length <= MAX_PER_MINT);
+        require(id_list.length < MAX_SUPPLY);
         recipients[0] = _owner;
         uint256 newItemId = _tokenIds.current();
 
@@ -193,6 +202,7 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     }
 
     function burnToken(uint256 tokenId) external returns (string memory) {
+        require(msg.sender == _owner);
         _burn(tokenId);
         return ("Burned successfully");
     }
