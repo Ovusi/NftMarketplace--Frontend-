@@ -34,7 +34,7 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     uint256 public constant MAX_SUPPLY = 10000;
     uint256 public constant MAX_PER_MINT = 5;
 
-    mapping(uint => string) ids;
+    mapping(uint => string) ids_uri;
     uint[] id_list;
 
     string public baseTokenURI;
@@ -154,7 +154,7 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         _safeMint(_owner, newItemId);
         _setTokenURI(newItemId, tokenURI_);
 
-        ids[newItemId] = tokenURI_;
+        ids_uri[newItemId] = tokenURI_;
         id_list.push(newItemId);
 
         emit Minted(_owner, tokenURI_);
