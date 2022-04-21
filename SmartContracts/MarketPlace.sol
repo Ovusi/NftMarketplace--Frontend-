@@ -89,9 +89,6 @@ abstract contract HavenMarketPlace is
     mapping(uint256 => AuctionedItem) public auctionedItem_;
     uint256[] public itemsAuctioned;
 
-    mapping(address => uint256) pendingReturns;
-    uint256[] owned; // arrary if NDTs owned by an address
-
     struct User {
         verified verified;
         address userAddress;
@@ -100,6 +97,9 @@ abstract contract HavenMarketPlace is
     }
     mapping(address => User) users_;
     address[] public marketUserAddresses;
+
+    mapping(address => uint256) pendingReturns;
+    uint256[] owned; // arrary if NDTs owned by an address
 
     modifier isClosed(uint256 aId) {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
