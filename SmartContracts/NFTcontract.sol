@@ -101,6 +101,7 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         onlyOwner
         returns (string memory)
     {
+        require(msg.sender == _owner, "Access denied.");
         collectionUri = newUri;
         emit UriChanged(collectionUri);
         return collectionUri;
