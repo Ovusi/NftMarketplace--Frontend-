@@ -17,7 +17,6 @@ abstract contract HavenMarketPlace is
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-
     /*///////////////////////////////////////////////////////////////
                             Events
     //////////////////////////////////////////////////////////////*/
@@ -33,7 +32,6 @@ abstract contract HavenMarketPlace is
     event withdrawnFunds(address owner, uint256 amount);
     event UserCreated(address user, string useruri);
 
-    
     /*///////////////////////////////////////////////////////////////
                             State variables
     //////////////////////////////////////////////////////////////*/
@@ -46,7 +44,6 @@ abstract contract HavenMarketPlace is
     address senderAdd;
     address payable tokenContract_;
 
-    
     /*///////////////////////////////////////////////////////////////
                             Enums
     //////////////////////////////////////////////////////////////*/
@@ -62,7 +59,6 @@ abstract contract HavenMarketPlace is
         no
     }
 
-    
     /*///////////////////////////////////////////////////////////////
                         Structs, Mappings and Lists
     //////////////////////////////////////////////////////////////*/
@@ -92,7 +88,7 @@ abstract contract HavenMarketPlace is
     struct User {
         verified verified;
         address userAddress;
-        uint regTime;
+        uint256 regTime;
         string userURI;
     }
     mapping(address => User) users_;
@@ -118,7 +114,6 @@ abstract contract HavenMarketPlace is
         tokenContract_ = tokenContractAddress;
     }
 
-    
     /*///////////////////////////////////////////////////////////////
                             Helper logic
     //////////////////////////////////////////////////////////////*/
@@ -144,14 +139,11 @@ abstract contract HavenMarketPlace is
         itemsListed.pop();
     }
 
-    
     /*///////////////////////////////////////////////////////////////
                             User logic
     //////////////////////////////////////////////////////////////*/
 
-    function createUser(
-        string memory useruri_
-    ) external returns (bool) {
+    function createUser(string memory useruri_) external returns (bool) {
         User storage userr = users_[msg.sender];
         require(msg.sender != userr.userAddress);
         User memory user = User(
@@ -180,7 +172,6 @@ abstract contract HavenMarketPlace is
         user.userURI = useruri_;
     }
 
-    
     /*///////////////////////////////////////////////////////////////
                         Direct listing logic
     //////////////////////////////////////////////////////////////*/
@@ -277,7 +268,6 @@ abstract contract HavenMarketPlace is
         return (true, "canceled");
     }
 
-    
     /*///////////////////////////////////////////////////////////////
                             Auction logic
     //////////////////////////////////////////////////////////////*/
@@ -433,7 +423,6 @@ abstract contract HavenMarketPlace is
         return (true, "Reward claimed successfully.");
     }
 
-    
     /*///////////////////////////////////////////////////////////////
                             Getter functions
     //////////////////////////////////////////////////////////////*/

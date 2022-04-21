@@ -22,7 +22,6 @@ contract NFT is
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    
     /*///////////////////////////////////////////////////////////////
                             Events
     //////////////////////////////////////////////////////////////*/
@@ -33,7 +32,6 @@ contract NFT is
     event ProfileImagedChanged(string newhash);
     event CollNameChanged(string name);
     event SymChanged(string sym);
-
 
     /*///////////////////////////////////////////////////////////////
                             State variables
@@ -50,7 +48,6 @@ contract NFT is
     string public baseTokenURI;
     mapping(uint256 => string) ids_uri;
     uint256[] id_list;
-
 
     /*///////////////////////////////////////////////////////////////
                         Overriding functions
@@ -89,7 +86,6 @@ contract NFT is
         return super.supportsInterface(interfaceId);
     }
 
-    
     /*///////////////////////////////////////////////////////////////
                             Constructor
     //////////////////////////////////////////////////////////////*/
@@ -100,7 +96,6 @@ contract NFT is
         _name = name;
     }
 
-        
     /*///////////////////////////////////////////////////////////////
                         Contract URI
     //////////////////////////////////////////////////////////////*/
@@ -130,14 +125,6 @@ contract NFT is
         return collectionUri;
     }
 
-    function getName() external view returns (string memory) {
-        return _name;
-    }
-
-    function getSymbol() external view returns (string memory) {
-        return _symbol;
-    }
-
     function changeName(string memory newName)
         external
         onlyOwner
@@ -158,7 +145,6 @@ contract NFT is
         return _symbol;
     }
 
-        
     /*///////////////////////////////////////////////////////////////
                         Core functions
     //////////////////////////////////////////////////////////////*/
@@ -223,13 +209,20 @@ contract NFT is
         return ("Burned successfully");
     }
 
-       
     /*///////////////////////////////////////////////////////////////
                         Getter functions
     //////////////////////////////////////////////////////////////*/
 
-     function getImage() external view returns (string memory) {
+    function getImage() external view returns (string memory) {
         return pictureHash;
+    }
+
+    function getName() external view returns (string memory) {
+        return _name;
+    }
+
+    function getSymbol() external view returns (string memory) {
+        return _symbol;
     }
 
     function tokensOfOwner(address token_owner)
