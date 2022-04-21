@@ -23,21 +23,18 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     event CollNameChanged(string name);
     event SymChanged(string sym);
 
-    address public contractAddress;
     address _owner;
     string public pictureHash;
     string public collectionUri;
     string _name;
     string _symbol;
     bytes _data;
-
     uint256 public constant MAX_SUPPLY = 10000;
     uint256 public constant MAX_PER_MINT = 5;
+    string public baseTokenURI;
 
     mapping(uint => string) ids_uri;
     uint[] id_list;
-
-    string public baseTokenURI;
 
     function _beforeTokenTransfer(
         address from,
