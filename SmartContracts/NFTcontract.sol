@@ -18,15 +18,15 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
 
     event Minted(address add, string uri);
     event MintedBatch(address add, string[]);
-    event DescriptionChanged(string description);
+    event UriChanged(string description);
     event ProfileImagedChanged(string newhash);
     event CollNameChanged(string name);
     event SymChanged(string sym);
 
     address public contractAddress;
-    address payable _owner;
+    address _owner;
     string public pictureHash;
-    string public collectionDescription;
+    string public collectionUri;
     string _name;
     string _symbol;
     bytes _data;
@@ -70,13 +70,10 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     }
 
     constructor(
-        address marketAddress,
-        address payable senderAdd,
         string memory name,
         string memory sym
     ) ERC721(_name, _symbol) {
-        contractAddress = marketAddress;
-        _owner = senderAdd;
+        _owner = msg.sender;
         _symbol = sym;
         _name = name;
     }
@@ -95,18 +92,18 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         return pictureHash;
     }
 
-    function getDescription() external view returns (string memory) {
-        return collectionDescription;
+    function getCollectionUri() external view returns (string memory) {
+        return collectionUri;
     }
 
-    function updateDescription(string memory newDescription)
+    function updateCollectionUri(string memory newUri)
         external
         onlyOwner
         returns (string memory)
     {
-        collectionDescription = newDescription;
-        emit DescriptionChanged(collectionDescription);
-        return collectionDescription;
+        collectionUri = newUri;
+        emit UriChanged(collectionUri);
+        return collectionUri;
     }
 
     function getName() external view returns (string memory) {
@@ -151,7 +148,6 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         uint256 newItemId = _tokenIds.current();
         _safeMint(_owner, newItemId);
         _setTokenURI(newItemId, tokenURI_);
-        setApprovalForAll(contractAddress, true);
 
         emit Minted(_owner, tokenURI_);
         return (newItemId, tokenURI_, true);
@@ -176,7 +172,6 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         for (uint256 i = 0; i < recipients.length; i++) {
             _safeMint(_owner, newItemId);
             _setTokenURI(newItemId, tokenURIList[i]);
-            setApprovalForAll(contractAddress, true);
             _tokenIds.increment();
         }
         emit MintedBatch(_owner, tokenURIList);
