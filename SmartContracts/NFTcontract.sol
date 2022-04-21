@@ -9,12 +9,23 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
-    // Create new nft collection
+contract NFT is
+    ERC721,
+    ERC721URIStorage,
+    ERC721Enumerable,
+    Ownable,
+    ReentrancyGuard
+{
     using SafeMath for uint256;
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
+
+    
+    /*///////////////////////////////////////////////////////////////
+                            Events
+    //////////////////////////////////////////////////////////////*/
 
     event Minted(address add, string uri);
     event MintedBatch(address add, string[]);
@@ -22,6 +33,11 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     event ProfileImagedChanged(string newhash);
     event CollNameChanged(string name);
     event SymChanged(string sym);
+
+
+    /*///////////////////////////////////////////////////////////////
+                            State variables
+    //////////////////////////////////////////////////////////////*/
 
     address _owner;
     string public pictureHash;
@@ -32,9 +48,14 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     uint256 public constant MAX_SUPPLY = 10000;
     uint256 public constant MAX_PER_MINT = 5;
     string public baseTokenURI;
+    mapping(uint256 => string) ids_uri;
+    uint256[] id_list;
 
-    mapping(uint => string) ids_uri;
-    uint[] id_list;
+
+    
+    /*///////////////////////////////////////////////////////////////
+                        Overriding functions
+    //////////////////////////////////////////////////////////////*/
 
     function _beforeTokenTransfer(
         address from,
@@ -69,10 +90,7 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         return super.supportsInterface(interfaceId);
     }
 
-    constructor(
-        string memory name,
-        string memory sym
-    ) ERC721(_name, _symbol) {
+    constructor(string memory name, string memory sym) ERC721(_name, _symbol) {
         _owner = msg.sender;
         _symbol = sym;
         _name = name;
@@ -138,6 +156,7 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     function mintNft(string memory tokenURI_)
         external
         onlyOwner
+        nonReentrant
         returns (
             uint256,
             string memory,
@@ -166,6 +185,7 @@ contract NFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         external
         virtual
         onlyOwner
+        nonReentrant
         returns (
             uint256,
             string[] memory,
