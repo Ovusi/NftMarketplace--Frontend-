@@ -109,6 +109,10 @@ abstract contract HavenMarketPlace is
         _;
     }
 
+    /*///////////////////////////////////////////////////////////////
+                            Constructor
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address senderAddress, address payable tokenContractAddress) {
         senderAdd = senderAddress;
         tokenContract_ = tokenContractAddress;
