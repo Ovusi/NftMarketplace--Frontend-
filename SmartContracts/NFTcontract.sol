@@ -105,10 +105,6 @@ contract NFT is
                         Contract URI
     //////////////////////////////////////////////////////////////*/
 
-    function getImage() external view returns (string memory) {
-        return pictureHash;
-    }
-
     function updateImage(string memory newHash)
         external
         onlyOwner
@@ -226,11 +222,15 @@ contract NFT is
         _burn(tokenId);
         return ("Burned successfully");
     }
-    
+
        
     /*///////////////////////////////////////////////////////////////
                         Getter functions
     //////////////////////////////////////////////////////////////*/
+
+     function getImage() external view returns (string memory) {
+        return pictureHash;
+    }
 
     function tokensOfOwner(address token_owner)
         external
