@@ -90,9 +90,20 @@ contract NFT is
                             Helper logic
     //////////////////////////////////////////////////////////////*/
 
-    function item_exists(uint id) public view returns (bool) {
+    function item_exists(uint id) internal view returns (bool) {
         for (uint256 i = 0; i < id_list.length; i++) {
-            if(id == id_list[i]) {
+            if(id_list[i] == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function remove_item(uint id) internal returns (bool) {
+        require(item_exists(id));
+        for (uint256 i = 0; i < id_list.length; i++) {
+            if(id_list[i] == id) {
+                delete id_list[i];
                 return true;
             }
         }
@@ -218,6 +229,7 @@ contract NFT is
 
     function burnToken(uint256 tokenId) external returns (string memory) {
         require(msg.sender == _owner);
+        require(item_exists(tokenId));
         _burn(tokenId);
         return ("Burned successfully");
     }
