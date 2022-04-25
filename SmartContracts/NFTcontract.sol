@@ -99,17 +99,6 @@ contract NFT is
         return false;
     }
 
-    function remove_item(uint id) internal returns (bool) {
-        require(item_exists(id));
-        for (uint256 i = 0; i < id_list.length; i++) {
-            if(id_list[i] == id) {
-                delete id_list[i];
-                return true;
-            }
-        }
-        return false;
-    }
-
     /*///////////////////////////////////////////////////////////////
                             Constructor
     //////////////////////////////////////////////////////////////*/

@@ -307,6 +307,7 @@ abstract contract HavenMarketPlace is
         );
 
         delete _listings[lId];
+        remove_listing(lId);
         listing.status = status.canceled;
         emit deListed(senderAdd, lId);
 
@@ -356,6 +357,7 @@ abstract contract HavenMarketPlace is
         nonReentrant
         isClosed(aId)
     {
+        require(auction_exists(aId) == true);
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(
             bidTime >= auctioneditem.auctionTime &&
@@ -424,6 +426,7 @@ abstract contract HavenMarketPlace is
         nonReentrant
         returns (bool, string memory)
     {
+        require(auction_exists(aId) == true);
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(
             msg.sender == auctioneditem.creator,
@@ -438,6 +441,7 @@ abstract contract HavenMarketPlace is
         );
 
         auctioneditem.status = status.canceled;
+        remove_auction(aId);
 
         emit auctionCanceled(msg.sender, aId);
 
@@ -481,6 +485,7 @@ abstract contract HavenMarketPlace is
         view
         returns (string memory)
     {
+        require(auction_exists(aId) == true);
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         return tokenURI(auctioneditem.tokenId);
     }
@@ -490,6 +495,7 @@ abstract contract HavenMarketPlace is
         view
         returns (Listing memory)
     {
+        require(listing_exists(lId) == true);
         Listing storage listing = _listings[lId];
         return listing;
     }
