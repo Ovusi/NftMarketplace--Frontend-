@@ -162,27 +162,6 @@ abstract contract HavenMarketPlace is
         return false;
     }
 
-    function find(uint256 value) internal view returns (uint256) {
-        uint256 i = 0;
-        while (itemsListed[i] != value) {
-            i++;
-        }
-        return i;
-    }
-
-    function removeByValue(uint256 value) internal {
-        uint256 i = find(value);
-        removeByIndex(i);
-    }
-
-    function removeByIndex(uint256 i) internal {
-        while (i < itemsListed.length - 1) {
-            itemsListed[i] = itemsListed[i + 1];
-            i++;
-        }
-        itemsListed.pop();
-    }
-
     /*///////////////////////////////////////////////////////////////
                             User logic
     //////////////////////////////////////////////////////////////*/
