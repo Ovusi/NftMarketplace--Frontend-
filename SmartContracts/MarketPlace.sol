@@ -126,42 +126,41 @@ abstract contract HavenMarketPlace is
                             Helper logic
     //////////////////////////////////////////////////////////////*/
 
-    function listing_exists(uint id) internal view returns (bool) {
+    function listing_exists(uint256 id) internal view returns (bool) {
         for (uint256 i = 0; i < itemsListed.length; i++) {
-            if(itemsListed[i] == id) {
+            if (itemsListed[i] == id) {
                 return true;
             }
         }
         return false;
     }
 
-     function remove_listing(uint id) internal returns (bool) {
+    function remove_listing(uint256 id) internal returns (bool) {
         for (uint256 i = 0; i < itemsListed.length; i++) {
-            if(itemsListed[i] == id) {
+            if (itemsListed[i] == id) {
                 delete itemsListed[i];
             }
         }
         return false;
     }
 
-    function auction_exists(uint id) internal view returns (bool) {
+    function auction_exists(uint256 id) internal view returns (bool) {
         for (uint256 i = 0; i < itemsAuctioned.length; i++) {
-            if(itemsAuctioned[i] == id) {
+            if (itemsAuctioned[i] == id) {
                 return true;
             }
         }
         return false;
     }
 
-     function remove_auction(uint id) internal returns (bool) {
+    function remove_auction(uint256 id) internal returns (bool) {
         for (uint256 i = 0; i < itemsAuctioned.length; i++) {
-            if(itemsAuctioned[i] == id) {
+            if (itemsAuctioned[i] == id) {
                 delete itemsAuctioned[i];
             }
         }
         return false;
     }
-
 
     function find(uint256 value) internal view returns (uint256) {
         uint256 i = 0;

@@ -90,9 +90,9 @@ contract NFT is
                             Helper logic
     //////////////////////////////////////////////////////////////*/
 
-    function item_exists(uint id) internal view returns (bool) {
+    function item_exists(uint256 id) internal view returns (bool) {
         for (uint256 i = 0; i < id_list.length; i++) {
-            if(id_list[i] == id) {
+            if (id_list[i] == id) {
                 return true;
             }
         }
