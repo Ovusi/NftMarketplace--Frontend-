@@ -276,7 +276,7 @@ abstract contract HavenMarketPlace is
         Listing storage listing = _listings[lId];
         require(msg.sender == listing.seller);
         require(listing.status == status.open);
-        require(lId == find(lId));
+        require(listing_exists(lId) == true);
 
         IERC721(listing.nftContract).transferFrom(
             address(this),
