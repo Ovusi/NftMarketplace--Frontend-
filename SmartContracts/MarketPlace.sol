@@ -85,7 +85,6 @@ abstract contract HavenMarketPlace is
     mapping(uint256 => AuctionedItem) public auctionedItem_;
     uint256[] public itemsAuctioned;
 
-    address[] ownedCollections;
     struct User {
         verified verified;
         address userAddress;
@@ -95,6 +94,9 @@ abstract contract HavenMarketPlace is
     }
     mapping(address => User) users_;
     address[] public marketUserAddresses;
+    mapping(address => address[]) ownedCollections_;
+
+    address[] public marketCollections;
 
     mapping(address => uint256) pendingReturns;
     uint256[] owned; // arrary of NFTs owned by an address
@@ -177,7 +179,7 @@ abstract contract HavenMarketPlace is
             msg.sender,
             block.timestamp,
             useruri_,
-            ownedCollections
+            ownedCollections_[msg.sender]
         );
         users_[msg.sender] = user;
         marketUserAddresses.push(msg.sender);
@@ -203,6 +205,8 @@ abstract contract HavenMarketPlace is
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
         user.ownedCollections.push(collectionaddress);
+        ownedCollections_[msg.sender].push(collectionaddress);
+        marketCollections.push(collectionaddress);
 
         return "Collection added successfully";
     }
