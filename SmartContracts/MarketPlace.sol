@@ -31,6 +31,7 @@ abstract contract HavenMarketPlace is
     event auctionCanceled(address owner, uint256 id);
     event withdrawnFunds(address owner, uint256 amount);
     event UserCreated(address user, string useruri);
+    event CollectionAdded(address user, address collectionadd);
 
     /*///////////////////////////////////////////////////////////////
                             State variables
@@ -207,6 +208,8 @@ abstract contract HavenMarketPlace is
         ownedCollections_[msg.sender].push(collectionaddress);
         user.ownedCollections = ownedCollections_[msg.sender];
         marketCollections.push(collectionaddress);
+
+        emit CollectionAdded(msg.sender, collectionaddress);
 
         return "Collection added successfully";
     }
