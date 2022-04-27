@@ -48,6 +48,7 @@ contract NFT is
     string public baseTokenURI;
     mapping(uint256 => string) ids_uri;
     uint256[] id_list;
+    address[] public token_owners;
 
     /*///////////////////////////////////////////////////////////////
                         Overriding functions
@@ -177,7 +178,7 @@ contract NFT is
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();
-        _safeMint(_owner, newItemId);
+        _safeMint(address(this), newItemId);
         _setTokenURI(newItemId, tokenURI_);
 
         ids_uri[newItemId] = tokenURI_;
@@ -208,7 +209,7 @@ contract NFT is
         uint256 newItemId = _tokenIds.current();
 
         for (uint256 i = 0; i < recipients.length; i++) {
-            _safeMint(_owner, newItemId);
+            _safeMint(address(this), newItemId);
             _setTokenURI(newItemId, tokenURIList[i]);
             _tokenIds.increment();
         }
