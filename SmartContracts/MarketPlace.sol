@@ -101,7 +101,6 @@ abstract contract HavenMarketPlace is
 
     mapping(address => uint256) pendingReturns;
     uint256[] owned; // arrary of NFTs owned by an address
-    
 
     /*///////////////////////////////////////////////////////////////
                             Modifier
@@ -202,7 +201,10 @@ abstract contract HavenMarketPlace is
         user.userURI = useruri_;
     }
 
-    function add_collection(address collectionaddress) external returns (string memory) {
+    function add_collection(address collectionaddress)
+        external
+        returns (string memory)
+    {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
         ownedCollections_[msg.sender].push(collectionaddress);
