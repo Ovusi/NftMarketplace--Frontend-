@@ -96,6 +96,7 @@ abstract contract HavenMarketPlace is
 
     mapping(address => uint256) pendingReturns;
     uint256[] owned; // arrary of NFTs owned by an address
+    address[] ownedCollections;
 
     /*///////////////////////////////////////////////////////////////
                             Modifier
