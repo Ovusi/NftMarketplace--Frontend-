@@ -204,8 +204,8 @@ abstract contract HavenMarketPlace is
     function add_collection(address collectionaddress) external returns (string memory) {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
-        user.ownedCollections.push(collectionaddress);
         ownedCollections_[msg.sender].push(collectionaddress);
+        user.ownedCollections = ownedCollections_[msg.sender];
         marketCollections.push(collectionaddress);
 
         return "Collection added successfully";
