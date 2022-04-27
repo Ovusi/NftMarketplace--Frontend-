@@ -499,7 +499,7 @@ abstract contract HavenMarketPlace is
         return listing;
     }
 
-    function getAllListings() public view returns (uint256[] memory) {
+    function getAllListings() external view returns (uint256[] memory) {
         return itemsListed;
     }
 
