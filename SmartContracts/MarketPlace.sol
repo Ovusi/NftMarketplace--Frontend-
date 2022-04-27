@@ -507,4 +507,12 @@ abstract contract HavenMarketPlace is
         Listing storage listing = _listings[lId];
         return tokenURI(listing.tokenId);
     }
+    
+    function isVerified(address userAdd) external view returns (bool) {
+        User storage user = users_[userAdd];
+        if(user.verified == verified.yes) {
+            return true;
+        }
+        return false;
+    }
 }
