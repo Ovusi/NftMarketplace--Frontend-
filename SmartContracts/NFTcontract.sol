@@ -104,10 +104,11 @@ contract NFT is
                             Constructor
     //////////////////////////////////////////////////////////////*/
 
-    constructor(string memory name, string memory sym) ERC721(_name, _symbol) {
+    constructor(string memory name, string memory sym, string memory collectionuri) ERC721(_name, _symbol) {
         _owner = msg.sender;
         _symbol = sym;
         _name = name;
+        collectionUri = collectionuri;
     }
 
     /*///////////////////////////////////////////////////////////////
