@@ -3,10 +3,7 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 library Payments {
     address constant tokenContract_ =
@@ -36,7 +33,7 @@ library Payments {
                 tokenId
             );
             IERC20(currency).transferFrom(address(this), seller, commision); // Todo
-            for (uint256 receiver = 0; receiver < payees.length; receiver++) {
+            for (uint256 receiver = 0; receiver <= payeeNumber; receiver++) {
                 IERC20(currency).transferFrom(
                     address(this),
                     payees[receiver],
@@ -50,11 +47,12 @@ library Payments {
                 tokenId
             );
             IERC20(currency).transferFrom(address(this), seller, commision); // Todo
-            IERC20(tokenContract_).transferFrom(
-                address(this),
-                tokenContract_,
-                fee
-            ); // Todo
+            for (uint256 receiver = 0; receiver <= payeeNumber; receiver++) {
+                IERC20(currency).transferFrom(
+                    address(this),
+                    payees[receiver],
+                    payeeCommission
+                ); // Todo
         }
     }
 }
