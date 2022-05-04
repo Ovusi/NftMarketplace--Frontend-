@@ -26,7 +26,7 @@ library Payments {
         uint256 payeeNumber = payees.length;
         uint256 payeeCommission = fee / payeeNumber;
 
-        if (currency == MATIC) {
+        if (currency == MATIC || currency == HVXTOKEN) {
             IERC721(nftContract).transferFrom(
                 address(this),
                 msg.sender,
@@ -47,12 +47,13 @@ library Payments {
                 tokenId
             );
             IERC20(currency).transferFrom(address(this), seller, commision); // Todo
-            for (uint256 receiver = 0; receiver <= payeeNumber; receiver++) {
-                IERC20(currency).transferFrom(
-                    address(this),
-                    payees[receiver],
-                    payeeCommission
-                ); // Todo
+            IERC20(tokenContract_).transferFrom(
+                address(this),
+                tokenContract_,
+                fee
+            ); // Todo
+        } else {
+            revert();
         }
     }
 }
