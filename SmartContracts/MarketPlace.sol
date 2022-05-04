@@ -272,7 +272,7 @@ abstract contract HavenMarketPlace is
         require(tokenContract_ != listing.seller);
 
         payment(listing.nftContract, listing.seller, listing.currency, listing.tokenId, price_);
-
+        
         listing.status = status.sold;
 
         emit Bought(senderAdd, price_, listing.tokenId);
@@ -540,6 +540,6 @@ abstract contract HavenMarketPlace is
                 seller,
                 commision
             ); // Todo
-            IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // TodoNo
+            IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // Todo
     }
 }
