@@ -44,6 +44,8 @@ abstract contract HavenMarketPlace is
     uint256 public highestBid;
     address senderAdd;
     address payable tokenContract_;
+    address private MATIC;
+    address private HVXTOKEN;
 
     /*///////////////////////////////////////////////////////////////
                             Enums
@@ -68,6 +70,7 @@ abstract contract HavenMarketPlace is
         status status;
         address seller;
         address nftContract;
+        address currency;
         uint256 tokenId;
         uint256 price;
     }
@@ -223,6 +226,7 @@ abstract contract HavenMarketPlace is
     function listNft(
         address token_,
         uint256 tokenid_,
+        address currency,
         uint256 price_
     ) external nonReentrant returns (uint256) {
         require(price_ > 0);
@@ -232,6 +236,7 @@ abstract contract HavenMarketPlace is
             status.open,
             msg.sender,
             token_,
+            currency,
             tokenid_,
             price_
         );
@@ -266,20 +271,7 @@ abstract contract HavenMarketPlace is
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
 
-        uint256 fee = (price_ * 2) / 100;
-        uint256 commision = price_ - fee;
-
-        IERC721(listing.nftContract).transferFrom(
-            address(this),
-            msg.sender,
-            listing.tokenId
-        );
-        IERC20(tokenContract_).transferFrom(
-            address(this),
-            listing.seller,
-            commision
-        ); // Todo
-        IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // Todo
+        payment(listing.nftContract, listing.seller, listing.currency, listing.tokenId, price_);
 
         listing.status = status.sold;
 
@@ -514,5 +506,40 @@ abstract contract HavenMarketPlace is
             return true;
         }
         return false;
+    }
+
+    function payment(address nftContract, address seller, address currency, uint tokenId, uint amount) internal {
+        uint price_ = amount;
+        uint256 fee = (price_ * 2) / 100;
+        uint256 commision = price_ - fee;
+
+        if (currency == MATIC) {
+
+            IERC721(nftContract).transferFrom(
+                address(this),
+                msg.sender,
+                tokenId
+            );
+            IERC20(currency).transferFrom(
+                address(this),
+                seller,
+                commision
+            ); // Todo
+            IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // Todo
+        }
+
+        else if (currency == HVXTOKEN) {
+
+            IERC721(nftContract).transferFrom(
+                address(this),
+                msg.sender,
+                tokenId
+            );
+            IERC20(currency).transferFrom(
+                address(this),
+                seller,
+                commision
+            ); // Todo
+            IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // TodoNo
     }
 }
