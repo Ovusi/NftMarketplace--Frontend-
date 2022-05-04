@@ -271,10 +271,12 @@ abstract contract HavenMarketPlace is
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
 
-        payment(listing.nftContract, listing.seller, listing.currency, listing.tokenId, price_);
-        
-        listing.status = status.sold;
-
+        try payment(listing.nftContract, listing.seller, listing.currency, listing.tokenId, price_) returns (bool) {
+            listing.status = status.sold;
+            return true;
+        } catch {
+            return false;
+        }
         emit Bought(senderAdd, price_, listing.tokenId);
 
         return true;
