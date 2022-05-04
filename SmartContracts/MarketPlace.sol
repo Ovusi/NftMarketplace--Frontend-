@@ -275,11 +275,11 @@ abstract contract HavenMarketPlace is
             listing.status = status.sold;
             return true;
         } catch {
-            return false;
+            revert();
         }
         emit Bought(senderAdd, price_, listing.tokenId);
 
-        return true;
+        return true
     }
 
     function cancelListing(uint256 lId)
