@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {Payments} from "../SmartContracts/PaymentSplitter.sol";
 
 abstract contract HavenMarketPlace is
     IERC721,
@@ -46,6 +47,7 @@ abstract contract HavenMarketPlace is
     address payable tokenContract_;
     address private MATIC;
     address private HVXTOKEN;
+    address[] private beneficiaries;
 
     /*///////////////////////////////////////////////////////////////
                             Enums
@@ -271,15 +273,19 @@ abstract contract HavenMarketPlace is
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
 
-        try payment(listing.nftContract, listing.seller, listing.currency, listing.tokenId, price_) returns (bool) {
-            listing.status = status.sold;
-            return true;
-        } catch {
-            revert();
-        }
+        Payments.payment(
+            listing.nftContract,
+            listing.seller,
+            listing.currency,
+            listing.tokenId,
+            price_,
+            beneficiaries
+        );
+        listing.status = status.sold;
+
         emit Bought(senderAdd, price_, listing.tokenId);
 
-        return true
+        return true;
     }
 
     function cancelListing(uint256 lId)
@@ -501,47 +507,12 @@ abstract contract HavenMarketPlace is
         Listing storage listing = _listings[lId];
         return tokenURI(listing.tokenId);
     }
-    
+
     function isVerified(address userAdd) external view returns (bool) {
         User storage user = users_[userAdd];
-        if(user.verified == verified.yes) {
+        if (user.verified == verified.yes) {
             return true;
         }
         return false;
-    }
-
-    function payment(address nftContract, address seller, address currency, uint tokenId, uint amount) internal {
-        uint price_ = amount;
-        uint256 fee = (price_ * 2) / 100;
-        uint256 commision = price_ - fee;
-
-        if (currency == MATIC) {
-
-            IERC721(nftContract).transferFrom(
-                address(this),
-                msg.sender,
-                tokenId
-            );
-            IERC20(currency).transferFrom(
-                address(this),
-                seller,
-                commision
-            ); // Todo
-            IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // Todo
-        }
-
-        else if (currency == HVXTOKEN) {
-
-            IERC721(nftContract).transferFrom(
-                address(this),
-                msg.sender,
-                tokenId
-            );
-            IERC20(currency).transferFrom(
-                address(this),
-                seller,
-                commision
-            ); // Todo
-            IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // Todo
     }
 }
