@@ -12,7 +12,63 @@ async function HavenXMarketplace(senderadd, provider_,) {
     const contract = new Contract(ABI, contractAddress)
 
 
-    this.deploy_collection = async () => {
+    this.listNft = async () => {
+
+    }
+
+    this.buyListing = async () => {
+
+    }
+
+    this.auctionNft = async () => {
+
+    }
+
+    this.bidAuctioneNft = async () => {
+
+    }
+
+    this.cancelListing = async () => {
+
+    }
+
+    this.cancelAuction = async () => {
+
+    }
+
+    this.createUser = async () => {
+
+    }
+
+    this.withdrawBid = async () => {
+
+    }
+
+    this.claimHighestBid = async () => {
+
+    }
+
+    this.claimWonNft = async () => {
+
+    }
+
+    this.getAllMarketAuctions = async () => {
+
+    }
+
+    this.getAllMarketListings = async () => {
+
+    }
+
+    this.getTokenUriById = async () => {
+
+    }
+
+    this.getListingById_ = async () => {
+
+    }
+
+    this.isUserVerified = async () => {
 
     }
 
