@@ -108,7 +108,7 @@ abstract contract HavenMarketPlace is
     uint256[] owned; // arrary of NFTs owned by an address
 
     /*///////////////////////////////////////////////////////////////
-                            Modifier
+                            Modifier.
     //////////////////////////////////////////////////////////////*/
 
     modifier isClosed(uint256 aId) {
