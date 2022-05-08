@@ -19,7 +19,7 @@ library Payments {
         uint256 tokenId,
         uint256 amount,
         address[] memory payees
-    ) external {
+    ) internal {
         uint256 price_ = amount;
         uint256 fee = (price_ * 2) / 100;
         uint256 commision = price_ - fee;
