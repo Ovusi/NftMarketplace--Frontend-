@@ -6,12 +6,18 @@ function ConnectWallet() {
     // You can do whatever you want with this returned data
     try {
         const web3 = new Web3(Web3.givenProvider || "provider_")
+        const account = web3.eth.getAccounts()[0]
+        const provider = web3.eth.currentProvider()
+        const chainId = web3.eth.getChainId()
+        const balance = web3.eth.getBalance()
+        const accounts = web3.eth.requestAccounts()
+        
         return {
-            account: web3.eth.getAccounts()[0],
-            provider: web3.eth.currentProvider(),
-            chainId: web3.eth.getChainId(),
-            balance: web3.eth.getBalance(),
-            accounts: web3.eth.requestAccounts()
+            account,
+            provider,
+            chainId,
+            balance,
+            accounts,
         }
     } catch {}
     
