@@ -7,9 +7,9 @@ const { Signer, ethers } = require('ethers')
 const { Component } = require("/Users/Nobert Jakpor//Desktop/NftMarketplace (Frontend)/component")
 
 
-function HavenXMarketplace(senderadd, provider_,) {
-    const marketcontract = new Contract(ABI, contractAddress)
-    const web3 = new Web3(provider_)
+function HavenXMarketplace(hvxmarketaddress, provider_,) {
+    const marketcontract = hvxmarketaddress //new Contract(ABI, contractAddress)
+    const web3 = provider_ //new Web3(provider_)
 
     this.listNft = async () => {
         /*
@@ -20,8 +20,7 @@ function HavenXMarketplace(senderadd, provider_,) {
         address token_,
         uint256 tokenid_,
         address currency,
-        uint256 price_
-    ) returns (uint256)
+        uint256 price_) returns (uint256)
         */
 
         return await marketcontract.methods.listNft().call()
@@ -51,8 +50,7 @@ function HavenXMarketplace(senderadd, provider_,) {
         address token_,
         uint256 tokenid_,
         uint256 aucEndTime,
-        uint256 price_
-    ) returns (uint256)
+        uint256 price_) returns (uint256)
 
          */
 
