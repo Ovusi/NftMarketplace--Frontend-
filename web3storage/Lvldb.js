@@ -1,5 +1,5 @@
 const level = require("level")
-const levelup = require("../NftMarketplace (Frontend)/node_modules/levelup")
+const levelup = require("levelup")
 const leveldown = require("leveldown")
 
 /* This module contains database functions for users and listing ids.

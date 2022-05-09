@@ -2,7 +2,7 @@ const { ThirdwebWeb3Provider } = require("C:/Users/Nobert Jakpor/node_modules/@3
 const { Web3 } = require('web3');
 const { ABI, BYTE_CODE, MARKET_ADDRESS, TOKEN_CONTRACT, TOKEN_ABI } = require("../collections/data")
 const Contract = require('web3-eth-contract')
-const { HavenXMarketplace } = require("../NftMarketplace (Frontend)/Web3Logic/collections/MarketContractInterface")
+const { HavenXMarketplace } = require("./Web3Logic/MarketContractInterface")
 
 
 const marketcontract = new Contract(ABI, MARKET_ADDRESS)
