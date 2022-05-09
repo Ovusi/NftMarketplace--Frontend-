@@ -2,6 +2,8 @@ const { useWeb3, useSwitchNetwork, ThirdwebWeb3Provider } = require("@3rdweb/hoo
 const { Web3 } = require('web3');
 
 function ConnectWallet() {
+    // This is the CUSTOM function that enables the connect wallet button in the dapp
+    // You can do whatever you want with this returned data
     try {
         const web3 = new Web3(Web3.givenProvider || "provider_")
         return {
