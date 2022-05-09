@@ -20,7 +20,7 @@ function HavenXMarketplace(senderadd, provider_,) {
         uint256 tokenid_,
         address currency,
         uint256 price_
-    ) external nonReentrant returns (uint256)
+    ) returns (uint256)
         */
 
         return await marketcontract.methods.listNft().call()
@@ -32,11 +32,7 @@ function HavenXMarketplace(senderadd, provider_,) {
         /* 
         This function allows you to purchase a direct nft listing
 
-        buyNft(uint256 listingId_, uint256 price_)
-        external
-        payable
-        nonReentrant
-        returns (bool)
+        buyNft(uint256 listingId_, uint256 price_) returns (bool)
         */
 
         return await marketcontract.methods.buyNft().call()
@@ -53,9 +49,10 @@ function HavenXMarketplace(senderadd, provider_,) {
         uint256 tokenid_,
         uint256 aucEndTime,
         uint256 price_
-    ) external nonReentrant returns (uint256)
+    ) returns (uint256)
 
          */
+
         return await marketcontract.methods.placeAuction().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
@@ -66,35 +63,56 @@ function HavenXMarketplace(senderadd, provider_,) {
          * Create bid on an auctioned item.
          * 
          * bid(uint256 aId, uint256 price_)
-        external
-        payable
-        nonReentrant
-        isClosed(aId)
          */
+
         return await marketcontract.methods.bid().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
     }
 
     this.cancelDirectListing = async () => {
+        /**
+         * Cancel a direct listing.
+         * Only owner of the listing can call this function.
+         * 
+         * cancelListing(uint256 lId) returns (bool, string memory)
+         */
+
         return await marketcontract.methods.cancelListing().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
     }
 
     this.cancelAuctionedItem = async () => {
+        /**
+         * Cancel an auctioned listing.
+         * Only owner of the listing can call this function.
+         * 
+         * cancelAuction(uint256 aId) returns (bool, string memory
+         */
         return await marketcontract.methods.cancelAuction().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
     }
 
     this.createNewUser = async () => {
+        /**
+         * This function creates a new user or returns an existing user
+         * when a wallet is connected.
+         * 
+         * createUser(string memory useruri_) external returns (bool)
+         */
         return await marketcontract.methods.createUser().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
     }
 
     this.withdrawBid = async () => {
+        /**
+         * Withdraws a bid
+         * 
+         * withdrawUnderBid(uint256 aId)
+         */
         return await marketcontract.methods.withdrawUnderBid().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
