@@ -8,73 +8,97 @@ const { Component } = require("/Users/Nobert Jakpor//Desktop/NftMarketplace (Fro
 
 
 async function HavenXMarketplace(senderadd, provider_,) {
-    const contractAddress = ""
-    const provider = Component.provider
-    const signer = provider.getSigner()
-    const web3 = new Web3(provider)
-
-    //const provider = Contract.setProvider('ws://localhost:8546')
-    const contract = new Contract(ABI, contractAddress)
-
+    const marketcontract = new Contract(ABI, contractAddress)
+    const web3 = new Web3(provider_)
 
     this.listNft = async () => {
-
+        return await marketcontract.methods.listNft().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
     this.buyListing = async () => {
-
+        return await marketcontract.methods.buyNft().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
     this.auctionNft = async () => {
-
+        return await marketcontract.methods.placeAuction().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
-    this.bidAuctioneNft = async () => {
-
+    this.bidAuctionedNft = async () => {
+        return await marketcontract.methods.bid().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
-    this.cancelListing = async () => {
-
+    this.cancelDirectListing = async () => {
+        return await marketcontract.methods.cancelListing().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
-    this.cancelAuction = async () => {
-
+    this.cancelAuctionedItem = async () => {
+        return await marketcontract.methods.cancelAuction().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
-    this.createUser = async () => {
-
+    this.createNewUser = async () => {
+        return await marketcontract.methods.createUser().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
     this.withdrawBid = async () => {
-
+        return await marketcontract.methods.withdrawUnderBid().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
     this.claimHighestBid = async () => {
-
+        return await marketcontract.methods.withdrawHighestBid().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
     this.claimWonNft = async () => {
-
+        return await marketcontract.methods.claimNft().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
     this.getAllMarketAuctions = async () => {
-
+        return await marketcontract.methods.getAllAuctions().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
     this.getAllMarketListings = async () => {
-
+        return await marketcontract.methods.getAllListings().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
     this.getTokenUriById = async () => {
-
+        return await marketcontract.methods.getTokenUri().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
     this.getListingById_ = async () => {
-
+        return await marketcontract.methods.getListingById().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
     this.isUserVerified = async () => {
-
+        return await marketcontract.methods.isVerified().call()
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
     }
 
 }
