@@ -7,29 +7,70 @@ const { Signer, ethers } = require('ethers')
 const { Component } = require("/Users/Nobert Jakpor//Desktop/NftMarketplace (Frontend)/component")
 
 
-async function HavenXMarketplace(senderadd, provider_,) {
+function HavenXMarketplace(senderadd, provider_,) {
     const marketcontract = new Contract(ABI, contractAddress)
     const web3 = new Web3(provider_)
 
     this.listNft = async () => {
+        /*
+        This function lists an nft directly on the marketplace.
+
+        listNft(
+        address token_,
+        uint256 tokenid_,
+        address currency,
+        uint256 price_
+    ) external nonReentrant returns (uint256)
+        */
+
         return await marketcontract.methods.listNft().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
     }
 
     this.buyListing = async () => {
+        /* 
+        This function allows you to purchase a direct nft listing
+
+        buyNft(uint256 listingId_, uint256 price_)
+        external
+        payable
+        nonReentrant
+        returns (bool)
+        */
+
         return await marketcontract.methods.buyNft().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
     }
 
     this.auctionNft = async () => {
+        /**
+         * Create an nft auction.
+         * 
+         * placeAuction(
+        address token_,
+        uint256 tokenid_,
+        uint256 aucEndTime,
+        uint256 price_
+    ) external nonReentrant returns (uint256)
+
+         */
         return await marketcontract.methods.placeAuction().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
     }
 
     this.bidAuctionedNft = async () => {
+        /**
+         * Create bid on an auctioned item.
+         * 
+         * bid(uint256 aId, uint256 price_)
+        external
+        payable
+        nonReentrant
+        isClosed(aId)
+         */
         return await marketcontract.methods.bid().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
