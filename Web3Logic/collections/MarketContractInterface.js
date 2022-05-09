@@ -14,7 +14,8 @@ function HavenXMarketplace(senderadd, provider_,) {
     this.listNft = async () => {
         /*
         This function lists an nft directly on the marketplace.
-
+        ...
+        ...
         listNft(
         address token_,
         uint256 tokenid_,
@@ -31,7 +32,8 @@ function HavenXMarketplace(senderadd, provider_,) {
     this.buyListing = async () => {
         /* 
         This function allows you to purchase a direct nft listing
-
+        ...
+        ...
         buyNft(uint256 listingId_, uint256 price_) returns (bool)
         */
 
@@ -43,7 +45,8 @@ function HavenXMarketplace(senderadd, provider_,) {
     this.auctionNft = async () => {
         /**
          * Create an nft auction.
-         * 
+         * ...
+         * ...
          * placeAuction(
         address token_,
         uint256 tokenid_,
@@ -61,7 +64,8 @@ function HavenXMarketplace(senderadd, provider_,) {
     this.bidAuctionedNft = async () => {
         /**
          * Create bid on an auctioned item.
-         * 
+         * ...
+         * ...
          * bid(uint256 aId, uint256 price_)
          */
 
@@ -74,7 +78,8 @@ function HavenXMarketplace(senderadd, provider_,) {
         /**
          * Cancel a direct listing.
          * Only owner of the listing can call this function.
-         * 
+         * ...
+         * ...
          * cancelListing(uint256 lId) returns (bool, string memory)
          */
 
@@ -87,7 +92,8 @@ function HavenXMarketplace(senderadd, provider_,) {
         /**
          * Cancel an auctioned listing.
          * Only owner of the listing can call this function.
-         * 
+         * ...
+         * ...
          * cancelAuction(uint256 aId) returns (bool, string memory
          */
         return await marketcontract.methods.cancelAuction().call()
@@ -99,7 +105,8 @@ function HavenXMarketplace(senderadd, provider_,) {
         /**
          * This function creates a new user or returns an existing user
          * when a wallet is connected.
-         * 
+         * ...
+         * ...
          * createUser(string memory useruri_) external returns (bool)
          */
         return await marketcontract.methods.createUser().call()
@@ -110,7 +117,8 @@ function HavenXMarketplace(senderadd, provider_,) {
     this.withdrawBid = async () => {
         /**
          * Withdraws a bid
-         * 
+         * ...
+         * ...
          * withdrawUnderBid(uint256 aId)
          */
         return await marketcontract.methods.withdrawUnderBid().call()
@@ -119,6 +127,12 @@ function HavenXMarketplace(senderadd, provider_,) {
     }
 
     this.claimHighestBid = async () => {
+        /**
+         * Claim highest bid after auction period has elapsed.
+         * ...
+         * ...
+         * withdrawHighestBid(uint256 aId) returns (bool, string memory)
+         */
         return await marketcontract.methods.withdrawHighestBid().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
