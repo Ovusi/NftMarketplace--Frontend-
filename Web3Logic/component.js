@@ -9,7 +9,7 @@ async function ConnectWallet() {
         const account = await web3.eth.getAccounts()[0]
         const provider = await web3.eth.currentProvider()
         const chainId = await web3.eth.getChainId()
-        const balance = await web3.eth.getBalance()
+        const balance = await web3.eth.getBalance(account)
         const accounts = await web3.eth.requestAccounts()
         
         return {
