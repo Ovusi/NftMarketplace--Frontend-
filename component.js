@@ -1,4 +1,21 @@
 const { useWeb3, useSwitchNetwork, ThirdwebWeb3Provider } = require("@3rdweb/hooks")
+const { Web3 } = require('web3');
+
+function ConnectWallet() {
+    try {
+        const web3 = new Web3(Web3.givenProvider || "provider_")
+        return {
+            account: web3.eth.getAccounts()[0],
+            provider: web3.eth.currentProvider(),
+            chainId: web3.eth.getChainId(),
+            balance: web3.eth.getBalance(),
+            accounts: web3.eth.requestAccounts()
+        }
+    } catch {}
+    
+
+}
+
 
 
 function Component() {
@@ -16,4 +33,4 @@ function Component() {
     }
 }
 
-module.exports = { Component }
+module.exports = { Component, ConnectWallet }
