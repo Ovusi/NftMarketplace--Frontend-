@@ -76,9 +76,7 @@ abstract contract HavenMarketPlace is
         uint256 tokenId;
         uint256 price;
     }
-    mapping(uint256 => Listing) public _listings;
-    uint256[] public itemsListed;
-
+    
     struct AuctionedItem {
         status status;
         address creator;
@@ -88,9 +86,7 @@ abstract contract HavenMarketPlace is
         uint256 tokenId;
         uint256 startPrice;
     }
-    mapping(uint256 => AuctionedItem) public auctionedItem_;
-    uint256[] public itemsAuctioned;
-
+    
     struct User {
         verified verified;
         address userAddress;
@@ -98,10 +94,17 @@ abstract contract HavenMarketPlace is
         string userURI;
         address[] ownedCollections;
     }
+
+    mapping(uint256 => Listing) public _listings;
+    uint256[] public itemsListed;
+
+    mapping(uint256 => AuctionedItem) public auctionedItem_;
+    uint256[] public itemsAuctioned;
+
     mapping(address => User) users_;
     address[] public marketUserAddresses;
+    
     mapping(address => address[]) ownedCollections_;
-
     address[] public marketCollections;
 
     mapping(address => uint256) pendingReturns;

@@ -6,13 +6,14 @@ async function ConnectWallet() {
     // This is the CUSTOM function that enables the connect wallet button in the dapp
     // You can do whatever you want with this returned data
 
-    const web3 = await new Web3(window.ethereum)
+    const web3 = await new Web3(window.ethereum || Web3.givenProvider)
         .then((data) => {
-            if (data) {
+            const cId = await web3.eth.getChainId()
+            if (cId == 147) {
                 const accounts = await web3.eth.getAccounts()
                 const account = accounts[0]
                 const provider = await web3.eth.currentProvider()
-                const chainId = await web3.eth.getChainId()
+                const chainId = cId
                 const balance = await web3.eth.getBalance(account)
 
                 return {
@@ -21,6 +22,8 @@ async function ConnectWallet() {
                     chainId,
                     balance,
                 }
+            } else {
+                console.log("Network not supported!")
             }
         })
         .catch((err) => {
