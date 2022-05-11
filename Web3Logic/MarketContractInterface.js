@@ -1,10 +1,7 @@
 const { Web3 } = require('web3');
 const { ABI, BYTE_CODE } = require("./collections/data")
 const Contract = require('web3-eth-contract')
-const { useWeb3, useSwitchNetwork, ThirdwebWeb3Provider } = require("C:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@3rdweb/react/node_modules/@3rdweb/hooks")
-
 const { Signer, ethers } = require('ethers')
-const { Component } = require("/Users/Nobert Jakpor//Desktop/NftMarketplace (Frontend)/component")
 
 
 function HavenXMarketplace(hvxmarketaddress, provider_,) {
