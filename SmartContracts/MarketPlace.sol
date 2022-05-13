@@ -9,6 +9,8 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {Payments} from "../SmartContracts/PaymentSplitter.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
 
 abstract contract HavenMarketPlace is
     IERC721,
@@ -16,6 +18,8 @@ abstract contract HavenMarketPlace is
     ReentrancyGuard
 {
     using Counters for Counters.Counter;
+    using SafeMath for uint256;
+
     Counters.Counter private _tokenIds;
 
     /*///////////////////////////////////////////////////////////////
@@ -103,7 +107,7 @@ abstract contract HavenMarketPlace is
 
     mapping(address => User) users_;
     address[] public marketUserAddresses;
-    
+
     mapping(address => address[]) ownedCollections_;
     address[] public marketCollections;
 

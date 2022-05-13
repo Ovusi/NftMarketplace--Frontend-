@@ -5,6 +5,8 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract HavenToken is ERC20 {
+    uint256 private stakeAllocation = 10000000;
+    uint256 private initialMintSupply = 90000000;
     uint256 private _totalSupply = 100000000 * 10**decimals();
 
     string private _name = "Haven Token";
