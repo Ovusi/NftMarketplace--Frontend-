@@ -14,13 +14,21 @@ async function ConnectWallet() {
                 const account = accounts[0]
                 const provider = await web3.eth.currentProvider()
                 const chainId = cId
-                const balance = await web3.eth.getBalance(account)
+                const balance = await web3.utils.fromWei(web3.eth.getBalance(account))
+
+                const disconnectWallet = async () => {
+                    if (accounts) {
+                        // TODO: Add disconnetion logic
+                        return "Wallet disconnected"
+                    }
+                }
 
                 return {
                     account,
                     provider,
                     chainId,
                     balance,
+                    disconnectWallet
                 }
             } else {
                 console.log("Network not supported!")
@@ -46,17 +54,27 @@ async function ConnectMetamask() {
     } else {
         accounts = await ethereum.request({ method: 'eth_requestAccounts' })
             .then((data) => {
-                if (data) {
+                const chainId = await ethereum.request({ method: 'eth_chainId' })
+
+                if (chainId == 147) {
                     const account = accounts[0]
                     const provider = await detectEthereumProvider()
-                    const chainIds = await ethereum.request({ method: 'eth_chainId' })
-                    const chainId = chainIds[0]
+
+                    const disconnectWallet = async () => {
+                        if (account) {
+                            // TODO: Add disconnetion logic
+                            return "Wallet disconnected"
+                        }
+                    }
 
                     return {
                         account,
                         provider,
-                        chainId
+                        chainId,
+                        disconnectWallet
                     }
+                } else {
+                    console.log("Wallet not supported!")
                 }
             })
             .catch((err) => { })

@@ -134,36 +134,59 @@ function HavenXMarketplace(hvxmarketaddress, provider_,) {
     }
 
     this.claimWonNft = async () => {
+        /**
+         * 
+         */
         return await marketcontract.methods.claimNft().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
     }
 
     this.getAllMarketAuctions = async () => {
+        /**
+         * 
+         */
         return await marketcontract.methods.getAllAuctions().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
     }
 
     this.getAllMarketListings = async () => {
+        /**
+         * getAllListings() external view returns (uint256[] memory)
+         */
         return await marketcontract.methods.getAllListings().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
     }
 
     this.getTokenUriById = async () => {
+        /**
+         * getTokenUri(uint256 lId) external view returns (string memory)
+         */
         return await marketcontract.methods.getTokenUri().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
     }
 
     this.getListingById_ = async () => {
+        /**
+         * getListingById(uint256 lId)
+            external
+            view
+            returns (Listing memory)
+         */
         return await marketcontract.methods.getListingById().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
     }
 
     this.isUserVerified = async () => {
+        /**
+         * Check if user is verified
+         * 
+         * isVerified(address userAdd) external view returns (bool)
+         */
         return await marketcontract.methods.isVerified().call()
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
