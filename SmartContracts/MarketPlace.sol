@@ -522,10 +522,12 @@ abstract contract HavenMarketPlace is
                             Getter functions
     //////////////////////////////////////////////////////////////*/
 
+    /// @dev Get all auctioned items in an array.
     function getAllAuctions() public view returns (uint256[] memory) {
         return itemsAuctioned;
     }
 
+    /// @dev Returns the URI of an auctioned token by Id.
     function getAuctionedTokenUri(uint256 aId)
         public
         view
@@ -536,6 +538,7 @@ abstract contract HavenMarketPlace is
         return tokenURI(auctioneditem.tokenId);
     }
 
+    /// @dev Returns a direct listing by Id.
     function getListingById(uint256 lId)
         public
         view
@@ -546,15 +549,18 @@ abstract contract HavenMarketPlace is
         return listing;
     }
 
+    /// @dev Get all direct listings in an array.
     function getAllListings() public view returns (uint256[] memory) {
         return itemsListed;
     }
 
+    /// @dev Returns the URI of a direct listing by Id.
     function getTokenUri(uint256 lId) public view returns (string memory) {
         Listing storage listing = _listings[lId];
         return tokenURI(listing.tokenId);
     }
 
+    /// @dev Checks if user is verified.
     function isVerified(address userAccount) public view returns (bool) {
         User storage user = users_[userAccount];
         if (user.verified == verified.yes) {
