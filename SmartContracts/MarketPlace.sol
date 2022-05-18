@@ -99,18 +99,14 @@ abstract contract HavenMarketPlace is
     }
 
     mapping(uint256 => Listing) public _listings;
-    uint256[] public itemsListed;
-
     mapping(uint256 => AuctionedItem) public auctionedItem_;
-    uint256[] public itemsAuctioned;
-
     mapping(address => User) users_;
-    address[] public marketUserAddresses;
-
     mapping(address => address[]) ownedCollections_;
-    address[] public marketCollections;
-
     mapping(address => uint256) pendingReturns;
+    uint256[] public itemsListed;
+    uint256[] public itemsAuctioned;
+    address[] public marketUserAddresses;
+    address[] public marketCollections;
     uint256[] owned; // arrary of NFTs owned by an address
 
     /*///////////////////////////////////////////////////////////////
