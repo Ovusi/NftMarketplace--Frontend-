@@ -11,7 +11,6 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {Payments} from "../SmartContracts/PaymentSplitter.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-
 abstract contract HavenMarketPlace is
     IERC721,
     ERC721URIStorage,
@@ -42,16 +41,16 @@ abstract contract HavenMarketPlace is
                             State variables
     //////////////////////////////////////////////////////////////*/
 
-    address payable public beneficiary;
-    uint256 public bidTime = block.timestamp;
-    uint256 public bidEndTime;
-    address public highestBidder;
-    uint256 public highestBid;
+    uint256 bidTime = block.timestamp;
+    uint256 bidEndTime;
+    uint256 highestBid;
+    address payable beneficiary;
+    address highestBidder;
     address senderAdd;
     address payable tokenContract_;
-    address private MATIC;
-    address private HVXTOKEN;
-    address[] private beneficiaries;
+    address MATIC;
+    address HVXTOKEN;
+    address[] beneficiaries;
 
     /*///////////////////////////////////////////////////////////////
                             Enums
@@ -80,7 +79,7 @@ abstract contract HavenMarketPlace is
         uint256 tokenId;
         uint256 price;
     }
-    
+
     struct AuctionedItem {
         status status;
         address creator;
@@ -90,7 +89,7 @@ abstract contract HavenMarketPlace is
         uint256 tokenId;
         uint256 startPrice;
     }
-    
+
     struct User {
         verified verified;
         address userAddress;
