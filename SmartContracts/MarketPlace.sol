@@ -218,6 +218,7 @@ abstract contract HavenMarketPlace is
         User storage user = users_[userAccount];
         require(user.verified != verified.no, "User already verified");
         require(msg.sender == owner);
+        
         user.verified = verified.yes;
     }
 
@@ -274,7 +275,6 @@ abstract contract HavenMarketPlace is
             amount
         );
         _tokenIds.increment();
-
         uint256 newItemId = _tokenIds.current();
         _listings[newItemId] = listing;
         itemsListed.push(newItemId);
@@ -449,7 +449,6 @@ abstract contract HavenMarketPlace is
         require(msg.sender == auctioneditem.creator);
 
         uint256 amount = highestBid;
-
         uint256 fee = (amount * 2) / 100;
         uint256 commision = amount - fee;
 
