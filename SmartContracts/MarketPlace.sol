@@ -81,7 +81,6 @@ abstract contract HavenMarketPlace is
         uint256 tokenId;
         uint256 price;
     }
-
     struct AuctionedItem {
         status status;
         address creator;
@@ -91,7 +90,6 @@ abstract contract HavenMarketPlace is
         uint256 tokenId;
         uint256 startPrice;
     }
-
     struct User {
         verified verified;
         address userAddress;
@@ -218,7 +216,7 @@ abstract contract HavenMarketPlace is
         User storage user = users_[userAccount];
         require(user.verified != verified.no, "User already verified");
         require(msg.sender == owner);
-        
+
         user.verified = verified.yes;
     }
 
