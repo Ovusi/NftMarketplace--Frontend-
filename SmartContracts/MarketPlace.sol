@@ -228,6 +228,7 @@ abstract contract HavenMarketPlace is
         user.userURI = useruri_;
     }
 
+    /// @dev Enable user to add a new collection.
     function add_collection(address collectionaddress)
         public
         returns (string memory)
@@ -252,12 +253,15 @@ abstract contract HavenMarketPlace is
                         Direct listing logic
     //////////////////////////////////////////////////////////////*/
 
+    /// @dev List an NFT on the marketplace.
     function listNft(
         address collectionContract,
         uint256 tokenid_,
         address currency,
         uint256 amount
     ) external nonReentrant returns (uint256) {
+        User storage user = users_[msg.sender];
+        require(msg.sender == user.userAddress);
         require(amount > 0);
         IERC721(collectionContract).transferFrom(msg.sender, address(this), tokenid_);
 
@@ -279,6 +283,7 @@ abstract contract HavenMarketPlace is
         return newItemId;
     }
 
+    /// @dev Allows a user purchase an direct listing.
     function buyNft(uint256 listingId_, uint256 amount)
         public
         payable
@@ -286,6 +291,8 @@ abstract contract HavenMarketPlace is
         returns (bool)
     {
         Listing storage listing = _listings[listingId_];
+        User storage user = users_[msg.sender];
+        require(msg.sender == user.userAddress);
         require(
             IERC20(tokenContract_).approve(address(this), amount) == true,
             "Transaction not approved."
@@ -315,6 +322,7 @@ abstract contract HavenMarketPlace is
         return true;
     }
 
+    /// @dev Enables the owner of a direct listing to cancel the Listing.
     function cancelListing(uint256 lId)
         public
         payable
@@ -322,6 +330,8 @@ abstract contract HavenMarketPlace is
         returns (bool, string memory)
     {
         Listing storage listing = _listings[lId];
+        User storage user = users_[msg.sender];
+        require(msg.sender == user.userAddress);
         require(msg.sender == listing.seller);
         require(listing.status == status.open);
         require(listing_exists(lId) == true);
@@ -344,12 +354,15 @@ abstract contract HavenMarketPlace is
                             Auction logic
     //////////////////////////////////////////////////////////////*/
 
+    /// @dev Create an auction.
     function placeAuction(
         address collectionContract,
         uint256 tokenid_,
         uint256 aucEndTime,
         uint256 amount
     ) public nonReentrant returns (uint256) {
+        User storage user = users_[msg.sender];
+        require(msg.sender == user.userAddress);
         require(amount > 0);
 
         IERC721(collectionContract).transferFrom(msg.sender, address(this), tokenid_);
@@ -377,12 +390,15 @@ abstract contract HavenMarketPlace is
         return newItemId;
     }
 
+    /// @dev Place a bid on an auctioned item.
     function bid(uint256 aId, uint256 amount)
         public
         payable
         nonReentrant
         isClosed(aId)
     {
+        User storage user = users_[msg.sender];
+        require(msg.sender == user.userAddress);
         require(auction_exists(aId) == true);
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(
@@ -407,6 +423,7 @@ abstract contract HavenMarketPlace is
         emit HighestBidIncreased(highestBidder, highestBid);
     }
 
+    /// @dev Allow a bidder withdraw a bid if it has been outbid. 
     function withdrawUnderBid(uint256 aId) public payable nonReentrant {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(msg.sender != auctioneditem.creator);
@@ -419,6 +436,7 @@ abstract contract HavenMarketPlace is
         delete pendingReturns[msg.sender];
     }
 
+    /// @dev Allow auction owner withdraw the wiining bid after auction closes.
     function withdrawHighestBid(uint256 aId)
         public
         payable
@@ -447,6 +465,7 @@ abstract contract HavenMarketPlace is
         return (true, "Withdrawal successful");
     }
 
+    /// @dev Allow auction owner cancel an auction.
     function cancelAuction(uint256 aId)
         public
         nonReentrant
@@ -474,6 +493,7 @@ abstract contract HavenMarketPlace is
         return (true, "Auction canceled");
     }
 
+    /// @dev Allow auction winner claim the reward.
     function claimNft(uint256 aId)
         public
         payable
