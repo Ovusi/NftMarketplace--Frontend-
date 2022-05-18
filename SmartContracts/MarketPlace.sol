@@ -192,7 +192,7 @@ abstract contract HavenMarketPlace is
                             User logic
     //////////////////////////////////////////////////////////////*/
 
-    function createUser(string memory useruri_) external returns (bool) {
+    function createUser(string memory useruri_) public returns (bool) {
         User storage userr = users_[msg.sender];
         require(msg.sender != userr.userAddress);
         User memory user = User(
@@ -208,7 +208,7 @@ abstract contract HavenMarketPlace is
         return true;
     }
 
-    function verifiyUser(address userAccount) external isAdmin(msg.sender) {
+    function verifiyUser(address userAccount) public isAdmin(msg.sender) {
         // todo: sort admin priviledge
         User storage user = users_[userAccount];
         require(user.verified != verified.no, "User already verified");
@@ -216,14 +216,14 @@ abstract contract HavenMarketPlace is
         user.verified = verified.yes;
     }
 
-    function editUser(string memory useruri_) external {
+    function editUser(string memory useruri_) public {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
         user.userURI = useruri_;
     }
 
     function add_collection(address collectionaddress)
-        external
+        public
         returns (string memory)
     {
         User storage user = users_[msg.sender];
@@ -274,7 +274,7 @@ abstract contract HavenMarketPlace is
     }
 
     function buyNft(uint256 listingId_, uint256 amount)
-        external
+        public
         payable
         nonReentrant
         returns (bool)
@@ -310,7 +310,7 @@ abstract contract HavenMarketPlace is
     }
 
     function cancelListing(uint256 lId)
-        external
+        public
         payable
         nonReentrant
         returns (bool, string memory)
@@ -343,7 +343,7 @@ abstract contract HavenMarketPlace is
         uint256 tokenid_,
         uint256 aucEndTime,
         uint256 amount
-    ) external nonReentrant returns (uint256) {
+    ) public nonReentrant returns (uint256) {
         require(amount > 0);
 
         IERC721(collectionContract).transferFrom(msg.sender, address(this), tokenid_);
@@ -372,7 +372,7 @@ abstract contract HavenMarketPlace is
     }
 
     function bid(uint256 aId, uint256 amount)
-        external
+        public
         payable
         nonReentrant
         isClosed(aId)
@@ -401,7 +401,7 @@ abstract contract HavenMarketPlace is
         emit HighestBidIncreased(highestBidder, highestBid);
     }
 
-    function withdrawUnderBid(uint256 aId) external payable nonReentrant {
+    function withdrawUnderBid(uint256 aId) public payable nonReentrant {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(msg.sender != auctioneditem.creator);
         require(msg.sender != highestBidder);
@@ -414,7 +414,7 @@ abstract contract HavenMarketPlace is
     }
 
     function withdrawHighestBid(uint256 aId)
-        external
+        public
         payable
         nonReentrant
         returns (bool, string memory)
@@ -442,7 +442,7 @@ abstract contract HavenMarketPlace is
     }
 
     function cancelAuction(uint256 aId)
-        external
+        public
         nonReentrant
         returns (bool, string memory)
     {
@@ -469,7 +469,7 @@ abstract contract HavenMarketPlace is
     }
 
     function claimNft(uint256 aId)
-        external
+        public
         payable
         nonReentrant
         isClosed(aId)
@@ -496,12 +496,12 @@ abstract contract HavenMarketPlace is
                             Getter functions
     //////////////////////////////////////////////////////////////*/
 
-    function getAllAuctions() external view returns (uint256[] memory) {
+    function getAllAuctions() public view returns (uint256[] memory) {
         return itemsAuctioned;
     }
 
     function getAuctionedTokenUri(uint256 aId)
-        external
+        public
         view
         returns (string memory)
     {
@@ -511,7 +511,7 @@ abstract contract HavenMarketPlace is
     }
 
     function getListingById(uint256 lId)
-        external
+        public
         view
         returns (Listing memory)
     {
@@ -520,16 +520,16 @@ abstract contract HavenMarketPlace is
         return listing;
     }
 
-    function getAllListings() external view returns (uint256[] memory) {
+    function getAllListings() public view returns (uint256[] memory) {
         return itemsListed;
     }
 
-    function getTokenUri(uint256 lId) external view returns (string memory) {
+    function getTokenUri(uint256 lId) public view returns (string memory) {
         Listing storage listing = _listings[lId];
         return tokenURI(listing.tokenId);
     }
 
-    function isVerified(address userAccount) external view returns (bool) {
+    function isVerified(address userAccount) public view returns (bool) {
         User storage user = users_[userAccount];
         if (user.verified == verified.yes) {
             return true;
