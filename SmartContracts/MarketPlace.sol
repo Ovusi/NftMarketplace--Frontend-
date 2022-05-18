@@ -50,6 +50,7 @@ abstract contract HavenMarketPlace is
     address payable tokenContract_;
     address MATIC;
     address HVXTOKEN;
+    address owner;
     address[] beneficiaries;
 
     /*///////////////////////////////////////////////////////////////
@@ -129,8 +130,8 @@ abstract contract HavenMarketPlace is
                             Constructor
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address senderAddress, address payable tokenContractAddress) {
-        senderAdd = senderAddress;
+    constructor(address payable tokenContractAddress) {
+        owner = msg.sender;
         tokenContract_ = tokenContractAddress;
     }
 
