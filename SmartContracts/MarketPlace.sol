@@ -208,9 +208,9 @@ abstract contract HavenMarketPlace is
         return true;
     }
 
-    function verifiyUser(address useradd) external isAdmin(msg.sender) {
+    function verifiyUser(address userAccount) external isAdmin(msg.sender) {
         // todo: sort admin priviledge
-        User storage user = users_[useradd];
+        User storage user = users_[userAccount];
         require(user.verified != verified.no, "User already verified");
         require(msg.sender == owner);
         user.verified = verified.yes;
@@ -247,21 +247,21 @@ abstract contract HavenMarketPlace is
     //////////////////////////////////////////////////////////////*/
 
     function listNft(
-        address token_,
+        address collectionContract,
         uint256 tokenid_,
         address currency,
-        uint256 price_
+        uint256 amount
     ) external nonReentrant returns (uint256) {
-        require(price_ > 0);
-        IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
+        require(amount > 0);
+        IERC721(collectionContract).transferFrom(msg.sender, address(this), tokenid_);
 
         Listing memory listing = Listing(
             status.open,
             msg.sender,
-            token_,
+            collectionContract,
             currency,
             tokenid_,
-            price_
+            amount
         );
         _tokenIds.increment();
 
@@ -269,11 +269,11 @@ abstract contract HavenMarketPlace is
         _listings[newItemId] = listing;
         itemsListed.push(newItemId);
 
-        emit Listed(msg.sender, token_, tokenid_, price_);
+        emit Listed(msg.sender, collectionContract, tokenid_, amount);
         return newItemId;
     }
 
-    function buyNft(uint256 listingId_, uint256 price_)
+    function buyNft(uint256 listingId_, uint256 amount)
         external
         payable
         nonReentrant
@@ -281,15 +281,15 @@ abstract contract HavenMarketPlace is
     {
         Listing storage listing = _listings[listingId_];
         require(
-            IERC20(tokenContract_).approve(address(this), price_) == true,
+            IERC20(tokenContract_).approve(address(this), amount) == true,
             "Transaction not approved."
         );
         require(
-            IERC20(tokenContract_).balanceOf(senderAdd) >= price_,
+            IERC20(tokenContract_).balanceOf(senderAdd) >= amount,
             "Not enough funds."
         );
         require(msg.sender != listing.seller, "Permission not granted.");
-        require(price_ >= listing.price, "Insufficient amount.");
+        require(amount >= listing.price, "Insufficient amount.");
         require(listing.status == status.open);
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
@@ -299,12 +299,12 @@ abstract contract HavenMarketPlace is
             listing.seller,
             listing.currency,
             listing.tokenId,
-            price_,
+            amount,
             beneficiaries
         );
         listing.status = status.sold;
 
-        emit Bought(senderAdd, price_, listing.tokenId);
+        emit Bought(senderAdd, amount, listing.tokenId);
 
         return true;
     }
@@ -339,25 +339,25 @@ abstract contract HavenMarketPlace is
     //////////////////////////////////////////////////////////////*/
 
     function placeAuction(
-        address token_,
+        address collectionContract,
         uint256 tokenid_,
         uint256 aucEndTime,
-        uint256 price_
+        uint256 amount
     ) external nonReentrant returns (uint256) {
-        require(price_ > 0);
+        require(amount > 0);
 
-        IERC721(token_).transferFrom(msg.sender, address(this), tokenid_);
+        IERC721(collectionContract).transferFrom(msg.sender, address(this), tokenid_);
         bidEndTime = aucEndTime;
         uint256 bidDuration = block.timestamp + bidEndTime;
 
         AuctionedItem memory auctionedItem = AuctionedItem(
             status.open,
             msg.sender,
-            token_,
+            collectionContract,
             block.timestamp,
             bidDuration,
             tokenid_,
-            price_
+            amount
         );
         _tokenIds.increment();
 
@@ -367,11 +367,11 @@ abstract contract HavenMarketPlace is
 
         auctionedItem.status = status.open;
 
-        emit itemAuctioned(msg.sender, newItemId, price_);
+        emit itemAuctioned(msg.sender, newItemId, amount);
         return newItemId;
     }
 
-    function bid(uint256 aId, uint256 price_)
+    function bid(uint256 aId, uint256 amount)
         external
         payable
         nonReentrant
@@ -385,18 +385,18 @@ abstract contract HavenMarketPlace is
             "Auction Ended"
         );
         require(
-            price_ > auctioneditem.startPrice,
+            amount > auctioneditem.startPrice,
             "Bid must be greater than auction price."
         );
-        require(price_ > highestBid, "Increase bid");
+        require(amount > highestBid, "Increase bid");
         require(auctioneditem.status == status.open);
 
         pendingReturns[highestBidder] += highestBid;
 
         highestBidder = msg.sender;
-        highestBid = price_;
+        highestBid = amount;
 
-        IERC20(tokenContract_).transferFrom(msg.sender, address(this), price_);
+        IERC20(tokenContract_).transferFrom(msg.sender, address(this), amount);
 
         emit HighestBidIncreased(highestBidder, highestBid);
     }
@@ -529,8 +529,8 @@ abstract contract HavenMarketPlace is
         return tokenURI(listing.tokenId);
     }
 
-    function isVerified(address userAdd) external view returns (bool) {
-        User storage user = users_[userAdd];
+    function isVerified(address userAccount) external view returns (bool) {
+        User storage user = users_[userAccount];
         if (user.verified == verified.yes) {
             return true;
         }
