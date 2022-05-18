@@ -152,6 +152,7 @@ abstract contract HavenMarketPlace is
                             Helper logic
     //////////////////////////////////////////////////////////////*/
 
+    /// @dev Check if a listing exists by Id.
     function listing_exists(uint256 id) internal view returns (bool) {
         for (uint256 i = 0; i < itemsListed.length; i++) {
             if (itemsListed[i] == id) {
@@ -161,6 +162,7 @@ abstract contract HavenMarketPlace is
         return false;
     }
 
+    /// @dev Remove a listing by Id.
     function remove_listing(uint256 id) internal returns (bool) {
         for (uint256 i = 0; i < itemsListed.length; i++) {
             if (itemsListed[i] == id) {
@@ -170,6 +172,7 @@ abstract contract HavenMarketPlace is
         return false;
     }
 
+    /// @dev Check if Auctioned item exists by Id.
     function auction_exists(uint256 id) internal view returns (bool) {
         for (uint256 i = 0; i < itemsAuctioned.length; i++) {
             if (itemsAuctioned[i] == id) {
@@ -179,6 +182,7 @@ abstract contract HavenMarketPlace is
         return false;
     }
 
+    /// @dev Remove auctioned item by Id.
     function remove_auction(uint256 id) internal returns (bool) {
         for (uint256 i = 0; i < itemsAuctioned.length; i++) {
             if (itemsAuctioned[i] == id) {
@@ -192,6 +196,7 @@ abstract contract HavenMarketPlace is
                             User logic
     //////////////////////////////////////////////////////////////*/
 
+    /// @dev Creates a new user if user does not already exist.
     function createUser(string memory useruri_) public returns (bool) {
         User storage userr = users_[msg.sender];
         require(msg.sender != userr.userAddress);
@@ -208,14 +213,15 @@ abstract contract HavenMarketPlace is
         return true;
     }
 
+    /// @dev Mark a user verified after KYC.
     function verifiyUser(address userAccount) public isAdmin(msg.sender) {
-        // todo: sort admin priviledge
         User storage user = users_[userAccount];
         require(user.verified != verified.no, "User already verified");
         require(msg.sender == owner);
         user.verified = verified.yes;
     }
 
+    /// @dev Enable existing user edit account info.
     function editUser(string memory useruri_) public {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
