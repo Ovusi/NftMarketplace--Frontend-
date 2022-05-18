@@ -51,6 +51,7 @@ abstract contract HavenMarketPlace is
     address MATIC;
     address HVXTOKEN;
     address owner;
+    address[] admins;
     address[] beneficiaries;
 
     /*///////////////////////////////////////////////////////////////
@@ -111,7 +112,7 @@ abstract contract HavenMarketPlace is
     address[] public marketCollections;
 
     /*///////////////////////////////////////////////////////////////
-                            Modifier
+                            Modifiers
     //////////////////////////////////////////////////////////////*/
 
     modifier isClosed(uint256 aId) {
@@ -126,12 +127,24 @@ abstract contract HavenMarketPlace is
         _;
     }
 
+    modifier isAdmin(address account) {
+        bool isAdmin_ = false;
+        for (uint256 i = 0; i < admins.length; i++) {
+            if (admins[i] == account) {
+                isAdmin_ = true;
+            }
+        }
+        require(isAdmin_, "Not an Admin");
+        _;
+    }
+
     /*///////////////////////////////////////////////////////////////
                             Constructor
     //////////////////////////////////////////////////////////////*/
 
     constructor(address payable tokenContractAddress) {
         owner = msg.sender;
+        admins.push(msg.sender);
         tokenContract_ = tokenContractAddress;
     }
 
@@ -195,11 +208,11 @@ abstract contract HavenMarketPlace is
         return true;
     }
 
-    function verifiyUser(address useradd, address admin) external {
+    function verifiyUser(address useradd) external isAdmin(msg.sender) {
         // todo: sort admin priviledge
         User storage user = users_[useradd];
         require(user.verified != verified.no, "User already verified");
-        require(admin == msg.sender);
+        require(msg.sender == owner);
         user.verified = verified.yes;
     }
 
@@ -222,6 +235,11 @@ abstract contract HavenMarketPlace is
         emit CollectionAdded(msg.sender, collectionaddress);
 
         return "Collection added successfully";
+    }
+
+    function addAdmin(address account) public isAdmin(account) {
+        require(msg.sender == owner);
+        admins.push(account);
     }
 
     /*///////////////////////////////////////////////////////////////
