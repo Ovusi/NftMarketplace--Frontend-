@@ -211,13 +211,24 @@ abstract contract HavenMarketPlace is
         return true;
     }
 
-    /// @dev Mark a user verified after KYC.
-    function verifiyUser(address userAccount) public isAdmin(msg.sender) {
+    /// @dev Mark a user verified after KYC. can also unverify user.
+    function verifiyUser(address userAccount)
+        public
+        isAdmin(msg.sender)
+        returns (string memory)
+    {
         User storage user = users_[userAccount];
-        require(user.verified != verified.no, "User already verified");
         require(msg.sender == owner);
 
-        user.verified = verified.yes;
+        if (user.verified == verified.no) {
+            user.verified = verified.yes;
+            return "Successfully verified";
+        }
+
+        if (user.verified == verified.yes) {
+            user.verified = verified.no;
+            return "Successfully unverified";
+        }
     }
 
     /// @dev Enable existing user edit account info.
@@ -262,7 +273,11 @@ abstract contract HavenMarketPlace is
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
         require(amount > 0);
-        IERC721(collectionContract).transferFrom(msg.sender, address(this), tokenid_);
+        IERC721(collectionContract).transferFrom(
+            msg.sender,
+            address(this),
+            tokenid_
+        );
 
         Listing memory listing = Listing(
             status.open,
@@ -363,7 +378,11 @@ abstract contract HavenMarketPlace is
         require(msg.sender == user.userAddress);
         require(amount > 0);
 
-        IERC721(collectionContract).transferFrom(msg.sender, address(this), tokenid_);
+        IERC721(collectionContract).transferFrom(
+            msg.sender,
+            address(this),
+            tokenid_
+        );
         bidEndTime = aucEndTime;
         uint256 bidDuration = block.timestamp + bidEndTime;
 
@@ -421,7 +440,7 @@ abstract contract HavenMarketPlace is
         emit HighestBidIncreased(highestBidder, highestBid);
     }
 
-    /// @dev Allow a bidder withdraw a bid if it has been outbid. 
+    /// @dev Allow a bidder withdraw a bid if it has been outbid.
     function withdrawUnderBid(uint256 aId) public payable nonReentrant {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(msg.sender != auctioneditem.creator);
@@ -536,11 +555,7 @@ abstract contract HavenMarketPlace is
     }
 
     /// @dev Returns a direct listing by Id.
-    function getListingById(uint256 lId)
-        public
-        view
-        returns (Listing memory)
-    {
+    function getListingById(uint256 lId) public view returns (Listing memory) {
         require(listing_exists(lId) == true);
         Listing storage listing = _listings[lId];
         return listing;
