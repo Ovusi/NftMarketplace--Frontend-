@@ -254,7 +254,7 @@ abstract contract HavenMarketPlace is
         return "Collection added successfully";
     }
 
-    function addAdmin(address account) public isAdmin(account) {
+    function addAdmin(address account) public isAdmin {
         require(msg.sender == owner);
         admins.push(account);
     }
