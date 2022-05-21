@@ -125,10 +125,10 @@ abstract contract HavenMarketPlace is
         _;
     }
 
-    modifier isAdmin(address account) {
+    modifier isAdmin() {
         bool isAdmin_ = false;
         for (uint256 i = 0; i < admins.length; i++) {
-            if (admins[i] == account) {
+            if (admins[i] == msg.sender) {
                 isAdmin_ = true;
             }
         }
@@ -214,7 +214,7 @@ abstract contract HavenMarketPlace is
     /// @dev Mark a user verified after KYC. can also unverify user.
     function verifiyUser(address userAccount)
         public
-        isAdmin(msg.sender)
+        isAdmin
         returns (string memory)
     {
         User storage user = users_[userAccount];
