@@ -14,10 +14,10 @@ function HavenXMarketplace(hvxmarketaddress, provider_,) {
         ...
         ...
         listNft(
-        address token_,
-        uint256 tokenid_,
-        address currency,
-        uint256 price_) returns (uint256)
+            address token_,
+            uint256 tokenid_,
+            address currency,
+            uint256 price_) returns (uint256)
         */
 
         return await marketcontract.methods.listNft().call()
@@ -44,10 +44,10 @@ function HavenXMarketplace(hvxmarketaddress, provider_,) {
          * ...
          * ...
          * placeAuction(
-        address token_,
-        uint256 tokenid_,
-        uint256 aucEndTime,
-        uint256 price_) returns (uint256)
+            address token_,
+            uint256 tokenid_,
+            uint256 aucEndTime,
+            uint256 price_) returns (uint256)
 
          */
 
