@@ -48,3 +48,35 @@ contract App {
         return "New user created";
     }
 }
+
+
+/**Contract example that implements Access Control */
+contract App {
+    // Variable to store the address of the contract owner.
+    address owner;
+
+    // A modifier is used to alter the state of a function.
+    modifier isOwner() {
+        require(msg.sender == owner, "Access denied!");
+        _;
+    }
+
+    constructor() {
+        // When contract is deployed, it sets the address of the deployer as the owner.
+        owner = msg.sender; 
+    }
+
+    /// @dev first example method of access control using "require" method.
+    function edit() public {
+        require(msg.sender == owner, "Access denied!");
+        // ...
+    }
+
+    /// @dev second example method of access control using the "isOwner modifier".
+    function editAgain() public isOwner {
+        require(msg.sender == owner, "Access denied!");
+        // ...
+    }
+}
+
+follow @0xlegendury
