@@ -16,6 +16,7 @@ contract App {
         string socialMediaAccounts;
     }
 
+    // Create a mapping of address to User struct.
     mapping(address => User) users_;
     // create a list of user addresses to iterate through.
     // this is necessary
