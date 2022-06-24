@@ -37,18 +37,18 @@ contract NFT is
                             State variables
     //////////////////////////////////////////////////////////////*/
 
-    address _owner;
     string public pictureHash;
     string public collectionUri;
     string _name;
     string _symbol;
+    string public baseTokenURI;
     bytes _data;
     uint256 public constant MAX_SUPPLY = 10000;
     uint256 public constant MAX_PER_MINT = 5;
-    string public baseTokenURI;
-    mapping(uint256 => string) ids_uri;
     uint256[] id_list;
+    mapping(uint256 => string) ids_uri;
     address[] public token_owners;
+    address _owner;
 
     /*///////////////////////////////////////////////////////////////
                         Overriding functions

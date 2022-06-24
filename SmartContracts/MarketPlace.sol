@@ -44,10 +44,10 @@ contract HavenMarketPlace is
     uint256 bidTime = block.timestamp;
     uint256 bidEndTime;
     uint256 highestBid;
-    address payable beneficiary;
+    address beneficiary;
     address highestBidder;
     address senderAdd;
-    address payable tokenContract_;
+    address tokenContract_;
     address MATIC;
     address HVXTOKEN;
     address owner;
@@ -140,7 +140,7 @@ contract HavenMarketPlace is
                             Constructor
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address payable tokenContractAddress) ERC721("HavenX", "HVX") {
+    constructor(address tokenContractAddress) ERC721("HavenX", "HVX") {
         owner = msg.sender;
         admins.push(msg.sender);
         tokenContract_ = tokenContractAddress;
