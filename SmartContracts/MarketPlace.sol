@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {Payments} from "../SmartContracts/PaymentSplitter.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-abstract contract HavenMarketPlace is
+contract HavenMarketPlace is
     IERC721,
     ERC721URIStorage,
     ReentrancyGuard
@@ -140,7 +140,7 @@ abstract contract HavenMarketPlace is
                             Constructor
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address payable tokenContractAddress) {
+    constructor(address payable tokenContractAddress) ERC721("HavenX", "HVX") {
         owner = msg.sender;
         admins.push(msg.sender);
         tokenContract_ = tokenContractAddress;
@@ -197,7 +197,7 @@ abstract contract HavenMarketPlace is
     /// @dev Creates a new user if user does not already exist.
     function createUser(string memory useruri_) public returns (bool) {
         User storage userr = users_[msg.sender];
-        require(msg.sender != userr.userAddress);
+        require(msg.sender != userr.userAddress, "Not Authorized!");
         User memory user = User(
             verified.no,
             msg.sender,
@@ -316,7 +316,7 @@ abstract contract HavenMarketPlace is
         );
         require(msg.sender != listing.seller, "Permission not granted.");
         require(amount >= listing.price, "Insufficient amount.");
-        require(listing.status == status.open);
+        require(listing.status == status.open, "Listing is not open!");
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
 

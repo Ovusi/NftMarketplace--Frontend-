@@ -80,3 +80,69 @@ contract App {
 }
 
 follow @0xlegendury
+
+
+/**in solidity, there is no specific type used to hold timestamps.
+    so we assign timestamps as unsigned integer values.
+     */
+uint256 timestamp = block.timestamp
+
+
+follow @0xlegendury
+
+
+/**
+Solidity comes with an inbuilt hashing function wich implements 
+sha256 */
+contract Test {   
+   function testsha256() public pure returns(bytes32 result){
+      return sha256("ABC");
+   }  
+}
+
+follow @0xlegendury
+
+
+// Removing an item fro an array in Solidity.
+contract Test {
+    // Declare an array that takes in unsigned integers for example.
+    uint items[] = [1, 2, 3];
+
+    function deleteItem(uint number) internal returns (bool) {
+        // Loop through the items array.
+            for (uint256 i = 0; i < items.length; i++) {
+                // if the number is found in the array
+                // we use the "delete" keyword to remove it from the list.
+                if (i == number) {
+                    delete itemsListed[i];
+                    return true;
+                }
+            }
+            return false;
+        }
+}
+
+follow @0xlegendury
+
+
+
+
+// How to send ERC20 token in Solidity.
+// import openzepplin ERC20 interface file
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+
+contract App {
+
+    event Transfered(address from, address to, uint amount); // event to be emitted.
+
+    // Set contract address of the token you want to send.
+    address tokenContractAddress = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+
+    function send(address toAddress,  uint amount) public {
+        // Send token
+        IERC20(currency).transferFrom(msg.sender, toAddress, amount); // Todo
+
+        emit Transfered(msg.sender, toAddress, amount); 
+    }
+}

@@ -59,7 +59,7 @@ async function ConnectMetamask() {
                 if (chainId == 147) {
                     const account = accounts[0]
                     const provider = await detectEthereumProvider()
-
+ 
                     const disconnectWallet = async () => {
                         if (account) {
                             // TODO: Add disconnetion logic

@@ -40,7 +40,7 @@ function HavenXMarketplace(hvxmarketaddress, provider_,) {
 
     this.auctionNft = async () => {
         /**
-         * Create an nft auction.
+         * Create an nft auction.  
          * ...
          * ...
          * placeAuction(

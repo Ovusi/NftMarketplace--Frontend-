@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 
-library Payments {
+contract Payments {
     using SafeMath for uint256;
 
     address constant tokenContract_ =
