@@ -95,6 +95,7 @@ contract NFT is
         for (uint256 i = 0; i < id_list.length; i++) {
             if (id_list[i] == id) {
                 return true;
+                break;
             }
         }
         return false;

@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Payments} from "../SmartContracts/PaymentSplitter.sol";
+import {Payments} from "../SmartContracts/libs.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract HavenMarketPlace is
@@ -155,6 +155,7 @@ contract HavenMarketPlace is
         for (uint256 i = 0; i < itemsListed.length; i++) {
             if (itemsListed[i] == id) {
                 return true;
+                break
             }
         }
         return false;
@@ -175,6 +176,7 @@ contract HavenMarketPlace is
         for (uint256 i = 0; i < itemsAuctioned.length; i++) {
             if (itemsAuctioned[i] == id) {
                 return true;
+                break;
             }
         }
         return false;
