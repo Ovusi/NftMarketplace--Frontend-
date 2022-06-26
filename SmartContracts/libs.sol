@@ -7,58 +7,43 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 
-contract Payments {
+library Payments {
     using SafeMath for uint256;
 
-    address constant tokenContract_ =
-        0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    address private constant MATIC = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    address private constant HVXTOKEN =
-        0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-        
-
-    function payment(
+    function buy(
         address nftContract,
         address seller,
         address currency,
+        address[] memory payees,
         uint256 tokenId,
-        uint256 amount,
-        address[] memory payees
+        uint256 amount
     ) internal {
-        uint256 price_ = amount;
-        uint256 fee = (price_ * 2) / 100;
-        uint256 commision = price_ - fee;
+        require(amount > 0, "Insufficient amount!");
+        require(seller, "No seller!");
+        require(currency, "No currecy selected!");
+        require(tokenId, "No token id selected!");
+
+        uint256 fee = (amount * 2) / 100;
+        uint256 commision = amount - fee;
         uint256 payeeNumber = payees.length;
         uint256 payeeCommission = fee / payeeNumber;
 
-        if (currency == MATIC || currency == HVXTOKEN) {
-            IERC721(nftContract).transferFrom(
+        IERC721(nftContract).transferFrom(
+            address(this),
+            msg.sender,
+            tokenId
+        );
+        IERC20(currency).transferFrom(msg.sender, seller, commision);
+        for (uint256 receiver = 0; receiver <= payeeNumber; receiver++) {
+            IERC20(currency).transferFrom(
                 address(this),
-                msg.sender,
-                tokenId
+                payees[receiver],
+                payeeCommission
             );
-            IERC20(currency).transferFrom(address(this), seller, commision); // Todo
-            for (uint256 receiver = 0; receiver <= payeeNumber; receiver++) {
-                IERC20(currency).transferFrom(
-                    address(this),
-                    payees[receiver],
-                    payeeCommission
-                ); // Todo
-            }
-        } else if (currency == HVXTOKEN) {
-            IERC721(nftContract).transferFrom(
-                address(this),
-                msg.sender,
-                tokenId
-            );
-            IERC20(currency).transferFrom(address(this), seller, commision); // Todo
-            IERC20(tokenContract_).transferFrom(
-                address(this),
-                tokenContract_,
-                fee
-            ); // Todo
-        } else {
-            revert();
         }
+    }
+
+    function split() internal {
+        //
     }
 }

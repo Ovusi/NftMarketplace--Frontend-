@@ -41,18 +41,18 @@ contract HavenMarketPlace is
                             State variables
     //////////////////////////////////////////////////////////////*/
 
-    uint256 bidTime = block.timestamp;
-    uint256 bidEndTime;
-    uint256 highestBid;
-    address beneficiary;
-    address highestBidder;
-    address senderAdd;
-    address tokenContract_;
-    address MATIC;
-    address HVXTOKEN;
-    address owner;
-    address[] admins;
-    address[] beneficiaries;
+    uint256 private bidTime = block.timestamp;
+    uint256 private bidEndTime;
+    uint256 private highestBid;
+    address private beneficiary;
+    address private highestBidder;
+    address private senderAdd;
+    address private tokenContract_;
+    address private MATIC;
+    address private HVXTOKEN;
+    address private owner;
+    address[] private  admins;
+    address[] private beneficiaries;
 
     /*///////////////////////////////////////////////////////////////
                             Enums
@@ -98,16 +98,16 @@ contract HavenMarketPlace is
         address[] ownedCollections;
     }
 
-    mapping(uint256 => Listing) public _listings;
-    mapping(uint256 => AuctionedItem) public auctionedItem_;
+    mapping(uint256 => Listing) private _listings;
+    mapping(uint256 => AuctionedItem) private auctionedItem_;
     mapping(address => User) users_;
-    mapping(address => address[]) ownedCollections_;
-    mapping(address => uint256) pendingReturns;
+    mapping(address => address[]) private ownedCollections_;
+    mapping(address => uint256) private pendingReturns;
     uint256[] owned; // arrary of NFTs owned by an address
-    uint256[] public itemsListed;
-    uint256[] public itemsAuctioned;
-    address[] public marketUserAddresses;
-    address[] public marketCollections;
+    uint256[] private itemsListed;
+    uint256[] private itemsAuctioned;
+    address[] private marketUserAddresses;
+    address[] private marketCollections;
 
     /*///////////////////////////////////////////////////////////////
                             Modifiers
@@ -322,13 +322,13 @@ contract HavenMarketPlace is
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
 
-        Payments.payment(
+        Payments.buy(
             listing.nftContract,
             listing.seller,
             listing.currency,
+            beneficiaries,
             listing.tokenId,
-            amount,
-            beneficiaries
+            amount
         );
         listing.status = status.sold;
 
