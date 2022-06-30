@@ -2,19 +2,20 @@
 
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Payments} from "../SmartContracts/libs.sol";
+import {Payments, UserLib} from "../SmartContracts/libs.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract HavenMarketPlace is
     IERC721,
     ERC721URIStorage,
-    ReentrancyGuard
+    ReentrancyGuard,
+    Payments,
+    UserLib
 {
     using Counters for Counters.Counter;
     using SafeMath for uint256;
@@ -50,7 +51,7 @@ contract HavenMarketPlace is
     address private tokenContract_;
     address private MATIC;
     address private HVXTOKEN;
-    address private owner;
+    address private owner_;
     address[] private  admins;
     address[] private beneficiaries;
 
@@ -64,10 +65,7 @@ contract HavenMarketPlace is
         canceled,
         closed
     }
-    enum verified {
-        yes,
-        no
-    }
+
 
     /*///////////////////////////////////////////////////////////////
                         Structs, Mappings and Lists
@@ -90,17 +88,10 @@ contract HavenMarketPlace is
         uint256 tokenId;
         uint256 startPrice;
     }
-    struct User {
-        verified verified;
-        address userAddress;
-        uint256 regTime;
-        string userURI;
-        address[] ownedCollections;
-    }
+
 
     mapping(uint256 => Listing) private _listings;
     mapping(uint256 => AuctionedItem) private auctionedItem_;
-    mapping(address => User) users_;
     mapping(address => address[]) private ownedCollections_;
     mapping(address => uint256) private pendingReturns;
     uint256[] owned; // arrary of NFTs owned by an address
@@ -132,7 +123,7 @@ contract HavenMarketPlace is
                 isAdmin_ = true;
             }
         }
-        require(isAdmin_, "Not an Admin");
+        require(isAdmin_);
         _;
     }
 
@@ -141,7 +132,7 @@ contract HavenMarketPlace is
     //////////////////////////////////////////////////////////////*/
 
     constructor(address tokenContractAddress) ERC721("HavenX", "HVX") {
-        owner = msg.sender;
+        owner_ = msg.sender;
         admins.push(msg.sender);
         tokenContract_ = tokenContractAddress;
     }
@@ -150,22 +141,12 @@ contract HavenMarketPlace is
                             Helper logic
     //////////////////////////////////////////////////////////////*/
 
+
     /// @dev Check if a listing exists by Id.
     function listing_exists(uint256 id) internal view returns (bool) {
         for (uint256 i = 0; i < itemsListed.length; i++) {
             if (itemsListed[i] == id) {
                 return true;
-                break
-            }
-        }
-        return false;
-    }
-
-    /// @dev Remove a listing by Id.
-    function remove_listing(uint256 id) internal returns (bool) {
-        for (uint256 i = 0; i < itemsListed.length; i++) {
-            if (itemsListed[i] == id) {
-                delete itemsListed[i];
             }
         }
         return false;
@@ -176,17 +157,6 @@ contract HavenMarketPlace is
         for (uint256 i = 0; i < itemsAuctioned.length; i++) {
             if (itemsAuctioned[i] == id) {
                 return true;
-                break;
-            }
-        }
-        return false;
-    }
-
-    /// @dev Remove auctioned item by Id.
-    function remove_auction(uint256 id) internal returns (bool) {
-        for (uint256 i = 0; i < itemsAuctioned.length; i++) {
-            if (itemsAuctioned[i] == id) {
-                delete itemsAuctioned[i];
             }
         }
         return false;
@@ -197,20 +167,8 @@ contract HavenMarketPlace is
     //////////////////////////////////////////////////////////////*/
 
     /// @dev Creates a new user if user does not already exist.
-    function createUser(string memory useruri_) public returns (bool) {
-        User storage userr = users_[msg.sender];
-        require(msg.sender != userr.userAddress, "Not Authorized!");
-        User memory user = User(
-            verified.no,
-            msg.sender,
-            block.timestamp,
-            useruri_,
-            ownedCollections_[msg.sender]
-        );
-        users_[msg.sender] = user;
-        marketUserAddresses.push(msg.sender);
-        emit UserCreated(msg.sender, useruri_);
-        return true;
+    function createUser(string memory useruri_) public {
+        return UserLib.addNewUser(useruri_);
     }
 
     /// @dev Mark a user verified after KYC. can also unverify user.
@@ -220,7 +178,7 @@ contract HavenMarketPlace is
         returns (string memory)
     {
         User storage user = users_[userAccount];
-        require(msg.sender == owner);
+        require(msg.sender == owner_);
 
         if (user.verified == verified.no) {
             user.verified = verified.yes;
@@ -257,7 +215,7 @@ contract HavenMarketPlace is
     }
 
     function addAdmin(address account) public isAdmin {
-        require(msg.sender == owner);
+        require(msg.sender == owner_);
         admins.push(account);
     }
 
@@ -271,7 +229,7 @@ contract HavenMarketPlace is
         uint256 tokenid_,
         address currency,
         uint256 amount
-    ) external nonReentrant returns (uint256) {
+    ) external payable nonReentrant returns (uint256) {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
         require(amount > 0);
@@ -299,7 +257,7 @@ contract HavenMarketPlace is
     }
 
     /// @dev Allows a user purchase an direct listing.
-    function buyNft(uint256 listingId_, uint256 amount)
+    function buyNft(uint256 listingId_, uint256 amount, address currency)
         public
         payable
         nonReentrant
@@ -309,23 +267,22 @@ contract HavenMarketPlace is
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
         require(
-            IERC20(tokenContract_).approve(address(this), amount) == true,
-            "Transaction not approved."
+            IERC20(tokenContract_).approve(address(this), amount) == true
         );
         require(
-            IERC20(tokenContract_).balanceOf(senderAdd) >= amount,
-            "Not enough funds."
+            IERC20(tokenContract_).balanceOf(senderAdd) >= amount
         );
-        require(msg.sender != listing.seller, "Permission not granted.");
-        require(amount >= listing.price, "Insufficient amount.");
-        require(listing.status == status.open, "Listing is not open!");
+        require(msg.sender != listing.seller);
+        require(amount >= listing.price);
+        require(listing.status == status.open);
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
+        require(currency == listing.currency);
 
         Payments.buy(
             listing.nftContract,
             listing.seller,
-            listing.currency,
+            currency,
             beneficiaries,
             listing.tokenId,
             amount
@@ -342,7 +299,7 @@ contract HavenMarketPlace is
         public
         payable
         nonReentrant
-        returns (bool, string memory)
+        returns (bool)
     {
         Listing storage listing = _listings[lId];
         User storage user = users_[msg.sender];
@@ -358,11 +315,10 @@ contract HavenMarketPlace is
         );
 
         delete _listings[lId];
-        remove_listing(lId);
         listing.status = status.canceled;
         emit deListed(senderAdd, lId);
 
-        return (true, "canceled");
+        return true;
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -422,14 +378,12 @@ contract HavenMarketPlace is
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(
             bidTime >= auctioneditem.auctionTime &&
-                bidTime <= auctioneditem.auctionEndTime,
-            "Auction Ended"
+                bidTime <= auctioneditem.auctionEndTime
         );
         require(
-            amount > auctioneditem.startPrice,
-            "Bid must be greater than auction price."
+            amount > auctioneditem.startPrice
         );
-        require(amount > highestBid, "Increase bid");
+        require(amount > highestBid);
         require(auctioneditem.status == status.open);
 
         pendingReturns[highestBidder] += highestBid;
@@ -460,7 +414,7 @@ contract HavenMarketPlace is
         public
         payable
         nonReentrant
-        returns (bool, string memory)
+        returns (bool)
     {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(auctioneditem.status != status.canceled);
@@ -480,20 +434,19 @@ contract HavenMarketPlace is
 
         emit withdrawnFunds(msg.sender, commision);
 
-        return (true, "Withdrawal successful");
+        return true;
     }
 
     /// @dev Allow auction owner cancel an auction.
     function cancelAuction(uint256 aId)
         public
         nonReentrant
-        returns (bool, string memory)
+        returns (bool)
     {
         require(auction_exists(aId) == true);
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(
-            msg.sender == auctioneditem.creator,
-            "You are not allowed to cancel this auction."
+            msg.sender == auctioneditem.creator
         );
         require(auctioneditem.status == status.open);
 
@@ -504,11 +457,10 @@ contract HavenMarketPlace is
         );
 
         auctioneditem.status = status.canceled;
-        remove_auction(aId);
 
         emit auctionCanceled(msg.sender, aId);
 
-        return (true, "Auction canceled");
+        return true;
     }
 
     /// @dev Allow auction winner claim the reward.
@@ -517,7 +469,7 @@ contract HavenMarketPlace is
         payable
         nonReentrant
         isClosed(aId)
-        returns (bool, string memory)
+        returns (bool)
     {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(msg.sender == highestBidder);
@@ -533,7 +485,7 @@ contract HavenMarketPlace is
 
         emit auctionSold(msg.sender, aId, highestBid);
 
-        return (true, "Reward claimed successfully.");
+        return true;
     }
 
     /*///////////////////////////////////////////////////////////////

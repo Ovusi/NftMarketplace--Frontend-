@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -37,11 +37,12 @@ contract NFT is
                             State variables
     //////////////////////////////////////////////////////////////*/
 
-    string public pictureHash;
-    string public collectionUri;
+    string private pictureHash;
+    string private collectionUri;
     string _name;
     string _symbol;
-    string public baseTokenURI;
+    string private baseTokenURI;
+    string[] private tokenURIList;
     bytes _data;
     uint256 public constant MAX_SUPPLY = 10000;
     uint256 public constant MAX_PER_MINT = 5;
@@ -49,6 +50,8 @@ contract NFT is
     mapping(uint256 => string) ids_uri;
     address[] public token_owners;
     address _owner;
+    //address[] private recipients;
+
 
     /*///////////////////////////////////////////////////////////////
                         Overriding functions
@@ -95,7 +98,6 @@ contract NFT is
         for (uint256 i = 0; i < id_list.length; i++) {
             if (id_list[i] == id) {
                 return true;
-                break;
             }
         }
         return false;
@@ -135,7 +137,7 @@ contract NFT is
         onlyOwner
         returns (string memory)
     {
-        require(msg.sender == _owner, "Access denied.");
+        require(msg.sender == _owner);
         collectionUri = newUri;
         emit UriChanged(collectionUri);
         return collectionUri;
@@ -180,7 +182,7 @@ contract NFT is
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();
-        _safeMint(address(this), newItemId);
+        _safeMint(_owner, newItemId);
         _setTokenURI(newItemId, tokenURI_);
 
         ids_uri[newItemId] = tokenURI_;
@@ -191,32 +193,32 @@ contract NFT is
     }
 
     function mintBatchWithURI(
-        address[] memory recipients,
-        string[] memory tokenURIList
+        string[] memory tokenURIList_
     )
         external
-        virtual
+        payable
         onlyOwner
         nonReentrant
         returns (
-            uint256,
-            string[] memory,
             bool
         )
     {
-        require(tokenURIList.length <= MAX_PER_MINT);
+        require(tokenURIList_.length <= MAX_PER_MINT);
         require(id_list.length < MAX_SUPPLY);
         require(msg.sender == _owner);
-        recipients[0] = _owner;
-        uint256 newItemId = _tokenIds.current();
+        // recipients[0] = _owner;
 
-        for (uint256 i = 0; i < recipients.length; i++) {
-            _safeMint(address(this), newItemId);
-            _setTokenURI(newItemId, tokenURIList[i]);
+        for (uint256 i = 0; i < tokenURIList_.length; i++) {
             _tokenIds.increment();
+            uint256 newItemId = _tokenIds.current();
+            _safeMint(_owner, newItemId);
+            _setTokenURI(newItemId, tokenURIList_[i]);
+
+            ids_uri[newItemId] = tokenURIList_[i];
+            id_list.push(newItemId);
         }
-        emit MintedBatch(_owner, tokenURIList);
-        return (newItemId, tokenURIList, true);
+        emit MintedBatch(_owner, tokenURIList_);
+        return (true);
     }
 
     function burnToken(uint256 tokenId) external returns (string memory) {

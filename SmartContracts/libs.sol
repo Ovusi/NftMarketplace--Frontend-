@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 
-library Payments {
+contract Payments {
     using SafeMath for uint256;
 
     function buy(
@@ -18,10 +18,7 @@ library Payments {
         uint256 tokenId,
         uint256 amount
     ) internal {
-        require(amount > 0, "Insufficient amount!");
-        require(seller, "No seller!");
-        require(currency, "No currecy selected!");
-        require(tokenId, "No token id selected!");
+
 
         uint256 fee = (amount * 2) / 100;
         uint256 commision = amount - fee;
@@ -43,7 +40,36 @@ library Payments {
         }
     }
 
-    function split() internal {
-        //
+}
+
+
+contract UserLib {
+    enum verified {
+        yes,
+        no
     }
+    struct User {
+    verified verified;
+    address userAddress;
+    uint256 regTime;
+    string userURI;
+    address[] ownedCollections;
+    }
+
+    mapping(address => User) users_;
+    mapping(address => address[]) private ownedCollections_;
+
+    function addNewUser(string memory useruri_) internal {
+        User storage userr = users_[msg.sender];
+        require(msg.sender != userr.userAddress, "Not Authorized!");
+        User memory user = User(
+            verified.no,
+            msg.sender,
+            block.timestamp,
+            useruri_,
+            ownedCollections_[msg.sender]
+        );
+        users_[msg.sender] = user;
+    }
+
 }
