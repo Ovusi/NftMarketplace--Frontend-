@@ -7,14 +7,13 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Payments, UserLib} from "../SmartContracts/libs.sol";
+import {UserLib} from "../SmartContracts/libs.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract HavenMarketPlace is
     IERC721,
     ERC721URIStorage,
     ReentrancyGuard,
-    Payments,
     UserLib
 {
     using Counters for Counters.Counter;
@@ -27,6 +26,7 @@ contract HavenMarketPlace is
     //////////////////////////////////////////////////////////////*/
 
     event Listed(address seller, address newToken, uint256 id, uint256 price);
+    event Minted(address add, string uri);
     event deListed(address owner, uint256 id);
     event Bought(address buyer, uint256 price, uint256 id);
     event Auctioned(address newToken, uint256 id, uint256 startPrice);
@@ -45,15 +45,27 @@ contract HavenMarketPlace is
     uint256 private bidTime = block.timestamp;
     uint256 private bidEndTime;
     uint256 private highestBid;
+    uint256[] private itemsListed;
+    uint256[] private itemsAuctioned;
+    uint256[] private id_list;
+    uint256 public MAX_PER_MINT = 5;
     address private beneficiary;
     address private highestBidder;
     address private senderAdd;
     address private tokenContract_;
-    address private MATIC;
-    address private HVXTOKEN;
     address private owner_;
+    address[] private marketUserAddresses;
+    address[] public token_owners;
+    address[] private marketCollections;
     address[] private  admins;
     address[] private beneficiaries;
+    mapping(uint256 => Listing) private _listings;
+    mapping(uint256 => AuctionedItem) private auctionedItem_;
+    mapping(address => address[]) private ownedCollections_;
+    mapping(address => uint256) private pendingReturns;
+    mapping(uint256 => string) ids_uri;
+    string[] private tokenURIList;
+    string private baseTokenURI;
 
     /*///////////////////////////////////////////////////////////////
                             Enums
@@ -75,9 +87,7 @@ contract HavenMarketPlace is
         status status;
         address seller;
         address nftContract;
-        address currency;
         uint256 tokenId;
-        uint256 price;
     }
     struct AuctionedItem {
         status status;
@@ -89,16 +99,6 @@ contract HavenMarketPlace is
         uint256 startPrice;
     }
 
-
-    mapping(uint256 => Listing) private _listings;
-    mapping(uint256 => AuctionedItem) private auctionedItem_;
-    mapping(address => address[]) private ownedCollections_;
-    mapping(address => uint256) private pendingReturns;
-    uint256[] owned; // arrary of NFTs owned by an address
-    uint256[] private itemsListed;
-    uint256[] private itemsAuctioned;
-    address[] private marketUserAddresses;
-    address[] private marketCollections;
 
     /*///////////////////////////////////////////////////////////////
                             Modifiers
@@ -116,25 +116,13 @@ contract HavenMarketPlace is
         _;
     }
 
-    modifier isAdmin() {
-        bool isAdmin_ = false;
-        for (uint256 i = 0; i < admins.length; i++) {
-            if (admins[i] == msg.sender) {
-                isAdmin_ = true;
-            }
-        }
-        require(isAdmin_);
-        _;
-    }
 
     /*///////////////////////////////////////////////////////////////
                             Constructor
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address tokenContractAddress) ERC721("HavenX", "HVX") {
+    constructor() ERC721("HavenX", "HVX") payable {
         owner_ = msg.sender;
-        admins.push(msg.sender);
-        tokenContract_ = tokenContractAddress;
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -174,7 +162,6 @@ contract HavenMarketPlace is
     /// @dev Mark a user verified after KYC. can also unverify user.
     function verifiyUser(address userAccount)
         public
-        isAdmin
         returns (string memory)
     {
         User storage user = users_[userAccount];
@@ -182,26 +169,24 @@ contract HavenMarketPlace is
 
         if (user.verified == verified.no) {
             user.verified = verified.yes;
-            return "Successfully verified";
+            return "verified";
         }
 
         if (user.verified == verified.yes) {
             user.verified = verified.no;
-            return "Successfully unverified";
+            return "unverified";
         }
     }
 
     /// @dev Enable existing user edit account info.
-    function editUser(string memory useruri_) public {
-        User storage user = users_[msg.sender];
-        require(msg.sender == user.userAddress);
-        user.userURI = useruri_;
+    function editUser(string memory useruri_) public returns (string memory) {
+        return UserLib.modifyUser(useruri_);
     }
 
     /// @dev Enable user to add a new collection.
     function add_collection(address collectionaddress)
         public
-        returns (string memory)
+        returns (bool)
     {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
@@ -211,85 +196,87 @@ contract HavenMarketPlace is
 
         emit CollectionAdded(msg.sender, collectionaddress);
 
-        return "Collection added successfully";
-    }
-
-    function addAdmin(address account) public isAdmin {
-        require(msg.sender == owner_);
-        admins.push(account);
+        return true;
     }
 
     /*///////////////////////////////////////////////////////////////
                         Direct listing logic
     //////////////////////////////////////////////////////////////*/
 
+    function mintNft(string memory _tokenURI)
+        external
+        nonReentrant
+        returns (
+            uint256,
+            string memory,
+            bool
+        )
+    {
+        _tokenIds.increment();
+
+        uint256 newItemId = _tokenIds.current();
+        _safeMint(msg.sender, newItemId);
+        _setTokenURI(newItemId, _tokenURI);
+
+        ids_uri[newItemId] = _tokenURI;
+        id_list.push(newItemId);
+
+        emit Minted(msg.sender, _tokenURI);
+        return (newItemId, _tokenURI, true);
+    }
+
     /// @dev List an NFT on the marketplace.
     function listNft(
         address collectionContract,
-        uint256 tokenid_,
-        address currency,
-        uint256 amount
+        uint256 tokenid_
     ) external payable nonReentrant returns (uint256) {
-        User storage user = users_[msg.sender];
-        require(msg.sender == user.userAddress);
-        require(amount > 0);
-        IERC721(collectionContract).transferFrom(
-            msg.sender,
-            address(this),
-            tokenid_
-        );
-
+        //User storage user = users_[msg.sender];
+        //require(msg.sender == user.userAddress);
+        //require(amount > 0);
+        
         Listing memory listing = Listing(
             status.open,
             msg.sender,
             collectionContract,
-            currency,
-            tokenid_,
-            amount
+            tokenid_
         );
+        IERC721(collectionContract).transferFrom(
+            payable(msg.sender),
+            payable(address(this)),
+            tokenid_
+        );
+
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         _listings[newItemId] = listing;
         itemsListed.push(newItemId);
 
-        emit Listed(msg.sender, collectionContract, tokenid_, amount);
+        //emit Listed(msg.sender, collectionContract, tokenid_, amount);
         return newItemId;
     }
 
     /// @dev Allows a user purchase an direct listing.
-    function buyNft(uint256 listingId_, uint256 amount, address currency)
+    function buyNft(uint256 listingId_)
         public
         payable
         nonReentrant
         returns (bool)
     {
         Listing storage listing = _listings[listingId_];
-        User storage user = users_[msg.sender];
-        require(msg.sender == user.userAddress);
-        require(
-            IERC20(tokenContract_).approve(address(this), amount) == true
-        );
-        require(
-            IERC20(tokenContract_).balanceOf(senderAdd) >= amount
-        );
+        //User storage user = users_[msg.sender];
+        //require(msg.sender == user.userAddress);
         require(msg.sender != listing.seller);
-        require(amount >= listing.price);
         require(listing.status == status.open);
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
-        require(currency == listing.currency);
-
-        Payments.buy(
-            listing.nftContract,
-            listing.seller,
-            currency,
-            beneficiaries,
-            listing.tokenId,
-            amount
+        IERC721(listing.nftContract).transferFrom(
+            payable(address(this)),
+            msg.sender,
+            listingId_
         );
         listing.status = status.sold;
 
-        emit Bought(senderAdd, amount, listing.tokenId);
+        //emit Bought(senderAdd, amount, listing.tokenId);
 
         return true;
     }
