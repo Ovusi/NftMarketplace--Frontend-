@@ -45,10 +45,10 @@ contract HavenMarketPlace is
     uint256 private bidTime = block.timestamp;
     uint256 private bidEndTime;
     uint256 private highestBid;
+    uint256 public MAX_PER_MINT = 5;
+    uint256[] private id_list;
     uint256[] private itemsListed;
     uint256[] private itemsAuctioned;
-    uint256[] private id_list;
-    uint256 public MAX_PER_MINT = 5;
     address private beneficiary;
     address private highestBidder;
     address private senderAdd;
@@ -121,7 +121,7 @@ contract HavenMarketPlace is
                             Constructor
     //////////////////////////////////////////////////////////////*/
 
-    constructor() ERC721("HavenX", "HVX") payable {
+    constructor(string memory name, string memory symbol) ERC721(name, symbol) payable {
         owner_ = msg.sender;
     }
 
@@ -155,13 +155,13 @@ contract HavenMarketPlace is
     //////////////////////////////////////////////////////////////*/
 
     /// @dev Creates a new user if user does not already exist.
-    function createUser(string memory useruri_) public {
+    function createUser(string memory useruri_) external {
         return UserLib.addNewUser(useruri_);
     }
 
     /// @dev Mark a user verified after KYC. can also unverify user.
     function verifiyUser(address userAccount)
-        public
+        external
         returns (string memory)
     {
         User storage user = users_[userAccount];
@@ -179,13 +179,13 @@ contract HavenMarketPlace is
     }
 
     /// @dev Enable existing user edit account info.
-    function editUser(string memory useruri_) public returns (string memory) {
+    function editUser(string memory useruri_) external returns (string memory) {
         return UserLib.modifyUser(useruri_);
     }
 
     /// @dev Enable user to add a new collection.
     function add_collection(address collectionaddress)
-        public
+        external
         returns (bool)
     {
         User storage user = users_[msg.sender];
@@ -217,6 +217,7 @@ contract HavenMarketPlace is
         uint256 newItemId = _tokenIds.current();
         _safeMint(msg.sender, newItemId);
         _setTokenURI(newItemId, _tokenURI);
+        setApprovalForAll(address(this), true);
 
         ids_uri[newItemId] = _tokenURI;
         id_list.push(newItemId);
@@ -257,7 +258,7 @@ contract HavenMarketPlace is
 
     /// @dev Allows a user purchase an direct listing.
     function buyNft(uint256 listingId_)
-        public
+        external
         payable
         nonReentrant
         returns (bool)
@@ -283,7 +284,7 @@ contract HavenMarketPlace is
 
     /// @dev Enables the owner of a direct listing to cancel the Listing.
     function cancelListing(uint256 lId)
-        public
+        external
         payable
         nonReentrant
         returns (bool)
@@ -318,7 +319,7 @@ contract HavenMarketPlace is
         uint256 tokenid_,
         uint256 aucEndTime,
         uint256 amount
-    ) public nonReentrant returns (uint256) {
+    ) external nonReentrant returns (uint256) {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
         require(amount > 0);
@@ -354,7 +355,7 @@ contract HavenMarketPlace is
 
     /// @dev Place a bid on an auctioned item.
     function bid(uint256 aId, uint256 amount)
-        public
+        external
         payable
         nonReentrant
         isClosed(aId)
@@ -384,7 +385,7 @@ contract HavenMarketPlace is
     }
 
     /// @dev Allow a bidder withdraw a bid if it has been outbid.
-    function withdrawUnderBid(uint256 aId) public payable nonReentrant {
+    function withdrawUnderBid(uint256 aId) external payable nonReentrant {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(msg.sender != auctioneditem.creator);
         require(msg.sender != highestBidder);
@@ -398,7 +399,7 @@ contract HavenMarketPlace is
 
     /// @dev Allow auction owner withdraw the wiining bid after auction closes.
     function withdrawHighestBid(uint256 aId)
-        public
+        external
         payable
         nonReentrant
         returns (bool)
@@ -426,7 +427,7 @@ contract HavenMarketPlace is
 
     /// @dev Allow auction owner cancel an auction.
     function cancelAuction(uint256 aId)
-        public
+        external
         nonReentrant
         returns (bool)
     {
@@ -452,7 +453,7 @@ contract HavenMarketPlace is
 
     /// @dev Allow auction winner claim the reward.
     function claimNft(uint256 aId)
-        public
+        external
         payable
         nonReentrant
         isClosed(aId)
@@ -480,13 +481,13 @@ contract HavenMarketPlace is
     //////////////////////////////////////////////////////////////*/
 
     /// @dev Get all auctioned items in an array.
-    function getAllAuctions() public view returns (uint256[] memory) {
+    function getAllAuctions() external view returns (uint256[] memory) {
         return itemsAuctioned;
     }
 
     /// @dev Returns the URI of an auctioned token by Id.
     function getAuctionedTokenUri(uint256 aId)
-        public
+        external
         view
         returns (string memory)
     {
@@ -496,25 +497,25 @@ contract HavenMarketPlace is
     }
 
     /// @dev Returns a direct listing by Id.
-    function getListingById(uint256 lId) public view returns (Listing memory) {
+    function getListingById(uint256 lId) external view returns (Listing memory) {
         require(listing_exists(lId) == true);
         Listing storage listing = _listings[lId];
         return listing;
     }
 
     /// @dev Get all direct listings in an array.
-    function getAllListings() public view returns (uint256[] memory) {
+    function getAllListings() external view returns (uint256[] memory) {
         return itemsListed;
     }
 
     /// @dev Returns the URI of a direct listing by Id.
-    function getTokenUri(uint256 lId) public view returns (string memory) {
+    function getTokenUri(uint256 lId) external view returns (string memory) {
         Listing storage listing = _listings[lId];
         return tokenURI(listing.tokenId);
     }
 
     /// @dev Checks if user is verified.
-    function isVerified(address userAccount) public view returns (bool) {
+    function isVerified(address userAccount) external view returns (bool) {
         User storage user = users_[userAccount];
         if (user.verified == verified.yes) {
             return true;

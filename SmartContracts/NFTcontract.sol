@@ -15,7 +15,6 @@ contract NFT is
     ERC721,
     ERC721URIStorage,
     ERC721Enumerable,
-    Ownable,
     ReentrancyGuard
 {
     using SafeMath for uint256;
