@@ -51,7 +51,6 @@ contract HavenMarketPlace is
     uint256[] private itemsAuctioned;
     address private beneficiary;
     address private highestBidder;
-    address private senderAdd;
     address private tokenContract_;
     address private owner_;
     address[] private marketUserAddresses;
@@ -306,17 +305,15 @@ contract HavenMarketPlace is
 
         Payments.payment(
             listing.nftContract,
-            listing.seller,
             currency, // Todo: analyze this properly
             listing.tokenId,
-            amount,
-            beneficiaries
+            amount
         );
         user.balance += commision; // Todo: remove amount and sort this properly
         marketFees += fee;
         listing.status = status.sold;
 
-        emit Bought(senderAdd, amount, listing.tokenId);
+        emit Bought(msg.sender, amount, listing.tokenId);
 
         return true;
     }
@@ -343,8 +340,16 @@ contract HavenMarketPlace is
 
         delete _listings[lId];
         listing.status = status.canceled;
-        emit deListed(senderAdd, lId);
+        emit deListed(msg.sender, lId);
 
+        return true;
+    }
+
+    function withdrawEarnings(address currency) external nonReentrant returns (bool) {
+        User storage user = users_[msg.sender];
+        require(msg.sender == user.userAddress);
+        IERC20(currency).transferFrom(address(this), msg.sender, user.balance);
+        
         return true;
     }
 
