@@ -7,14 +7,13 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {UserLib} from "../SmartContracts/libs.sol";
+import {Payments} from "../SmartContracts/libs.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract HavenMarketPlace is
     IERC721,
     ERC721URIStorage,
-    ReentrancyGuard,
-    UserLib
+    ReentrancyGuard
 {
     using Counters for Counters.Counter;
     using SafeMath for uint256;
@@ -46,6 +45,7 @@ contract HavenMarketPlace is
     uint256 private bidEndTime;
     uint256 private highestBid;
     uint256 public MAX_PER_MINT = 5;
+    uint256 private marketFees;
     uint256[] private id_list;
     uint256[] private itemsListed;
     uint256[] private itemsAuctioned;
@@ -64,6 +64,7 @@ contract HavenMarketPlace is
     mapping(address => address[]) private ownedCollections_;
     mapping(address => uint256) private pendingReturns;
     mapping(uint256 => string) ids_uri;
+    mapping(address => User) users_;
     string[] private tokenURIList;
     string private baseTokenURI;
 
@@ -76,6 +77,10 @@ contract HavenMarketPlace is
         sold,
         canceled,
         closed
+    }
+    enum verified {
+        yes,
+        no
     }
 
 
@@ -97,6 +102,14 @@ contract HavenMarketPlace is
         uint256 auctionEndTime;
         uint256 tokenId;
         uint256 startPrice;
+    }
+    struct User {
+    verified verified;
+    address userAddress;
+    uint256 regTime;
+    uint256 balance;
+    string userURI;
+    address[] ownedCollections;
     }
 
 
@@ -155,8 +168,21 @@ contract HavenMarketPlace is
     //////////////////////////////////////////////////////////////*/
 
     /// @dev Creates a new user if user does not already exist.
-    function createUser(string memory useruri_) external {
-        return UserLib.addNewUser(useruri_);
+    function createUser(string memory useruri_) external returns (bool) {
+        User storage userr = users_[msg.sender];
+        require(msg.sender != userr.userAddress);
+        User memory user = User(
+            verified.no,
+            msg.sender,
+            block.timestamp,
+            0,
+            useruri_,
+            ownedCollections_[msg.sender]
+        );
+        users_[msg.sender] = user;
+        marketUserAddresses.push(msg.sender);
+        emit UserCreated(msg.sender, useruri_);
+        return true;
     }
 
     /// @dev Mark a user verified after KYC. can also unverify user.
@@ -180,7 +206,9 @@ contract HavenMarketPlace is
 
     /// @dev Enable existing user edit account info.
     function editUser(string memory useruri_) external returns (string memory) {
-        return UserLib.modifyUser(useruri_);
+        User storage user = users_[msg.sender];
+        require(msg.sender == user.userAddress);
+        user.userURI = useruri_;
     }
 
     /// @dev Enable user to add a new collection.
@@ -217,7 +245,6 @@ contract HavenMarketPlace is
         uint256 newItemId = _tokenIds.current();
         _safeMint(msg.sender, newItemId);
         _setTokenURI(newItemId, _tokenURI);
-        setApprovalForAll(address(this), true);
 
         ids_uri[newItemId] = _tokenURI;
         id_list.push(newItemId);
@@ -229,21 +256,23 @@ contract HavenMarketPlace is
     /// @dev List an NFT on the marketplace.
     function listNft(
         address collectionContract,
-        uint256 tokenid_
+        uint256 tokenid_,
+        uint256 amount
     ) external payable nonReentrant returns (uint256) {
-        //User storage user = users_[msg.sender];
-        //require(msg.sender == user.userAddress);
-        //require(amount > 0);
+        User storage user = users_[msg.sender];
+        require(msg.sender == user.userAddress);
+        require(amount > 0);
+
+        IERC721(collectionContract).transferFrom(
+            payable(msg.sender),
+            payable(address(this)),
+            tokenid_
+        );
         
         Listing memory listing = Listing(
             status.open,
             msg.sender,
             collectionContract,
-            tokenid_
-        );
-        IERC721(collectionContract).transferFrom(
-            payable(msg.sender),
-            payable(address(this)),
             tokenid_
         );
 
@@ -257,27 +286,37 @@ contract HavenMarketPlace is
     }
 
     /// @dev Allows a user purchase an direct listing.
-    function buyNft(uint256 listingId_)
+    function buyNft(uint256 listingId_, address currency, uint256 amount)
         external
         payable
         nonReentrant
         returns (bool)
     {
         Listing storage listing = _listings[listingId_];
-        //User storage user = users_[msg.sender];
-        //require(msg.sender == user.userAddress);
+        User storage user = users_[msg.sender];
+        require(msg.sender == user.userAddress);
         require(msg.sender != listing.seller);
         require(listing.status == status.open);
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
-        IERC721(listing.nftContract).transferFrom(
-            payable(address(this)),
-            msg.sender,
-            listingId_
+
+        //uint256 price_ = amount;
+        uint256 fee = (amount * 2) / 100;
+        uint256 commision = amount - fee;
+
+        Payments.payment(
+            listing.nftContract,
+            listing.seller,
+            currency, // Todo: analyze this properly
+            listing.tokenId,
+            amount,
+            beneficiaries
         );
+        user.balance += commision; // Todo: remove amount and sort this properly
+        marketFees += fee;
         listing.status = status.sold;
 
-        //emit Bought(senderAdd, amount, listing.tokenId);
+        emit Bought(senderAdd, amount, listing.tokenId);
 
         return true;
     }
