@@ -39,14 +39,12 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
 
     uint256 private bidTime = block.timestamp;
     uint256 private bidEndTime;
-    uint256 private highestBid;
     uint256 public MAX_PER_MINT = 5;
     uint256 private marketFees;
     uint256[] private id_list;
     uint256[] private itemsListed;
     uint256[] private itemsAuctioned;
     address private beneficiary;
-    address private highestBidder;
     address private tokenContract_;
     address private owner_;
     address[] private marketUserAddresses;
@@ -96,6 +94,8 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         uint256 auctionEndTime;
         uint256 tokenId;
         uint256 startPrice;
+        address highestBidder;
+        uint256 highestBid;
     }
     struct User {
         verified verified;
