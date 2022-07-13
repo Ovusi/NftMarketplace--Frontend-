@@ -209,7 +209,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         ownedCollections_[msg.sender].push(collectionaddress);
         user.ownedCollections = ownedCollections_[msg.sender];
         marketCollections.push(collectionaddress);
-
+        
         emit CollectionAdded(msg.sender, collectionaddress);
 
         return true;
@@ -333,14 +333,15 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         return true;
     }
 
-    function withdrawEarnings(address currency)
+    function withdrawEarnings(address currency, uint256 amount)
         external
         nonReentrant
         returns (bool)
     {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
-        IERC20(currency).transferFrom(address(this), msg.sender, user.balance);
+        require(amount >= user.balance);
+        IERC20(currency).transferFrom(address(this), msg.sender, amount);
 
         return true;
     }

@@ -14,4 +14,8 @@ contract HavenToken is ERC20 {
     constructor() ERC20(_name, _symbol) {
         _mint(msg.sender, initialMintSupply * 10**decimals());
     }
+
+    function marketplaceRewards(address account, uint256 amount) external {
+        _mint(account, amount);
+    }
 }

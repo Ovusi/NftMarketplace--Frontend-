@@ -19,12 +19,12 @@ library Payments {
         uint256 amount
     ) internal {
         if (currency == MATIC || currency == HVXTOKEN) {
+            IERC20(currency).transferFrom(msg.sender, address(this), amount);
             IERC721(nftContract).transferFrom(
                 address(this),
                 msg.sender,
                 tokenId
             );
-            IERC20(currency).transferFrom(msg.sender, address(this), amount); // Todo
         } else {
             revert();
         }
