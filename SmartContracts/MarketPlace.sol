@@ -376,6 +376,8 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
             block.timestamp,
             bidDuration,
             tokenid_,
+            amount,
+            msg.sender,
             amount
         );
         _tokenIds.increment();
@@ -406,24 +408,24 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
                 bidTime <= auctioneditem.auctionEndTime
         );
         require(amount > auctioneditem.startPrice);
-        require(amount > highestBid);
+        require(amount > auctioneditem.highestBid);
         require(auctioneditem.status == status.open);
 
-        pendingReturns[highestBidder] += highestBid;
+        pendingReturns[auctioneditem.highestBidder] += auctioneditem.highestBid;
 
-        highestBidder = msg.sender;
-        highestBid = amount;
+        auctioneditem.highestBidder = msg.sender;
+        auctioneditem.highestBid = amount;
 
         IERC20(tokenContract_).transferFrom(msg.sender, address(this), amount);
 
-        emit HighestBidIncreased(highestBidder, highestBid);
+        emit HighestBidIncreased(auctioneditem.highestBidder, auctioneditem.highestBid);
     }
 
     /// @dev Allow a bidder withdraw a bid if it has been outbid.
     function withdrawUnderBid(uint256 aId) external payable nonReentrant {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(msg.sender != auctioneditem.creator);
-        require(msg.sender != highestBidder);
+        require(msg.sender != auctioneditem.highestBidder);
 
         uint256 amount = pendingReturns[msg.sender];
 
@@ -444,7 +446,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         require(block.timestamp > auctioneditem.auctionEndTime);
         require(msg.sender == auctioneditem.creator);
 
-        uint256 amount = highestBid;
+        uint256 amount = auctioneditem.highestBid;
         uint256 fee = (amount * 2) / 100;
         uint256 commision = amount - fee;
 
@@ -489,18 +491,18 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         returns (bool)
     {
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
-        require(msg.sender == highestBidder);
+        require(msg.sender == auctioneditem.highestBidder);
         require(block.timestamp > auctioneditem.auctionEndTime);
         require(msg.sender != auctioneditem.creator);
         require(auctioneditem.status != status.canceled);
 
         IERC721(auctioneditem.nftContract).transferFrom(
             address(this),
-            highestBidder,
+            auctioneditem.highestBidder,
             auctioneditem.tokenId
         );
 
-        emit auctionSold(msg.sender, aId, highestBid);
+        emit auctionSold(msg.sender, aId, auctioneditem.highestBid);
 
         return true;
     }
