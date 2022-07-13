@@ -10,14 +10,10 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {Payments} from "../SmartContracts/libs.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-contract HavenMarketPlace is
-    IERC721,
-    ERC721URIStorage,
-    ReentrancyGuard
-{
+contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
     using Counters for Counters.Counter;
     using SafeMath for uint256;
-    
+
     Counters.Counter private _tokenIds;
 
     /*///////////////////////////////////////////////////////////////
@@ -56,7 +52,7 @@ contract HavenMarketPlace is
     address[] private marketUserAddresses;
     address[] public token_owners;
     address[] private marketCollections;
-    address[] private  admins;
+    address[] private admins;
     address[] private beneficiaries;
     mapping(uint256 => Listing) private _listings;
     mapping(uint256 => AuctionedItem) private auctionedItem_;
@@ -82,7 +78,6 @@ contract HavenMarketPlace is
         no
     }
 
-
     /*///////////////////////////////////////////////////////////////
                         Structs, Mappings and Lists
     //////////////////////////////////////////////////////////////*/
@@ -103,14 +98,13 @@ contract HavenMarketPlace is
         uint256 startPrice;
     }
     struct User {
-    verified verified;
-    address userAddress;
-    uint256 regTime;
-    uint256 balance;
-    string userURI;
-    address[] ownedCollections;
+        verified verified;
+        address userAddress;
+        uint256 regTime;
+        uint256 balance;
+        string userURI;
+        address[] ownedCollections;
     }
-
 
     /*///////////////////////////////////////////////////////////////
                             Modifiers
@@ -128,19 +122,20 @@ contract HavenMarketPlace is
         _;
     }
 
-
     /*///////////////////////////////////////////////////////////////
                             Constructor
     //////////////////////////////////////////////////////////////*/
 
-    constructor(string memory name, string memory symbol) ERC721(name, symbol) payable {
+    constructor(string memory name, string memory symbol)
+        payable
+        ERC721(name, symbol)
+    {
         owner_ = msg.sender;
     }
 
     /*///////////////////////////////////////////////////////////////
                             Helper logic
     //////////////////////////////////////////////////////////////*/
-
 
     /// @dev Check if a listing exists by Id.
     function listing_exists(uint256 id) internal view returns (bool) {
@@ -185,10 +180,7 @@ contract HavenMarketPlace is
     }
 
     /// @dev Mark a user verified after KYC. can also unverify user.
-    function verifiyUser(address userAccount)
-        external
-        returns (string memory)
-    {
+    function verifiyUser(address userAccount) external returns (string memory) {
         User storage user = users_[userAccount];
         require(msg.sender == owner_);
 
@@ -211,10 +203,7 @@ contract HavenMarketPlace is
     }
 
     /// @dev Enable user to add a new collection.
-    function add_collection(address collectionaddress)
-        external
-        returns (bool)
-    {
+    function add_collection(address collectionaddress) external returns (bool) {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
         ownedCollections_[msg.sender].push(collectionaddress);
@@ -267,7 +256,7 @@ contract HavenMarketPlace is
             address(this),
             tokenid_
         );
-        
+
         Listing memory listing = Listing(
             status.open,
             msg.sender,
@@ -285,12 +274,11 @@ contract HavenMarketPlace is
     }
 
     /// @dev Allows a user purchase an direct listing.
-    function buyNft(uint256 listingId_, address currency, uint256 amount)
-        external
-        payable
-        nonReentrant
-        returns (bool)
-    {
+    function buyNft(
+        uint256 listingId_,
+        address currency,
+        uint256 amount
+    ) external payable nonReentrant returns (bool) {
         Listing storage listing = _listings[listingId_];
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
@@ -345,11 +333,15 @@ contract HavenMarketPlace is
         return true;
     }
 
-    function withdrawEarnings(address currency) external nonReentrant returns (bool) {
+    function withdrawEarnings(address currency)
+        external
+        nonReentrant
+        returns (bool)
+    {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
         IERC20(currency).transferFrom(address(this), msg.sender, user.balance);
-        
+
         return true;
     }
 
@@ -412,9 +404,7 @@ contract HavenMarketPlace is
             bidTime >= auctioneditem.auctionTime &&
                 bidTime <= auctioneditem.auctionEndTime
         );
-        require(
-            amount > auctioneditem.startPrice
-        );
+        require(amount > auctioneditem.startPrice);
         require(amount > highestBid);
         require(auctioneditem.status == status.open);
 
@@ -470,16 +460,10 @@ contract HavenMarketPlace is
     }
 
     /// @dev Allow auction owner cancel an auction.
-    function cancelAuction(uint256 aId)
-        external
-        nonReentrant
-        returns (bool)
-    {
+    function cancelAuction(uint256 aId) external nonReentrant returns (bool) {
         require(auction_exists(aId) == true);
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
-        require(
-            msg.sender == auctioneditem.creator
-        );
+        require(msg.sender == auctioneditem.creator);
         require(auctioneditem.status == status.open);
 
         IERC721(auctioneditem.nftContract).transferFrom(
@@ -541,7 +525,11 @@ contract HavenMarketPlace is
     }
 
     /// @dev Returns a direct listing by Id.
-    function getListingById(uint256 lId) external view returns (Listing memory) {
+    function getListingById(uint256 lId)
+        external
+        view
+        returns (Listing memory)
+    {
         require(listing_exists(lId) == true);
         Listing storage listing = _listings[lId];
         return listing;
