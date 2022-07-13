@@ -85,6 +85,8 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         address seller;
         address nftContract;
         uint256 tokenId;
+        uint256 price;
+        uint256 listingTime;
     }
     struct AuctionedItem {
         status status;
@@ -261,7 +263,9 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
             status.open,
             msg.sender,
             collectionContract,
-            tokenid_
+            tokenid_,
+            amount,
+            block.timestamp
         );
 
         _tokenIds.increment();
