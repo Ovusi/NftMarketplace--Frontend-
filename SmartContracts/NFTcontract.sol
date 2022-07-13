@@ -15,6 +15,7 @@ contract NFT is
     ERC721,
     ERC721URIStorage,
     ERC721Enumerable,
+    Ownable,
     ReentrancyGuard
 {
     using SafeMath for uint256;
@@ -43,12 +44,14 @@ contract NFT is
     string private baseTokenURI;
     string[] private tokenURIList;
     bytes _data;
-    uint256 public constant MAX_SUPPLY = 10000;
-    uint256 public constant MAX_PER_MINT = 5;
-    uint256[] id_list;
-    mapping(uint256 => string) ids_uri;
-    address[] public token_owners;
-    address _owner;
+    uint256 private constant MAX_SUPPLY = 10000;
+    uint256 private constant MAX_PER_MINT = 5;
+    uint256[] private id_list;
+    mapping(uint256 => string) private ids_uri;
+    mapping(uint => address) private tokenOwnersMap; //todo:
+    address[] private token_owners; // todo: keep track of token owners
+    address private _owner;
+    address private marketAddress = 0xd9145CCE52D386f254917e481eB44e9943F39138;
     //address[] private recipients;
 
 
@@ -168,6 +171,7 @@ contract NFT is
 
     function mintNft(string memory tokenURI_)
         external
+        payable
         onlyOwner
         nonReentrant
         returns (
@@ -181,8 +185,10 @@ contract NFT is
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();
-        _safeMint(_owner, newItemId);
+        _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, tokenURI_);
+
+        setApprovalForAll(marketAddress, true);
 
         ids_uri[newItemId] = tokenURI_;
         id_list.push(newItemId);
@@ -212,12 +218,21 @@ contract NFT is
             uint256 newItemId = _tokenIds.current();
             _safeMint(_owner, newItemId);
             _setTokenURI(newItemId, tokenURIList_[i]);
+            setApprovalForAll(marketAddress, true);
 
             ids_uri[newItemId] = tokenURIList_[i];
             id_list.push(newItemId);
         }
         emit MintedBatch(_owner, tokenURIList_);
         return (true);
+    }
+
+    function withdrawToken(uint256 tokenId_, address from, address to) external payable {
+        // ...
+        //require(msg.sender == _owner);
+        //approve(to, tokenId_);
+        transferFrom(from, to, tokenId_);
+
     }
 
     function burnToken(uint256 tokenId) external returns (string memory) {
