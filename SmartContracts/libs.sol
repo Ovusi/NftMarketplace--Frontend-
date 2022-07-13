@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -19,7 +19,6 @@ library Payments {
 
     function payment(
         address nftContract,
-        address seller,
         address currency,
         uint256 tokenId,
         uint256 amount
@@ -32,18 +31,6 @@ library Payments {
             );
             IERC20(currency).transferFrom(msg.sender, address(this), amount); // Todo
 
-        } else if (currency == HVXTOKEN) {
-            IERC721(nftContract).transferFrom(
-                address(this),
-                msg.sender,
-                tokenId
-            );
-            IERC20(currency).transferFrom(address(this), seller, commision); // Todo
-            IERC20(tokenContract_).transferFrom(
-                address(this),
-                tokenContract_,
-                fee
-            ); // Todo
         } else {
             revert();
         }
