@@ -273,7 +273,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         _listings[newItemId] = listing;
         itemsListed.push(newItemId);
 
-        //emit Listed(msg.sender, collectionContract, tokenid_, amount);
+        emit Listed(msg.sender, collectionContract, tokenid_, amount);
         return newItemId;
     }
 
