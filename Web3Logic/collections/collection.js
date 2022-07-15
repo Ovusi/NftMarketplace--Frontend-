@@ -1,7 +1,7 @@
 const { Web3 } = require('web3');
 const { ABI, BYTE_CODE } = require("../collections/data")
 
-function DeployCollection(nftmarketaddress, senderadd, provider_, name, symbol) {
+function DeployCollection(account, provider_, name, symbol) {
   const rpcURL = provider_
   const web3 = new Web3(rpcURL)
 
@@ -13,7 +13,7 @@ function DeployCollection(nftmarketaddress, senderadd, provider_, name, symbol) 
   }
 
   const parameter = {
-    from: senderadd,
+    from: account,
     gas: 1500000,
     gasPrice: '30000000000000'
   }
