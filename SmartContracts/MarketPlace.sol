@@ -247,7 +247,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
     ) external payable nonReentrant returns (uint256) {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
-        require(amount > 0);
+        require(amount != 0);
 
         IERC721(collectionContract).transferFrom(
             msg.sender,
@@ -286,6 +286,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         require(listing.status == status.open);
         require(tokenContract_ != msg.sender);
         require(tokenContract_ != listing.seller);
+        require(amount != 0);
 
         //uint256 price_ = amount;
         uint256 fee = (amount * 2) / 100;
@@ -340,6 +341,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
         require(amount >= user.balance);
+        require(amount != 0);
 
         IERC20(currency).transferFrom(address(this), msg.sender, amount);
         user.balance -= amount;
@@ -360,7 +362,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
     ) external nonReentrant returns (uint256) {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
-        require(amount > 0);
+        require(amount != 0);
 
         IERC721(collectionContract).transferFrom(
             msg.sender,
@@ -413,6 +415,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         require(amount > auctioneditem.highestBid);
         require(auctioneditem.status == status.open);
         require(msg.sender != auctioneditem.creator);
+        require(amount != 0);
 
         IERC20(tokenContract_).transferFrom(msg.sender, address(this), amount);
 
