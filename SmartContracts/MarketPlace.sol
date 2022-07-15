@@ -74,14 +74,11 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
     uint256[] private id_list;
     uint256[] private itemsListed;
     uint256[] private itemsAuctioned;
-    address private beneficiary;
     address private tokenContract_;
     address private owner_;
     address[] private marketUserAddresses;
-    address[] public token_owners;
     address[] private marketCollections;
     address[] private admins;
-    address[] private beneficiaries;
     mapping(uint256 => Listing) private _listings;
     mapping(uint256 => AuctionedItem) private auctionedItem_;
     mapping(address => address[]) private ownedCollections_;
@@ -475,7 +472,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
 
         IERC721(auctioneditem.nftContract).transferFrom(
             address(this),
-            auctioneditem.creator,
+            msg.sender,
             auctioneditem.tokenId
         );
 
@@ -502,7 +499,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
 
         IERC721(auctioneditem.nftContract).transferFrom(
             address(this),
-            auctioneditem.highestBidder,
+            msg.sender,
             auctioneditem.tokenId
         );
 
