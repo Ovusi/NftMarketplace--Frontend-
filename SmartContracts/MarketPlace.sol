@@ -345,7 +345,9 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
         require(amount >= user.balance);
+
         IERC20(currency).transferFrom(address(this), msg.sender, amount);
+        user.balance -= amount;
 
         return true;
     }
