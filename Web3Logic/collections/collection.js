@@ -9,7 +9,7 @@ function DeployCollection(nftmarketaddress, senderadd, provider_, name, symbol) 
 
   const payload = {
     data: BYTE_CODE,
-    arguments: [nftmarketaddress, senderadd, name, symbol]
+    arguments: [name, symbol, uri]
   }
 
   const parameter = {
