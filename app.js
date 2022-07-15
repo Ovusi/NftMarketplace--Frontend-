@@ -11,24 +11,24 @@ const web3 = new Web3(Web3.givenProvider || "provider_")
 const HVXMP = HavenXMarketplace(marketcontract, web3)
 
 const App = ({ children }) => {
-    const supportedChainIds = [4]
-    const connectors = {
-        injected: {},
-        walletconnect: {},
-        walletlink: {
-            appName: "thirdweb - demo",
-            url: "https://thirdweb.com",
-            darkMode: false,
-        },
-    }
-    return (
-        <ThirdwebWeb3Provider
-            supportedChainIds={supportedChainIds}
-            connectors={connectors}
-        >
-            {children}
-        </ThirdwebWeb3Provider>
-    )
+  const supportedChainIds = [4]
+  const connectors = {
+    injected: {},
+    walletconnect: {},
+    walletlink: {
+      appName: "thirdweb - demo",
+      url: "https://thirdweb.com",
+      darkMode: false,
+    },
+  }
+  return (
+    <ThirdwebWeb3Provider
+      supportedChainIds={supportedChainIds}
+      connectors={connectors}
+    >
+      {children}
+    </ThirdwebWeb3Provider>
+  )
 }
 
 export default App
