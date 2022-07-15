@@ -417,38 +417,38 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         require(auctioneditem.status == status.open);
         require(msg.sender != auctioneditem.creator);
 
-        pendingReturns[aId][msg.sender] += amount;
+        IERC20(tokenContract_).transferFrom(msg.sender, address(this), amount);
 
-        //pendingReturns[auctioneditem.highestBidder] += auctioneditem.highestBid;
+        pendingReturns[aId][msg.sender] = amount;
 
         auctioneditem.highestBidder = msg.sender;
         auctioneditem.highestBid = amount;
 
-        IERC20(tokenContract_).transferFrom(msg.sender, address(this), amount);
 
         emit HighestBidIncreased(auctioneditem.highestBidder, auctioneditem.highestBid);
     }
 
     /// @dev Allow a bidder withdraw a bid if it has been outbid.
     function withdrawUnderBid(uint256 aId) external payable nonReentrant {
+        uint256 pending = pendingReturns[aId][msg.sender];
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
+        require(pending != auctioneditem.highestBid);
         require(msg.sender != auctioneditem.creator);
         require(msg.sender != auctioneditem.highestBidder);
 
-        uint256 amount = pendingReturns[aId][msg.sender];
-
-        IERC20(tokenContract_).transferFrom(address(this), msg.sender, amount);
+        IERC20(tokenContract_).transferFrom(address(this), msg.sender, pending);
 
         delete pendingReturns[aId][msg.sender];
     }
 
     /// @dev Allow auction owner withdraw the wiining bid after auction closes.
-    function withdrawHighestBid(uint256 aId)
+    function claimHighestBid(uint256 aId)
         external
         payable
         nonReentrant
         returns (bool)
     {
+        User storage user = users_[msg.sender];
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(auctioneditem.status != status.canceled);
         require(block.timestamp > auctioneditem.auctionEndTime);
@@ -458,12 +458,8 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         uint256 fee = (amount * 2) / 100;
         uint256 commision = amount - fee;
 
-        IERC20(tokenContract_).transferFrom(
-            address(this),
-            auctioneditem.creator,
-            commision
-        ); // Todo
-        IERC20(tokenContract_).transferFrom(address(this), tokenContract_, fee); // Todo
+        user.balance += commision; // Todo: remove amount and sort this properly
+        marketFees += fee;
 
         emit withdrawnFunds(msg.sender, commision);
 
