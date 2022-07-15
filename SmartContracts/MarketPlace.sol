@@ -34,49 +34,6 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
     event CollectionAdded(address user, address collectionadd);
 
     /*///////////////////////////////////////////////////////////////
-                            State variables
-    //////////////////////////////////////////////////////////////*/
-
-    uint256 private bidTime = block.timestamp;
-    uint256 private bidEndTime;
-    uint256 public MAX_PER_MINT = 5;
-    uint256 private marketFees;
-    uint256[] private id_list;
-    uint256[] private itemsListed;
-    uint256[] private itemsAuctioned;
-    address private beneficiary;
-    address private tokenContract_;
-    address private owner_;
-    address[] private marketUserAddresses;
-    address[] public token_owners;
-    address[] private marketCollections;
-    address[] private admins;
-    address[] private beneficiaries;
-    mapping(uint256 => Listing) private _listings;
-    mapping(uint256 => AuctionedItem) private auctionedItem_;
-    mapping(address => address[]) private ownedCollections_;
-    mapping(address => uint256) private pendingReturns;
-    mapping(uint256 => string) ids_uri;
-    mapping(address => User) users_;
-    string[] private tokenURIList;
-    string private baseTokenURI;
-
-    /*///////////////////////////////////////////////////////////////
-                            Enums
-    //////////////////////////////////////////////////////////////*/
-
-    enum status {
-        open,
-        sold,
-        canceled,
-        closed
-    }
-    enum verified {
-        yes,
-        no
-    }
-
-    /*///////////////////////////////////////////////////////////////
                         Structs, Mappings and Lists
     //////////////////////////////////////////////////////////////*/
 
@@ -107,6 +64,48 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         string userURI;
         address[] ownedCollections;
     }
+
+    /*///////////////////////////////////////////////////////////////
+                            State variables
+    //////////////////////////////////////////////////////////////*/
+
+    uint256 public MAX_PER_MINT = 5;
+    uint256 private marketFees;
+    uint256[] private id_list;
+    uint256[] private itemsListed;
+    uint256[] private itemsAuctioned;
+    address private beneficiary;
+    address private tokenContract_;
+    address private owner_;
+    address[] private marketUserAddresses;
+    address[] public token_owners;
+    address[] private marketCollections;
+    address[] private admins;
+    address[] private beneficiaries;
+    mapping(uint256 => Listing) private _listings;
+    mapping(uint256 => AuctionedItem) private auctionedItem_;
+    mapping(address => address[]) private ownedCollections_;
+    mapping(uint256 => mapping(address => uint256)) private pendingReturns;
+    mapping(uint256 => string) ids_uri;
+    mapping(address => User) users_;
+    string[] private tokenURIList;
+    string private baseTokenURI;
+
+    /*///////////////////////////////////////////////////////////////
+                            Enums
+    //////////////////////////////////////////////////////////////*/
+
+    enum status {
+        open,
+        sold,
+        canceled,
+        closed
+    }
+    enum verified {
+        yes,
+        no
+    }
+
 
     /*///////////////////////////////////////////////////////////////
                             Modifiers
@@ -322,7 +321,6 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         require(msg.sender == user.userAddress);
         require(msg.sender == listing.seller);
         require(listing.status == status.open);
-        require(listing_exists(lId) == true);
 
         IERC721(listing.nftContract).transferFrom(
             address(this),
@@ -372,8 +370,8 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
             address(this),
             tokenid_
         );
-        bidEndTime = aucEndTime;
-        uint256 bidDuration = block.timestamp + bidEndTime;
+
+        uint256 bidDuration = block.timestamp + aucEndTime;
 
         AuctionedItem memory auctionedItem = AuctionedItem(
             status.open,
@@ -392,6 +390,8 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         auctionedItem_[newItemId] = auctionedItem;
         itemsAuctioned.push(newItemId);
 
+        pendingReturns[newItemId][msg.sender] = 0;
+
         auctionedItem.status = status.open;
 
         emit itemAuctioned(msg.sender, newItemId, amount);
@@ -407,17 +407,19 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
     {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
-        require(auction_exists(aId) == true);
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
         require(
-            bidTime >= auctioneditem.auctionTime &&
-                bidTime <= auctioneditem.auctionEndTime
+            block.timestamp >= auctioneditem.auctionTime &&
+                block.timestamp <= auctioneditem.auctionEndTime
         );
         require(amount > auctioneditem.startPrice);
         require(amount > auctioneditem.highestBid);
         require(auctioneditem.status == status.open);
+        require(msg.sender != auctioneditem.creator);
 
-        pendingReturns[auctioneditem.highestBidder] += auctioneditem.highestBid;
+        pendingReturns[aId][msg.sender] += amount;
+
+        //pendingReturns[auctioneditem.highestBidder] += auctioneditem.highestBid;
 
         auctioneditem.highestBidder = msg.sender;
         auctioneditem.highestBid = amount;
@@ -433,11 +435,11 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         require(msg.sender != auctioneditem.creator);
         require(msg.sender != auctioneditem.highestBidder);
 
-        uint256 amount = pendingReturns[msg.sender];
+        uint256 amount = pendingReturns[aId][msg.sender];
 
         IERC20(tokenContract_).transferFrom(address(this), msg.sender, amount);
 
-        delete pendingReturns[msg.sender];
+        delete pendingReturns[aId][msg.sender];
     }
 
     /// @dev Allow auction owner withdraw the wiining bid after auction closes.
