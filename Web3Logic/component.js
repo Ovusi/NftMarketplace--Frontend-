@@ -19,7 +19,7 @@ async function ConnectWallet() {
         const disconnectWallet = async () => {
           if (accounts) {
             // TODO: Add/modify disconnetion logic
-            web3 = ""
+            data = "undefined"
             return "Wallet disconnected"
           }
         }
