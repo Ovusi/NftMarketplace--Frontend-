@@ -281,6 +281,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
     ) external payable nonReentrant returns (bool) {
         Listing storage listing = _listings[listingId_];
         User storage user = users_[msg.sender];
+        User storage listingCreator = users_[listing.seller];
         require(msg.sender == user.userAddress);
         require(msg.sender != listing.seller);
         require(listing.status == status.open);
@@ -288,7 +289,6 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         require(tokenContract_ != listing.seller);
         require(amount != 0);
 
-        //uint256 price_ = amount;
         uint256 fee = (amount * 2) / 100;
         uint256 commision = amount - fee;
 
@@ -298,7 +298,8 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
             listing.tokenId,
             amount
         );
-        user.balance += commision; // Todo: remove amount and sort this properly
+
+        listingCreator.balance += commision; // Todo: remove amount and sort this properly
         marketFees += fee;
         listing.status = status.sold;
 
@@ -448,8 +449,8 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         nonReentrant
         returns (bool)
     {
-        User storage user = users_[msg.sender];
         AuctionedItem storage auctioneditem = auctionedItem_[aId];
+        User storage auctionCreator = users_[auctioneditem.creator];
         require(auctioneditem.status != status.canceled);
         require(block.timestamp > auctioneditem.auctionEndTime);
         require(msg.sender == auctioneditem.creator);
@@ -458,7 +459,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         uint256 fee = (amount * 2) / 100;
         uint256 commision = amount - fee;
 
-        user.balance += commision; // Todo: remove amount and sort this properly
+        auctionCreator.balance += commision; // Todo: remove amount and sort this properly
         marketFees += fee;
 
         emit withdrawnFunds(msg.sender, commision);
