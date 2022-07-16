@@ -9,7 +9,7 @@ async function ConnectWallet() {
   const web3 = await new Web3(window.ethereum || Web3.givenProvider)
     .then((data) => {
       const cId = await web3.eth.getChainId()
-      if (cId == 147) {
+      if (data != "undefined" && cId == 147) {
         const accounts = await web3.eth.getAccounts()
         const account = accounts[0]
         const provider = await web3.eth.currentProvider()
@@ -51,11 +51,11 @@ async function ConnectMetamask() {
   if (typeof ethereum.isMetaMask() != true) {
     console.log('MetaMask is not installed!');
   } else {
-    accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+    const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
       .then((data) => {
         const chainId = await ethereum.request({ method: 'eth_chainId' })
 
-        if (chainId == 147) {
+        if (data != "undefined" && chainId == 147) {
           const account = accounts[0]
           const provider = await detectEthereumProvider()
 
