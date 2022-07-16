@@ -17,11 +17,9 @@ async function ConnectWallet() {
         const balance = await web3.utils.fromWei(web3.eth.getBalance(account))
 
         const disconnectWallet = async () => {
-          if (accounts) {
-            // TODO: Add/modify disconnetion logic
-            data = "undefined"
-            return "Wallet disconnected"
-          }
+          // TODO: Add/modify disconnetion logic
+          if (accounts) data = "undefined"
+          return "Wallet disconnected"
         }
 
         return {
@@ -60,10 +58,9 @@ async function ConnectMetamask() {
           const provider = await detectEthereumProvider()
 
           const disconnectWallet = async () => {
-            if (account) {
-              // TODO: Add disconnetion logic
-              return "Wallet disconnected"
-            }
+            // TODO: Add/modify disconnetion logic
+            if (accounts) data = "undefined"
+            return "Wallet disconnected"
           }
 
           return {
@@ -97,4 +94,4 @@ function Component() {
   }
 }
 
-module.exports = { Component, ConnectWallet }
+module.exports = { ConnectWallet, ConnectMetamask }
