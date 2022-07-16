@@ -18,7 +18,8 @@ async function ConnectWallet() {
 
         const disconnectWallet = async () => {
           if (accounts) {
-            // TODO: Add disconnetion logic
+            // TODO: Add/modify disconnetion logic
+            web3 = ""
             return "Wallet disconnected"
           }
         }
@@ -31,14 +32,14 @@ async function ConnectWallet() {
           disconnectWallet
         }
       } else {
-        console.log("Network not supported!")
+        return "Network not supported!"
       }
     })
     .catch((err) => {
       if (typeof ethereum.isMetaMask() != true) {
-        console.log('MetaMask is not installed!');
+        return 'MetaMask is not installed!'
       } else {
-        console.log(err)
+        return err
       }
     })
 }
