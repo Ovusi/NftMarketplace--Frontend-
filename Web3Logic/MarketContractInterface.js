@@ -11,34 +11,34 @@ function HavenXMarketplace(provider) {
   Contract.setProvider(provider)
   const marketcontract = new Contract(JSON.parse(process.env.ABI), process.env.MARKET_PLACE_ADDRESS)
 
-  this.listNft = async () => {
+  this.listNft = async (nftCollectionContract, tokenid, amount) => {
     /*
     This function lists an nft directly on the marketplace.
     ...
     ...
     listNft(
-        address token_,
+        address collectionContract,
         uint256 tokenid_,
-        address currency,
+        address amount,
         uint256 price_) returns (uint256)
     */
 
-    return await marketcontract.methods.listNft().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.listNft(nftCollectionContract, tokenid, amount).send()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
-  this.buyListing = async () => {
+  this.buyListing = async (listingid, currencycontract, amount) => {
     /* 
     This function allows you to purchase a direct nft listing
     ...
     ...
-    buyNft(uint256 listingId_, uint256 price_) returns (bool)
+    buyNft(uint256 listingId_, address currency uint256 amount) returns (bool)
     */
 
-    return await marketcontract.methods.buyNft().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.buyNft(listingid, currencycontract, amount).send()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.auctionNft = async () => {
@@ -54,9 +54,9 @@ function HavenXMarketplace(provider) {
 
      */
 
-    return await marketcontract.methods.placeAuction().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.placeAuction().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.bidAuctionedNft = async () => {
@@ -67,9 +67,9 @@ function HavenXMarketplace(provider) {
      * bid(uint256 aId, uint256 price_)
      */
 
-    return await marketcontract.methods.bid().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.bid().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.cancelDirectListing = async () => {
@@ -81,9 +81,9 @@ function HavenXMarketplace(provider) {
      * cancelListing(uint256 lId) returns (bool, string memory)
      */
 
-    return await marketcontract.methods.cancelListing().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.cancelListing().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.cancelAuctionedItem = async () => {
@@ -94,9 +94,9 @@ function HavenXMarketplace(provider) {
      * ...
      * cancelAuction(uint256 aId) returns (bool, string memory
      */
-    return await marketcontract.methods.cancelAuction().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.cancelAuction().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.createNewUser = async () => {
@@ -107,9 +107,9 @@ function HavenXMarketplace(provider) {
      * ...
      * createUser(string memory useruri_) external returns (bool)
      */
-    return await marketcontract.methods.createUser().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.createUser().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.withdrawBid = async () => {
@@ -119,9 +119,9 @@ function HavenXMarketplace(provider) {
      * ...
      * withdrawUnderBid(uint256 aId)
      */
-    return await marketcontract.methods.withdrawUnderBid().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.withdrawUnderBid().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.claimHighestBid = async () => {
@@ -131,45 +131,45 @@ function HavenXMarketplace(provider) {
      * ...
      * withdrawHighestBid(uint256 aId) returns (bool, string memory)
      */
-    return await marketcontract.methods.withdrawHighestBid().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.withdrawHighestBid().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.claimWonNft = async () => {
     /**
      * 
      */
-    return await marketcontract.methods.claimNft().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.claimNft().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.getAllMarketAuctions = async () => {
     /**
      * 
      */
-    return await marketcontract.methods.getAllAuctions().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.getAllAuctions().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.getAllMarketListings = async () => {
     /**
      * getAllListings() external view returns (uint256[] memory)
      */
-    return await marketcontract.methods.getAllListings().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.getAllListings().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.getTokenUriById = async () => {
     /**
      * getTokenUri(uint256 lId) external view returns (string memory)
      */
-    return await marketcontract.methods.getTokenUri().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.getTokenUri().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.getListingById_ = async () => {
@@ -179,9 +179,9 @@ function HavenXMarketplace(provider) {
         view
         returns (Listing memory)
      */
-    return await marketcontract.methods.getListingById().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.getListingById().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
   this.isUserVerified = async () => {
@@ -190,9 +190,9 @@ function HavenXMarketplace(provider) {
      * 
      * isVerified(address userAdd) external view returns (bool)
      */
-    return await marketcontract.methods.isVerified().call()
-      .then((data) => console.log(data))
-      .catch((err) => console.log(err))
+    await marketcontract.methods.isVerified().call()
+      .then((data) => { return data })
+      .catch((err) => { return err })
   }
 
 }
