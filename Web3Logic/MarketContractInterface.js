@@ -1,14 +1,15 @@
-const { Web3 } = require('web3');
-const { ABI, BYTE_CODE } = require("./collections/data")
+const Web3 = require('web3');
 const Contract = require('web3-eth-contract')
-const { Signer, ethers } = require('ethers')
 
 require("dotenv").config()
 
+// When users connect thier wallets, the provider is parsed
+// as an argument to the HavenXMarketplace class.
+// This allows users to interact with the marketplace contract.
 
-function HavenXMarketplace(hvxmarketaddress, provider_,) {
-  const marketcontract = hvxmarketaddress //new Contract(ABI, contractAddress)
-  const web3 = provider_ //new Web3(provider_)
+function HavenXMarketplace(provider) {
+  Contract.setProvider(provider)
+  const marketcontract = new Contract(process.env.ABI, process.env.MARKET_PLACE_ADDRESS)
 
   this.listNft = async () => {
     /*
