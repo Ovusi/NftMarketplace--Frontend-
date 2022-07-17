@@ -3,6 +3,8 @@ const { ABI, BYTE_CODE } = require("./collections/data")
 const Contract = require('web3-eth-contract')
 const { Signer, ethers } = require('ethers')
 
+require("dotenv").config()
+
 
 function HavenXMarketplace(hvxmarketaddress, provider_,) {
   const marketcontract = hvxmarketaddress //new Contract(ABI, contractAddress)
