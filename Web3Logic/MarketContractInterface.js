@@ -54,7 +54,7 @@ function HavenXMarketplace(provider) {
 
      */
 
-    await marketcontract.methods.placeAuction().call()
+    await marketcontract.methods.placeAuction().send()
       .then((data) => { return data })
       .catch((err) => { return err })
   }
@@ -67,7 +67,7 @@ function HavenXMarketplace(provider) {
      * bid(uint256 aId, uint256 price_)
      */
 
-    await marketcontract.methods.bid().call()
+    await marketcontract.methods.bid().send()
       .then((data) => { return data })
       .catch((err) => { return err })
   }
@@ -81,7 +81,7 @@ function HavenXMarketplace(provider) {
      * cancelListing(uint256 lId) returns (bool, string memory)
      */
 
-    await marketcontract.methods.cancelListing().call()
+    await marketcontract.methods.cancelListing().send()
       .then((data) => { return data })
       .catch((err) => { return err })
   }
@@ -94,7 +94,7 @@ function HavenXMarketplace(provider) {
      * ...
      * cancelAuction(uint256 aId) returns (bool, string memory
      */
-    await marketcontract.methods.cancelAuction().call()
+    await marketcontract.methods.cancelAuction().send()
       .then((data) => { return data })
       .catch((err) => { return err })
   }
@@ -107,7 +107,7 @@ function HavenXMarketplace(provider) {
      * ...
      * createUser(string memory useruri_) external returns (bool)
      */
-    await marketcontract.methods.createUser().call()
+    await marketcontract.methods.createUser().send()
       .then((data) => { return data })
       .catch((err) => { return err })
   }
@@ -119,7 +119,7 @@ function HavenXMarketplace(provider) {
      * ...
      * withdrawUnderBid(uint256 aId)
      */
-    await marketcontract.methods.withdrawUnderBid().call()
+    await marketcontract.methods.withdrawUnderBid().send()
       .then((data) => { return data })
       .catch((err) => { return err })
   }
@@ -131,7 +131,7 @@ function HavenXMarketplace(provider) {
      * ...
      * withdrawHighestBid(uint256 aId) returns (bool, string memory)
      */
-    await marketcontract.methods.withdrawHighestBid().call()
+    await marketcontract.methods.withdrawHighestBid().send()
       .then((data) => { return data })
       .catch((err) => { return err })
   }
@@ -140,7 +140,7 @@ function HavenXMarketplace(provider) {
     /**
      * 
      */
-    await marketcontract.methods.claimNft().call()
+    await marketcontract.methods.claimNft().send()
       .then((data) => { return data })
       .catch((err) => { return err })
   }
