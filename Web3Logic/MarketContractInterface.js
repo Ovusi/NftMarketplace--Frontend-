@@ -9,7 +9,7 @@ require("dotenv").config()
 
 function HavenXMarketplace(provider) {
   Contract.setProvider(provider)
-  const marketcontract = new Contract(process.env.ABI, process.env.MARKET_PLACE_ADDRESS)
+  const marketcontract = new Contract(JSON.parse(process.env.ABI), process.env.MARKET_PLACE_ADDRESS)
 
   this.listNft = async () => {
     /*

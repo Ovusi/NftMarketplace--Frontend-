@@ -1,15 +1,17 @@
 const { Web3 } = require('web3');
 const { ABI, BYTE_CODE } = require("../collections/data")
 
-function DeployCollection(account, provider_, name, symbol) {
-  const rpcURL = provider_
-  const web3 = new Web3(rpcURL)
+require("dotenv").config()
 
-  const deploy_contract = new web3.eth.Contract(JSON.parse(ABI))
+
+function DeployCollection(account, provider_, name, symbol) {
+  const web3 = new Web3(provider_)
+
+  const deploy_contract = new web3.eth.Contract(JSON.parse(process.env.ABI))
 
   const payload = {
-    data: BYTE_CODE,
-    arguments: [name, symbol, uri]
+    data: process.env.BYTE_CODE,
+    arguments: [name, symbol]
   }
 
   const parameter = {
