@@ -3,7 +3,6 @@ const { ABI, BYTE_CODE } = require("../collections/data")
 
 require("dotenv").config()
 
-
 function DeployCollection(account, provider_, name, symbol) {
   const web3 = new Web3(provider_)
 
