@@ -16,10 +16,18 @@ contract HavenToken is ERC20 {
     string private _name = "Haven Token";
     string private _symbol = "HVX";
 
+    /*///////////////////////////////////////////////////////////////
+                            Constructor
+    //////////////////////////////////////////////////////////////*/
+
     constructor() ERC20(_name, _symbol) {
         owner = msg.sender;
         _mint(msg.sender, initialMintSupply);
     }
+
+    /*///////////////////////////////////////////////////////////////
+                            Logic
+    //////////////////////////////////////////////////////////////*/
 
     function marketplaceRewards(address account, uint256 amount) external {
         uint256 floatReward = (amount * 10) ^ 0;
