@@ -20,11 +20,13 @@ contract HavenToken is ERC20 {
     }
 
     function marketplaceRewards(address account, uint256 amount) external {
+        uint256 floatReward = amount * 10^0;
         require(msg.sender == marketplace || msg.sender == stakingAddress);
         require(totalRewarded < rewardSupply);
-        require(amount < rewardSupply);
+        require(floatReward < rewardSupply);
+        
         _mint(account, amount);
 
-        totalRewarded += amount;
+        totalRewarded += floatReward;
     }
 }
