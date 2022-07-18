@@ -11,11 +11,13 @@ contract HavenToken is ERC20 {
 
     address marketplace = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address stakingAddress = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+    address owner;
 
     string private _name = "Haven Token";
     string private _symbol = "HVX";
 
     constructor() ERC20(_name, _symbol) {
+        owner = msg.sender;
         _mint(msg.sender, initialMintSupply);
     }
 
@@ -24,9 +26,19 @@ contract HavenToken is ERC20 {
         require(msg.sender == marketplace || msg.sender == stakingAddress);
         require(totalRewarded < rewardSupply);
         require(floatReward < rewardSupply);
-        
+
         _mint(account, amount);
 
         totalRewarded += floatReward;
+    }
+    
+    function setMarketAddress(address marketAddress) external {
+        require(msg.sender == owner);
+        marketplace = marketAddress;
+    }
+
+        function setStakingAddress(address stakingContractAddress) external {
+        require(msg.sender == owner);
+        stakingAddress = stakingContractAddress;
     }
 }
