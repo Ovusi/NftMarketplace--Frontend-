@@ -22,7 +22,7 @@ contract HavenToken is ERC20 {
     }
 
     function marketplaceRewards(address account, uint256 amount) external {
-        uint256 floatReward = amount * 10^0;
+        uint256 floatReward = (amount * 10) ^ 0;
         require(msg.sender == marketplace || msg.sender == stakingAddress);
         require(totalRewarded < rewardSupply);
         require(floatReward < rewardSupply);
@@ -31,13 +31,13 @@ contract HavenToken is ERC20 {
 
         totalRewarded += floatReward;
     }
-    
+
     function setMarketAddress(address marketAddress) external {
         require(msg.sender == owner);
         marketplace = marketAddress;
     }
 
-        function setStakingAddress(address stakingContractAddress) external {
+    function setStakingAddress(address stakingContractAddress) external {
         require(msg.sender == owner);
         stakingAddress = stakingContractAddress;
     }
