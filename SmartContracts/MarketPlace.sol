@@ -417,11 +417,11 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         require(auctioneditem.status == status.open);
         require(msg.sender != auctioneditem.creator);
         require(amount != 0);
-
+        
         IERC20(tokenContract_).transferFrom(msg.sender, address(this), amount);
 
         pendingReturns[aId][msg.sender] = amount;
-
+    
         auctioneditem.highestBidder = msg.sender;
         auctioneditem.highestBid = amount;
 

@@ -1,11 +1,11 @@
 {
-    "contractName": "Payments",
+    "contractName": "ABDKMath64x64",
     "abi": [],
-    "metadata": "{\"compiler\":{\"version\":\"0.8.15+commit.e14f2714\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/SmartContracts/libs.sol\":\"Payments\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/SmartContracts/libs.sol\":{\"keccak256\":\"0x0a326edb559a77256e4b075822f68ddd10860b17ef6db230fcf5db01ee87564a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d6338648c16036727a9574ea28a52c70d0b2b1cf50609173aef7e9848e715abd\",\"dweb:/ipfs/QmSXzbayXQLvV2ZuLhhGnNp87kBLUssyjNJvWgspWbLxZ7\"]},\"c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0x9750c6b834f7b43000631af5cc30001c5f547b3ceb3635488f140f60e897ea6b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5a7d5b1ef5d8d5889ad2ed89d8619c09383b80b72ab226e0fe7bde1636481e34\",\"dweb:/ipfs/QmebXWgtEfumQGBdVeM6c71McLixYXQP5Bk6kKXuoY4Bmr\"]},\"c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol\":{\"keccak256\":\"0xed6a749c5373af398105ce6ee3ac4763aa450ea7285d268c85d9eeca809cdb1f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://20a97f891d06f0fe91560ea1a142aaa26fdd22bed1b51606b7d48f670deeb50f\",\"dweb:/ipfs/QmTbCtZKChpaX5H2iRiTDMcSz29GSLCpTCDgJpcMR4wg8x\"]},\"c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f\",\"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy\"]},\"c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol\":{\"keccak256\":\"0x0f633a0223d9a1dcccfcf38a64c9de0874dfcbfac0c6941ccf074d63a2ce0e1e\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://864a40efcffdf408044c332a5aa38ec5618ed7b4eecb8f65faf45671bd6cdc65\",\"dweb:/ipfs/QmQJquTMtc6fgm5JQzGdsGpA2fqBe3MHWEdt2qzaLySMdN\"]}},\"version\":1}",
-    "bytecode": "60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220e45d90382738e629a9051da23862fee87700f838c41f7a908568f313bff5dcce64736f6c634300080f0033",
-    "deployedBytecode": "73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220e45d90382738e629a9051da23862fee87700f838c41f7a908568f313bff5dcce64736f6c634300080f0033",
-    "sourceMap": "449:728:0:-:0;;;;;;;;;;;;;;;-1:-1:-1;;;449:728:0;;;;;;;;;;;;;;;;;",
-    "deployedSourceMap": "449:728:0:-:0;;;;;;;;",
+    "metadata": "{\"compiler\":{\"version\":\"0.8.15+commit.e14f2714\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"notice\":\"Smart contract library of mathematical functions operating with signed 64.64-bit fixed point numbers.  Signed 64.64-bit fixed point number is basically a simple fraction whose numerator is signed 128-bit integer and denominator is 2^64.  As long as denominator is always the same, there is no need to store it, thus in Solidity signed 64.64-bit fixed point numbers are represented by int128 type holding only the numerator.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/SmartContracts/libs.sol\":\"ABDKMath64x64\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/SmartContracts/libs.sol\":{\"keccak256\":\"0x0a326edb559a77256e4b075822f68ddd10860b17ef6db230fcf5db01ee87564a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d6338648c16036727a9574ea28a52c70d0b2b1cf50609173aef7e9848e715abd\",\"dweb:/ipfs/QmSXzbayXQLvV2ZuLhhGnNp87kBLUssyjNJvWgspWbLxZ7\"]},\"c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0x9750c6b834f7b43000631af5cc30001c5f547b3ceb3635488f140f60e897ea6b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5a7d5b1ef5d8d5889ad2ed89d8619c09383b80b72ab226e0fe7bde1636481e34\",\"dweb:/ipfs/QmebXWgtEfumQGBdVeM6c71McLixYXQP5Bk6kKXuoY4Bmr\"]},\"c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol\":{\"keccak256\":\"0xed6a749c5373af398105ce6ee3ac4763aa450ea7285d268c85d9eeca809cdb1f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://20a97f891d06f0fe91560ea1a142aaa26fdd22bed1b51606b7d48f670deeb50f\",\"dweb:/ipfs/QmTbCtZKChpaX5H2iRiTDMcSz29GSLCpTCDgJpcMR4wg8x\"]},\"c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f\",\"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy\"]},\"c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol\":{\"keccak256\":\"0x0f633a0223d9a1dcccfcf38a64c9de0874dfcbfac0c6941ccf074d63a2ce0e1e\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://864a40efcffdf408044c332a5aa38ec5618ed7b4eecb8f65faf45671bd6cdc65\",\"dweb:/ipfs/QmQJquTMtc6fgm5JQzGdsGpA2fqBe3MHWEdt2qzaLySMdN\"]}},\"version\":1}",
+    "bytecode": "60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea264697066735822122085075ade5af11598f856337b4206ad138ba2a84b4827b74cee0b80819ae2f99764736f6c634300080f0033",
+    "deployedBytecode": "73000000000000000000000000000000000000000030146080604052600080fdfea264697066735822122085075ade5af11598f856337b4206ad138ba2a84b4827b74cee0b80819ae2f99764736f6c634300080f0033",
+    "sourceMap": "1641:30834:0:-:0;;;;;;;;;;;;;;;-1:-1:-1;;;1641:30834:0;;;;;;;;;;;;;;;;;",
+    "deployedSourceMap": "1641:30834:0:-:0;;;;;;;;",
     "sourcePath": "c:/Users/Nobert Jakpor/Desktop/NftMarketplace (Frontend)/SmartContracts/libs.sol",
     "compiler": {
         "name": "solc",
@@ -39286,7 +39286,33 @@
             "totalCost": "17303"
         },
         "internal": {
-            "payment(address,address,uint256,uint256)": "infinite"
+            "abs(int128)": "infinite",
+            "add(int128,int128)": "infinite",
+            "avg(int128,int128)": "infinite",
+            "div(int128,int128)": "infinite",
+            "divi(int256,int256)": "infinite",
+            "divu(uint256,uint256)": "infinite",
+            "divuu(uint256,uint256)": "infinite",
+            "exp(int128)": "infinite",
+            "exp_2(int128)": "infinite",
+            "from128x128(int256)": "infinite",
+            "fromInt(int256)": "infinite",
+            "fromUInt(uint256)": "infinite",
+            "gavg(int128,int128)": "infinite",
+            "inv(int128)": "infinite",
+            "ln(int128)": "infinite",
+            "log_2(int128)": "infinite",
+            "mul(int128,int128)": "infinite",
+            "muli(int128,int256)": "infinite",
+            "mulu(int128,uint256)": "infinite",
+            "neg(int128)": "infinite",
+            "pow(int128,uint256)": "infinite",
+            "sqrt(int128)": "infinite",
+            "sqrtu(uint256)": "infinite",
+            "sub(int128,int128)": "infinite",
+            "to128x128(int128)": "infinite",
+            "toInt(int128)": "infinite",
+            "toUInt(int128)": "infinite"
         }
     }
 }
