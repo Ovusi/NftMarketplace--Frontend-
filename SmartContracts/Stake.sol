@@ -3,13 +3,14 @@
 
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import "SmartContracts/NFTcontract.sol";
 
-contract New {
+contract HaveXStaking {
     
-    function chaN() public pure returns (bool) {
-
-        return true;
+    function apy(uint256 principal, uint256 period) public returns (uint256) {
+        uint256 div = 5/100;
+        return (principal * div / 100) * period;
     }
 }

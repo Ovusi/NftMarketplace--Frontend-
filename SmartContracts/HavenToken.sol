@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
 
 contract HavenToken is ERC20 {
     uint256 private rewardSupply = 100000000 * 10**9;
@@ -31,7 +32,10 @@ contract HavenToken is ERC20 {
 
     function marketplaceRewards(address account, uint256 amount) external {
         uint256 floatReward = (amount * 10) ^ 0;
-
+        require(
+            Address.isContract(marketplace) ||
+                Address.isContract(stakingAddress)
+        );
         require(msg.sender == marketplace || msg.sender == stakingAddress);
         require(totalRewarded < rewardSupply);
         require(floatReward < rewardSupply);
