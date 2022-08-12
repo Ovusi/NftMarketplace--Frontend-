@@ -9,3 +9,11 @@ const TOKEN_CONTRACT = "0x"
 const TOKEN_ABI = []
 
 module.exports = { ABI, BYTE_CODE, MARKET_ADDRESS }
+
+
+
+const ans = () => {
+    return (507 * 0.10) * 604800 
+}
+
+console.log(ans())
