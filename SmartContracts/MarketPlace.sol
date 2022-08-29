@@ -404,6 +404,7 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         payable
         nonReentrant
         isClosed(aId)
+        returns (bool)
     {
         User storage user = users_[msg.sender];
         require(msg.sender == user.userAddress);
@@ -425,8 +426,8 @@ contract HavenMarketPlace is IERC721, ERC721URIStorage, ReentrancyGuard {
         auctioneditem.highestBidder = msg.sender;
         auctioneditem.highestBid = amount;
 
-
         emit HighestBidIncreased(auctioneditem.highestBidder, auctioneditem.highestBid);
+        return true;
     }
 
     /// @dev Allow a bidder withdraw a bid if it has been outbid.
