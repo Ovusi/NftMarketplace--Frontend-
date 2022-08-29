@@ -3,32 +3,41 @@ const { ABI, BYTE_CODE } = require("../collections/data")
 
 require("dotenv").config()
 
-function DeployCollection(account, provider_, name, symbol) {
-  const web3 = new Web3(provider_)
+class DeployCollection {
+  constructor(account, provider_, name, symbol) {
+    try {
+      const web3 = new Web3(provider_);
+      this.deploy_contract = new web3.eth.Contract(JSON.parse(process.env.ABI));
+  
+      this.payload = {
+        data: process.env.BYTE_CODE,
+        arguments: [name, symbol]
+      };
+  
+      this.parameter = {
+        from: account,
+        gas: 1500000,
+        gasPrice: '30000000000000'
+      };
 
-  const deploy_contract = new web3.eth.Contract(JSON.parse(process.env.ABI))
-
-  const payload = {
-    data: process.env.BYTE_CODE,
-    arguments: [name, symbol]
+      console.log('Connected to the Blockchain successfully.')
+      return 'Connected to the Blockchain successfully.'
+      
+    } catch (error) {
+      console.log(error)
+      return 'An error occured.'
+    }
   }
 
-  const parameter = {
-    from: account,
-    gas: 1500000,
-    gasPrice: '30000000000000'
-  }
-
-  this.deploy_collection = async () => {
-    await deploy_contract.deploy(payload).send(parameter, (err, transactionHash) => {
-      return {'Transaction Hash': transactionHash};
+  deploy_collection = async () => {
+    await this.deploy_contract.deploy(this.payload).send(this.parameter, (err, transactionHash) => {
+      return { 'Transaction Hash': transactionHash };
     }).on('confirmation', () => { }).then((newContractInstance) => {
-      return {'Deployed Contract Address': newContractInstance.options.address}
-    })
+      return { 'Deployed Contract Address': newContractInstance.options.address };
+    });
 
-    return newContractInstance.options.address
-  }
-
+    return newContractInstance.options.address;
+  };
 }
 
 module.exports = { DeployCollection }
